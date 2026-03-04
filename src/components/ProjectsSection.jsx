@@ -19,8 +19,8 @@ export default function ProjectsSection() {
         </div>
       </div>
 
-      {/* Grid section content below the sticky tab */}
-      <div className="grid-bg bg-black min-h-screen pt-16 pb-20">
+      {/* Grid section content below the sticky tab (red grid) */}
+      <div className="grid-bg-red bg-black min-h-screen pt-16 pb-20">
         <div className="max-w-4xl mx-auto px-6">
           <div className="relative">
             <div className="absolute -left-4 top-4 w-full h-full bg-gray-300 rounded-lg border-2 border-pink-400 transform -rotate-2 opacity-60" />

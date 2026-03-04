@@ -40,8 +40,8 @@ export default function FoldersSection() {
         </div>
       </div>
 
-      {/* Grid section content below the sticky tab */}
-      <div className="grid-bg bg-black min-h-screen pt-16 pb-20">
+      {/* Grid section content below the sticky tab (purple grid) */}
+      <div className="grid-bg-purple bg-black min-h-screen pt-16 pb-20">
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16">
             {folders.map((folder) => (

@@ -19,8 +19,8 @@ export default function ContactSection() {
         </div>
       </div>
 
-      {/* Grid section content below the sticky tab */}
-      <div className="grid-bg bg-black min-h-screen pt-16 pb-20">
+      {/* Grid section content below the sticky tab (green grid) */}
+      <div className="grid-bg-green bg-black min-h-screen pt-16 pb-20">
         <div className="max-w-4xl mx-auto px-6">
           <div className="bg-gray-200 rounded-lg border-2 border-green-400 overflow-hidden">
             <div className="grid md:grid-cols-2 gap-0">
