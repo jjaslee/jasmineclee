@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background: #000;
+  }
+
+  body {
+    margin: 0;
+    background: #000 !important;
+    color: #e5e7eb;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(106, 34, 255, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(106, 34, 255, 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.wavy-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.85;
+  mask-image: url('/squiggly-line.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-mode: luminance;
+  -webkit-mask-image: url('/squiggly-line.png');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-mode: luminance;
+}
+
+@layer utilities {
+  .font-bangers {
+    font-family: 'Bangers', system-ui, sans-serif;
+  }
+
+  .font-poppins {
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+
+  .font-nanum {
+    font-family: 'Nanum Brush Script', system-ui, cursive;
+  }
+
+  .postcard-text {
+    font-size: clamp(0.9rem, 1.1vw, 1.15rem);
+  }
+
+  .flip-card {
+    perspective: 1600px;
+    cursor: pointer;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .flip-card-inner.is-flipped {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
+
+  .flip-square {
+    transform-origin: center;
+    animation: flipForward 0.35s ease-out;
+  }
+}
+
+@keyframes flipForward {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+

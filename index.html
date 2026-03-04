@@ -1,75 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flip Animation</title>
-
-  <!-- CSS file -->
-  <link rel="stylesheet" href="css/style.css" />
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-
-
-</head>
-
-<body>
-
-  <!-- toggle container -->
-  <div class="toggle-container">
-
-    <div id="language-toggle" class="language-toggle">
-      <span class="lang en active">EN</span>
-      <span class="separator">|</span>
-      <span class="lang zh">中文</span>
-    </div>
-
-    <div id="theme-toggle" class="theme-toggle">
-      <div class="circle white-circle"></div>
-      <div class="circle black-circle"></div>
-    </div>
-  </div>
-
-  <!-- Jasmine Lee drop-in bridge animation -->
-  <div class="name-wrapper">
-    <h1 class="name-intro" id="name-intro">
-      <span>J</span><span>A</span><span>S</span><span>M</span><span>I</span><span>N</span><span>E</span>
-      <span class="name-gap"></span>
-      <span>L</span><span>E</span><span>E</span>
-    </h1>
-    <span id="chinese-name" class="chinese-name">李靜文</span>
-  </div>
-
-  <!-- ─────────────── 3D IMAGE CAROUSEL ─────────────── -->
-  <div class="carousel-3d-container">
-    <div class="carousel-3d">
-      <div class="carousel-cell"><img src="images/photo1.jpg" alt="Image 1"></div>
-      <div class="carousel-cell"><img src="images/photo2.jpg" alt="Image 2"></div>
-      <div class="carousel-cell"><img src="images/photo3.jpg" alt="Image 3"></div>
-      <div class="carousel-cell"><img src="images/photo4.jpg" alt="Image 4"></div>
-      <div class="carousel-cell"><img src="images/img5.jpg" alt="Image 5"></div>
-      <div class="carousel-cell"><img src="images/img6.jpg" alt="Image 6"></div>
-      <div class="carousel-cell"><img src="images/img7.jpg" alt="Image 7"></div>
-
-
-      <!-- …add as many <div class="carousel-cell"> as you like… -->
-    </div>
-  </div>
-  <!-- ──────────────────────────────────────────────────── -->
-
-
-  <!-- JS files -->
-  <script src="js/theme-toggle.js"></script>
-  <script src="js/scramble-effect.js"></script>
-  <script src="js/language-toggle.js"></script>
-  <script src="js/init.js"></script>
-  <script src="js/jl-lj-animation.js"></script>
-  <script src="js/script.js"></script>
-
-
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>web-portfolio-2026</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
