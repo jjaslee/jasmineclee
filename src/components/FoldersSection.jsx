@@ -21,7 +21,7 @@ function FolderIcon({ color }) {
 
 export default function FoldersSection() {
   return (
-    <section id="work" className="relative py-20">
+    <section id="work" className="relative grid-bg py-20">
       <div className="max-w-4xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16">
           {folders.map((folder) => (
@@ -30,9 +30,7 @@ export default function FoldersSection() {
               className="group flex flex-col items-center gap-4 hover:scale-105 transition-transform cursor-pointer"
             >
               <FolderIcon color={folder.color} />
-              <span className="text-white text-sm font-medium tracking-wide">
-                {folder.label}
-              </span>
+              <span className="text-white text-sm font-medium tracking-wide">{folder.label}</span>
             </button>
           ))}
         </div>
@@ -40,7 +38,7 @@ export default function FoldersSection() {
 
       <div className="max-w-3xl mx-auto px-6 mt-16">
         <div className="relative shadow-2xl">
-          {/* Manila folder tab */}
+          {/* Manila folder tab (label ~1/3 from left) */}
           <div
             className="absolute -top-10 left-1/3 -translate-x-1/2 h-12 w-[220px] border-2 border-black/70 bg-[#f1e2b6]"
             style={{
@@ -50,9 +48,7 @@ export default function FoldersSection() {
             }}
           >
             <div className="h-full w-full flex items-center justify-center">
-              <span className="font-bangers tracking-wide text-black text-lg">
-                PROJECTS
-              </span>
+              <span className="font-bangers tracking-wide text-black text-lg">PROJECTS</span>
             </div>
           </div>
 
@@ -71,25 +67,26 @@ export default function FoldersSection() {
             </div>
             <div className="bg-white/85 p-8 min-h-[180px]">
               <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-                {['resumecv', 'portfolio', 'sidehustle', 'work', 'design', 'assets'].map(
-                  (name) => (
-                    <button
-                      key={name}
-                      className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
-                    >
-                      <div className="w-14 h-12 bg-purple-600 rounded-t-md rounded-br-md flex items-end pb-1 pl-2">
-                        <div className="w-4 h-0.5 bg-black/20 rounded" />
-                      </div>
-                      <span className="text-black text-xs font-medium">{name}</span>
-                    </button>
-                  ),
-                )}
+                {['resumecv', 'portfolio', 'sidehustle', 'work', 'design', 'assets'].map((name) => (
+                  <button
+                    key={name}
+                    className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+                  >
+                    <div className="w-14 h-12 bg-purple-600 rounded-t-md rounded-br-md flex items-end pb-1 pl-2">
+                      <div className="w-4 h-0.5 bg-black/20 rounded" />
+                    </div>
+                    <span className="text-black text-xs font-medium">{name}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <div className="h-14 bg-red-500 flex items-center justify-center mt-20">
+        <span className="text-white font-medium tracking-widest text-sm">ABOUT ME</span>
+      </div>
     </section>
   )
 }
-

@@ -1,22 +1,28 @@
 export default function ContactSection() {
   return (
-    <section id="contact" className="relative py-20">
+    <section id="contact" className="relative grid-bg py-20">
       <div className="max-w-4xl mx-auto px-6">
         <div className="bg-gray-200 rounded-lg border-2 border-green-400 overflow-hidden">
           <div className="grid md:grid-cols-2 gap-0">
             <div className="p-6">
               <div className="aspect-video bg-gray-400 rounded mb-6 overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&h=400&fit=crop"
+                  src="/hero-1.png"
                   alt=""
                   className="w-full h-full object-cover"
-                  style={{ filter: 'grayscale(1) contrast(0.72) brightness(1.08)' }}
+                style={{ filter: 'grayscale(1) contrast(0.72) brightness(1.08)' }}
                 />
               </div>
             </div>
             <div className="p-6 flex flex-col justify-between">
               <div>
-                <div className="w-16 h-16 rounded-full bg-gray-400 overflow-hidden mb-6" />
+                <div className="w-16 h-16 rounded-full bg-gray-400 overflow-hidden mb-6">
+                  <img
+                    src="/hero-1.png"
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <input
                   type="text"
                   placeholder="Name *"
@@ -46,4 +52,3 @@ export default function ContactSection() {
     </section>
   )
 }
-

@@ -9,6 +9,8 @@ const colorOptions = [
 export default function Header({ heroColor, onHeroColorChange }) {
   const active = colorOptions.find((c) => c.id === heroColor) ?? colorOptions[0]
   const [lang, setLang] = useState('EN')
+  const [spinTurns, setSpinTurns] = useState(0)
+  const [theme, setTheme] = useState('dark')
 
   return (
     <header
@@ -16,6 +18,7 @@ export default function Header({ heroColor, onHeroColorChange }) {
       style={{ borderBottomColor: active.border }}
     >
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        {/* Left: name in Bangers */}
         <a
           href="#home"
           className="text-white text-xl md:text-2xl tracking-wide font-bangers hover:opacity-90 transition-opacity"
@@ -23,6 +26,7 @@ export default function Header({ heroColor, onHeroColorChange }) {
           JASMINE LEE
         </a>
 
+        {/* Center: color boxes + nav links in a row */}
         <div className="flex items-center gap-5">
           <div className="flex gap-1">
             {colorOptions.map((opt) => {
@@ -32,38 +36,91 @@ export default function Header({ heroColor, onHeroColorChange }) {
                   key={opt.id}
                   type="button"
                   onClick={() => onHeroColorChange && onHeroColorChange(opt.id)}
-                  className={`w-4 h-4 ${opt.className} ${
-                    isActive ? 'border border-white flip-square' : ''
-                  }`}
+                  className={`w-4 h-4 ${opt.className} ${isActive ? 'border border-white flip-square' : ''}`}
                   style={opt.style || undefined}
                   aria-label={`Set hero color to ${opt.id}`}
                 />
               )
             })}
           </div>
-
           <nav className="flex gap-4 text-[11px] md:text-xs lg:text-sm font-poppins text-gray-200 tracking-[0.12em]">
-            <a href="#work" className="uppercase hover:text-white transition-colors">
-              Projects
+            <a
+              href="#work"
+              className="relative uppercase pb-0.5 hover:text-white transition-colors group"
+            >
+              <span>Projects</span>
+              <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-white transition-all duration-300 ease-out group-hover:w-full" />
             </a>
-            <a href="#about" className="uppercase hover:text-white transition-colors">
-              About
+            <a
+              href="#about"
+              className="relative uppercase pb-0.5 hover:text-white transition-colors group"
+            >
+              <span>About</span>
+              <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-white transition-all duration-300 ease-out group-hover:w-full" />
             </a>
-            <a href="#contact" className="uppercase hover:text-white transition-colors">
-              Contact
+            <a
+              href="#contact"
+              className="relative uppercase pb-0.5 hover:text-white transition-colors group"
+            >
+              <span>Contact</span>
+              <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-white transition-all duration-300 ease-out group-hover:w-full" />
             </a>
           </nav>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setLang((prev) => (prev === 'EN' ? 'ZH' : 'EN'))}
-          className="font-poppins text-gray-200 text-xs"
-        >
-          {lang}
-        </button>
+        {/* Right: language + toggle */}
+        <div className="flex items-center gap-4 font-poppins text-gray-200">
+          <button
+            type="button"
+            onClick={() => {
+              setLang((prev) => (prev === 'EN' ? 'ZH' : 'EN'))
+              setSpinTurns((prev) => prev + 1)
+            }}
+            onMouseEnter={() => setSpinTurns((prev) => prev + 1)}
+            className="flex items-center gap-1 group text-[11px] md:text-xs lg:text-sm"
+          >
+            <span
+              className={`transition-transform duration-200 ease-out group-hover:-translate-x-1 ${
+                lang === 'EN' ? 'text-white' : 'text-gray-400'
+              }`}
+            >
+              EN
+            </span>
+            <span
+              className="inline-block origin-center transition-transform duration-500 ease-out"
+              style={{ transform: `rotate(${spinTurns * 360}deg)` }}
+            >
+              |
+            </span>
+            <span className={lang === 'ZH' ? 'text-white' : 'text-gray-400'}>
+              中文
+            </span>
+          </button>
+          {/* Two-circle theme toggle (independent from language) */}
+          <button
+            type="button"
+            onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+            className="relative w-9 h-5 flex items-center justify-center"
+          >
+            {/* Left circle (outline) */}
+            <span
+              className="absolute w-4 h-4 rounded-full border border-white bg-black transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              style={{
+                transform: theme === 'dark' ? 'translateX(-6px)' : 'translateX(6px)',
+                zIndex: theme === 'dark' ? 0 : 1,
+              }}
+            />
+            {/* Right circle (filled) */}
+            <span
+              className="absolute w-4 h-4 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              style={{
+                transform: theme === 'dark' ? 'translateX(6px)' : 'translateX(-6px)',
+                zIndex: theme === 'dark' ? 1 : 0,
+              }}
+            />
+          </button>
+        </div>
       </div>
     </header>
   )
 }
-

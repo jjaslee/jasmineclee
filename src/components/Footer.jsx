@@ -9,17 +9,11 @@ export default function Footer({ accentColor = '#6A22FF' }) {
         <p className={`${primaryTextClass} font-medium tracking-widest text-lg mb-4`}>
           THANKS FOR STOPPING BY!
         </p>
-        <a
-          href="#home"
-          className={`${primaryTextClass} hover:underline text-sm font-light mb-8 inline-block`}
-        >
+        <a href="#home" className={`${primaryTextClass} hover:underline text-sm font-light mb-8 inline-block`}>
           back to top
         </a>
-        <p className={`${secondaryTextClass} text-xs`}>
-          © 2026. jasmine lee. all rights reserved.
-        </p>
+        <p className={`${secondaryTextClass} text-xs`}>© 2024. jasmine lee. all rights reserved.</p>
       </div>
     </footer>
   )
 }
-
