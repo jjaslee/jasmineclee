@@ -1,3 +1,5 @@
+import { useState, useRef } from 'react'
+
 const folders = [
   { label: 'PHOTOS', bodyColor: '#C96AED', tabColor: '#A825D9' },
   { label: 'DESIGN', bodyColor: '#50C0FA', tabColor: '#1688C4' },
@@ -5,6 +7,8 @@ const folders = [
 ]
 
 const innerFolderNames = ['animālis', 'sēcūdēre', 'sōlītūdō', 'havaia', 'pacificus']
+
+const MINIMIZE_DURATION_MS = 350
 
 function FolderIcon({ bodyColor, tabColor }) {
   return (
@@ -75,7 +79,36 @@ function SmallFolderIcon() {
   )
 }
 
-export default function FoldersSection() {
+export default function FoldersSection({ showWindow = true, onCloseWindow, onOpenWindow }) {
+  const [isMinimizing, setIsMinimizing] = useState(false)
+  const [minimizeOrigin, setMinimizeOrigin] = useState(null)
+  const [isMaximized, setIsMaximized] = useState(false)
+  const windowRef = useRef(null)
+  const photosFolderRef = useRef(null)
+
+  const handleMinimize = () => {
+    if (!windowRef.current || !photosFolderRef.current) return
+    const windowRect = windowRef.current.getBoundingClientRect()
+    const folderRect = photosFolderRef.current.getBoundingClientRect()
+    const folderCenterX = folderRect.left + folderRect.width / 2
+    const folderCenterY = folderRect.top + folderRect.height / 2
+    const originX = folderCenterX - windowRect.left
+    const originY = folderCenterY - windowRect.top
+    setMinimizeOrigin({ x: originX, y: originY })
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => setIsMinimizing(true))
+    })
+  }
+
+  const handleMinimizeTransitionEnd = (e) => {
+    if (e.propertyName !== 'transform') return
+    if (isMinimizing) {
+      onCloseWindow?.()
+      setIsMinimizing(false)
+      setMinimizeOrigin(null)
+    }
+  }
+
   return (
     <section id="work" className="relative">
       {/* Sticky tab bar for PROJECTS */}
@@ -97,13 +130,22 @@ export default function FoldersSection() {
       </div>
 
       {/* Grid section content below the sticky tab (purple grid) */}
-      <div className="grid-bg-purple bg-black min-h-screen pt-16 pb-20">
+      <div
+        className={
+          showWindow
+            ? 'grid-bg-purple bg-black min-h-screen pt-16 pb-20'
+            : 'grid-bg-purple bg-black pt-16 pb-16'
+        }
+      >
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16">
             {folders.map((folder) => (
               <button
                 key={folder.label}
+                ref={folder.label === 'PHOTOS' ? photosFolderRef : undefined}
+                type="button"
                 className="group flex flex-col items-center gap-4 hover:scale-105 transition-transform cursor-pointer"
+                onDoubleClick={folder.label === 'PHOTOS' ? onOpenWindow : undefined}
               >
                 <FolderIcon bodyColor={folder.bodyColor} tabColor={folder.tabColor} />
                 <span className="text-white text-sm font-medium tracking-wide">
@@ -114,18 +156,39 @@ export default function FoldersSection() {
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto px-6 mt-16">
-          <div className="relative shadow-2xl bg">
+        {showWindow && (
+        <div
+          className={`mx-auto mt-16 transition-all duration-300 ease-out ${
+            isMaximized ? 'w-[calc(100%-2rem)] max-w-none px-4' : 'max-w-3xl px-6'
+          }`}
+        >
+          <div
+            ref={windowRef}
+            className="relative shadow-2xl bg"
+            style={{
+              transformOrigin: minimizeOrigin
+                ? `${minimizeOrigin.x}px ${minimizeOrigin.y}px`
+                : 'center center',
+              transition: `transform ${MINIMIZE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${MINIMIZE_DURATION_MS}ms ease-out`,
+              ...(isMinimizing && {
+                transform: 'scale(0)',
+                opacity: 0,
+              }),
+            }}
+            onTransitionEnd={handleMinimizeTransitionEnd}
+          >
             {/* Window body */}
             <div
-              className="bg-white border-2 rounded-xl overflow-hidden"
+              className={`bg-white border-2 rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+                isMaximized ? 'aspect-[8/5]' : ''
+              }`}
               style={{
                 borderColor: '#C96AED',
                 clipPath:
                   'polygon(0 0, 26% 0, 30% -14%, 62% -14%, 66% 0, 100% 0, 100% 100%, 0 100%)',
               }}
             >
-              <div className="bg-white px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10">
+              <div className="bg-white px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10 shrink-0">
                 {/* Left: camera icon + active tab label */}
                 <div className="flex items-center gap-3">
                   <div className="relative w-6 h-3 bg-black">
@@ -142,13 +205,32 @@ export default function FoldersSection() {
 
                 {/* Right: window controls */}
                 <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-red-500" />
-                  <span className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <span className="w-3 h-3 rounded-full bg-green-400" />
+                  <button
+                    type="button"
+                    onClick={onCloseWindow}
+                    className="w-3 h-3 rounded-full bg-red-500 hover:brightness-110 transition"
+                    aria-label="Close projects window"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleMinimize}
+                    className="w-3 h-3 rounded-full bg-yellow-400 hover:brightness-110 transition"
+                    aria-label="Minimize projects window"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsMaximized((prev) => !prev)}
+                    className="w-3 h-3 rounded-full bg-green-400 hover:brightness-110 transition"
+                    aria-label={isMaximized ? 'Restore window size' : 'Maximize window'}
+                  />
                 </div>
               </div>
-              <div className="bg-white/85 p-8 min-h-[180px]">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div
+                className={`bg-white/85 p-8 flex-1 min-h-0 flex items-center ${
+                  isMaximized ? 'min-h-[12rem]' : 'min-h-[180px]'
+                }`}
+              >
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
                   {innerFolderNames.map((name) => (
                     <button
                       key={name}
@@ -163,6 +245,7 @@ export default function FoldersSection() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </section>
   )

@@ -8,6 +8,7 @@ import Footer from './components/Footer'
 
 function App() {
   const [heroColor, setHeroColor] = useState('purple')
+  const [showProjectsWindow, setShowProjectsWindow] = useState(true)
   const accentColorMap = {
     purple: '#6A22FF',
     red: '#F62F60',
@@ -20,7 +21,11 @@ function App() {
       <Header heroColor={heroColor} onHeroColorChange={setHeroColor} />
       <main>
         <HeroSection heroColor={heroColor} />
-        <FoldersSection />
+        <FoldersSection
+          showWindow={showProjectsWindow}
+          onCloseWindow={() => setShowProjectsWindow(false)}
+          onOpenWindow={() => setShowProjectsWindow(true)}
+        />
         <ProjectsSection />
         <ContactSection />
         <Footer accentColor={footerColor} />
