@@ -6,23 +6,23 @@ const folders = [
   { label: 'TECHNICALS', bodyColor: '#C0F000', tabColor: '#8EAC12' },
 ]
 
-const PHOTOS_INNER_FOLDERS = ['animālis', 'sēcūdēre', 'sōlītūdō', 'havaia', 'pacificus']
+const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Hawaii', 'Peace']
 
-// Display name → path slug in public/photos; each slug's folder holds image filenames
+// Display name → path slug in public/photos; each slug folder holds image filenames
 const PHOTOS_FOLDER_SLUGS = {
-  animālis: 'animals',
-  sēcūdēre: 'seclusion',
-  sōlītūdō: 'solitude',
-  havaia: 'havaia',
-  pacificus: 'pacificus',
+  Animals: 'animals',
+  Seclusion: 'seclusion',
+  Solitude: 'solitude',
+  Hawaii: 'hawaii',
+  Peace: 'peace',
 }
 
 const PHOTOS_FOLDER_FILES = {
-  animālis: ['IMG_8861.jpg', 'IMG_4109.jpg', 'IMG_4020.jpg', 'IMG_4139.jpg', 'IMG_4086.jpg', 'IMG_4021.jpg'],
-  sēcūdēre: ['IMG_9424.jpg', 'IMG_3916.jpg', 'IMG_3917.jpg', 'IMG_3908.jpg'],
-  sōlītūdō: ['IMG_9437.jpg', 'IMG_9443.jpg', 'IMG_9083.jpg', 'IMG_9095.jpg', 'IMG_9446.jpg', 'IMG_9451.jpg', 'IMG_9439.jpg', 'IMG_8930.jpg'],
-  havaia: [],
-  pacificus: [],
+  Animals: ['IMG_8861.jpg', 'IMG_4109.jpg', 'IMG_4020.jpg', 'IMG_4139.jpg', 'IMG_4086.jpg', 'IMG_4021.jpg'],
+  Seclusion: ['IMG_9424.jpg', 'IMG_3916.jpg', 'IMG_3917.jpg', 'IMG_3908.jpg'],
+  Solitude: ['IMG_9437.jpg', 'IMG_9443.jpg', 'IMG_9083.jpg', 'IMG_9095.jpg', 'IMG_9446.jpg', 'IMG_9451.jpg', 'IMG_9439.jpg', 'IMG_8930.jpg'],
+  Hawaii: [],
+  Peace: [],
 }
 const DESIGN_INNER_FOLDERS = [
   'Digital Drawing',
@@ -172,10 +172,30 @@ function FolderWindow({
   const [minimizeOrigin, setMinimizeOrigin] = useState(null)
   const [isMaximized, setIsMaximized] = useState(false)
   const [randomOffset, setRandomOffset] = useState({ x: 0, y: 0 })
+  const [lightboxIndex, setLightboxIndex] = useState(null)
   const windowRef = useRef(null)
 
   const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
   const isInsideSubfolder = Boolean(subfolderName)
+  const lightboxOpen = lightboxIndex != null && contentFiles?.length > 0
+
+  const closeLightbox = () => setLightboxIndex(null)
+
+  const goPrev = () => {
+    if (!contentFiles?.length) return
+    setLightboxIndex((prev) => {
+      const current = prev ?? 0
+      return (current - 1 + contentFiles.length) % contentFiles.length
+    })
+  }
+
+  const goNext = () => {
+    if (!contentFiles?.length) return
+    setLightboxIndex((prev) => {
+      const current = prev ?? 0
+      return (current + 1) % contentFiles.length
+    })
+  }
 
   useEffect(() => {
     if (show && randomOffset.x === 0 && randomOffset.y === 0) {
@@ -185,6 +205,22 @@ function FolderWindow({
       })
     }
   }, [show])
+
+  useEffect(() => {
+    // Reset lightbox when leaving a folder view or closing window
+    if (!show || !isInsideSubfolder) setLightboxIndex(null)
+  }, [show, isInsideSubfolder])
+
+  useEffect(() => {
+    if (!lightboxOpen) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowLeft') goPrev()
+      if (e.key === 'ArrowRight') goNext()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [lightboxOpen, contentFiles?.length])
 
   const handleMinimize = () => {
     if (!windowRef.current || !folderRef?.current) return
@@ -231,36 +267,36 @@ function FolderWindow({
       }}
       onClick={handleWrapperClick}
     >
-      <div
-        className={`mx-auto mt-16 transition-all duration-300 ease-out ${
-          isMaximized ? 'w-[min(90vw,1100px)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
-        }`}
-      >
-      <div
-        ref={windowRef}
-        className="relative shadow-2xl bg"
-        style={{
-          transformOrigin: minimizeOrigin
-            ? `${minimizeOrigin.x}px ${minimizeOrigin.y}px`
-            : 'center center',
-          transition: `transform ${MINIMIZE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${MINIMIZE_DURATION_MS}ms ease-out`,
-          ...(isMinimizing && {
-            transform: 'scale(0)',
-            opacity: 0,
-          }),
-        }}
-        onTransitionEnd={handleMinimizeTransitionEnd}
-      >
         <div
-          className={`bg-white border-2 rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
-            isMaximized ? 'min-h-[380px]' : ''
+          className={`mx-auto mt-16 transition-all duration-300 ease-out ${
+            isMaximized ? 'w-[min(90vw,1100px)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
           }`}
-          style={{
-            borderColor,
-            clipPath:
-              'polygon(0 0, 26% 0, 30% -14%, 62% -14%, 66% 0, 100% 0, 100% 100%, 0 100%)',
-          }}
         >
+          <div
+            ref={windowRef}
+            className="relative shadow-2xl bg"
+            style={{
+              transformOrigin: minimizeOrigin
+                ? `${minimizeOrigin.x}px ${minimizeOrigin.y}px`
+                : 'center center',
+              transition: `transform ${MINIMIZE_DURATION_MS}ms cubic-bezier(0.4, 0, 0.2, 1), opacity ${MINIMIZE_DURATION_MS}ms ease-out`,
+              ...(isMinimizing && {
+                transform: 'scale(0)',
+                opacity: 0,
+              }),
+            }}
+            onTransitionEnd={handleMinimizeTransitionEnd}
+          >
+            <div
+              className={`bg-white font-poppins border-2 rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+                isMaximized ? 'min-h-[380px]' : ''
+              }`}
+              style={{
+                borderColor,
+                clipPath:
+                  'polygon(0 0, 26% 0, 30% -14%, 62% -14%, 66% 0, 100% 0, 100% 100%, 0 100%)',
+              }}
+            >
           <div className="bg-white px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10 shrink-0">
             <div className="flex items-center gap-3">
               <TitleBarIcon type={iconType} />
@@ -288,12 +324,12 @@ function FolderWindow({
             </div>
           </div>
           <div
-            className={`bg-white/85 p-8 flex items-center ${
+            className={`relative bg-white/85 px-8 pb-8 pt-5 flex ${isInsideSubfolder ? 'items-start' : 'items-center'} ${
               isMaximized ? 'min-h-[10rem]' : 'flex-1 min-h-0 min-h-[350px]'
             }`}
           >
             {isInsideSubfolder ? (
-              <div className="w-full flex flex-col gap-4">
+              <div className="w-full flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={onBack}
@@ -304,17 +340,20 @@ function FolderWindow({
                 </button>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 md:gap-4 w-full content-start overflow-auto max-h-[min(50vh,400px)]">
                   {contentFiles.length > 0 ? (
-                    contentFiles.map((src) => (
-                      <div
+                    contentFiles.map((src, i) => (
+                      <button
                         key={src}
-                        className="aspect-square rounded-lg overflow-hidden bg-black/5 border border-black/10"
+                        type="button"
+                        className="aspect-square rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] transition cursor-pointer"
+                        onClick={() => setLightboxIndex(i)}
+                        aria-label={`Open image ${i + 1} of ${contentFiles.length}`}
                       >
                         <img
                           src={src}
                           alt=""
                           className="w-full h-full object-cover"
                         />
-                      </div>
+                      </button>
                     ))
                   ) : (
                     <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
@@ -336,10 +375,59 @@ function FolderWindow({
                 ))}
               </div>
             )}
+
+            {lightboxOpen ? (
+              <div
+                role="presentation"
+                className="absolute inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center cursor-pointer p-3 sm:p-5 overflow-hidden"
+                onMouseDown={closeLightbox}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Image preview"
+                  className="relative w-full h-full max-w-[min(920px,100%)] max-h-full cursor-default"
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img
+                      src={contentFiles[lightboxIndex]}
+                      alt=""
+                      className="block object-contain rounded-md shadow-2xl bg-black/10 cursor-pointer"
+                      style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      draggable={false}
+                    />
+
+                    {contentFiles.length > 1 ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={goPrev}
+                          aria-label="Previous image"
+                          className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-4xl sm:text-5xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
+                          style={{ color: borderColor }}
+                        >
+                          {'<'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={goNext}
+                          aria-label="Next image"
+                          className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-4xl sm:text-5xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
+                          style={{ color: borderColor }}
+                        >
+                          {'>'}
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
-      </div>
+    </div>
     </div>
   )
 }

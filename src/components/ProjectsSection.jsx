@@ -15,8 +15,7 @@ const ABOUT_CARDS = [
     image: '/about-me-archery.jpg',
     alt: 'About me — 2',
     paragraphs: [
-      "Art and creativity have been with me all my life. I grew up learning traditional art before pivoting to digital media and design. I love storytelling through experimental, landscape, and street photography. From weekly piano lessons to becoming a self-taught guitarist and (hopefully) future drummer, music is another creative outlet that I enjoy.",
-      "In my free time, I also shoot compound archery with my school’s collegiate team.",
+      "Art and creativity has been integral to my life. I grew up learning traditional art before pivoting to digital media and design. I love storytelling through experimental, landscape, and street photography. Music is another creative outlet that I enjoy, whether through playing piano, humming to my guitar, or picking out the drum pattern of a song. My happy place is the archery range, where I’m shooting arrows with music playing in the background.",
     ],
   },
   {
