@@ -6,14 +6,14 @@ const folders = [
   { label: 'TECHNICALS', bodyColor: '#C0F000', tabColor: '#8EAC12' },
 ]
 
-const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Hawaii', 'Peace']
+const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Warmth', 'Peace']
 
 // Display name → path slug in public/photos; each slug folder holds image filenames
 const PHOTOS_FOLDER_SLUGS = {
   Animals: 'animals',
   Seclusion: 'seclusion',
   Solitude: 'solitude',
-  Hawaii: 'hawaii',
+  Warmth: 'warmth',
   Peace: 'peace',
 }
 
@@ -21,7 +21,7 @@ const PHOTOS_FOLDER_FILES = {
   Animals: ['IMG_8861.jpg', 'IMG_4109.jpg', 'IMG_4020.jpg', 'IMG_4139.jpg', 'IMG_4086.jpg', 'IMG_4021.jpg'],
   Seclusion: ['IMG_9424.jpg', 'IMG_3916.jpg', 'IMG_3917.jpg', 'IMG_3908.jpg'],
   Solitude: ['IMG_9437.jpg', 'IMG_9443.jpg', 'IMG_9083.jpg', 'IMG_9095.jpg', 'IMG_9446.jpg', 'IMG_9451.jpg', 'IMG_9439.jpg', 'IMG_8930.jpg'],
-  Hawaii: [],
+  Warmth: ['IMG_4013.jpg','IMG_4164.jpg', 'IMG_4171.jpg', 'IMG_4173.jpg', 'IMG_4180.jpg'],
   Peace: [],
 }
 const DESIGN_INNER_FOLDERS = [
@@ -217,6 +217,15 @@ function FolderWindow({
       if (e.key === 'Escape') closeLightbox()
       if (e.key === 'ArrowLeft') goPrev()
       if (e.key === 'ArrowRight') goNext()
+
+      // Lightbox-only: discourage casual copying/saving
+      if ((e.metaKey || e.ctrlKey) && typeof e.key === 'string') {
+        const k = e.key.toLowerCase()
+        if (k === 's' || k === 'c' || k === 'x' || k === 'p' || k === 'u') {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -324,9 +333,9 @@ function FolderWindow({
             </div>
           </div>
           <div
-            className={`relative bg-white/85 px-8 pb-8 pt-5 flex ${isInsideSubfolder ? 'items-start' : 'items-center'} ${
-              isMaximized ? 'min-h-[10rem]' : 'flex-1 min-h-0 min-h-[350px]'
-            }`}
+            className={`relative bg-white/85 px-8 pb-8 pt-5 flex ${
+              isInsideSubfolder ? 'items-start' : 'items-center'
+            } ${isMaximized ? 'flex-1 min-h-[420px]' : 'flex-1 min-h-0 min-h-[350px]'}`}
           >
             {isInsideSubfolder ? (
               <div className="w-full flex flex-col gap-3">
@@ -344,14 +353,18 @@ function FolderWindow({
                       <button
                         key={src}
                         type="button"
-                        className="aspect-square rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] transition cursor-pointer"
+                        className="group aspect-square rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] cursor-pointer"
                         onClick={() => setLightboxIndex(i)}
                         aria-label={`Open image ${i + 1} of ${contentFiles.length}`}
+                        onContextMenu={(e) => e.preventDefault()}
                       >
                         <img
                           src={src}
                           alt=""
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover select-none transition-transform duration-200 ease-out group-hover:scale-[1.08]"
+                          onContextMenu={(e) => e.preventDefault()}
+                          onDragStart={(e) => e.preventDefault()}
+                          draggable={false}
                         />
                       </button>
                     ))
@@ -379,7 +392,7 @@ function FolderWindow({
             {lightboxOpen ? (
               <div
                 role="presentation"
-                className="absolute inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center cursor-pointer p-3 sm:p-5 overflow-hidden"
+                className="absolute inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center cursor-default p-3 sm:p-5 overflow-hidden select-none"
                 onMouseDown={closeLightbox}
               >
                 <div
@@ -387,17 +400,20 @@ function FolderWindow({
                   aria-modal="true"
                   aria-label="Image preview"
                   className="relative w-full h-full max-w-[min(920px,100%)] max-h-full cursor-default"
+                  onContextMenu={(e) => e.preventDefault()}
                 >
                   <div className="relative w-full h-full flex items-center justify-center">
                     <img
                       src={contentFiles[lightboxIndex]}
                       alt=""
-                      className="block object-contain rounded-md cursor-pointer"
+                      className="block object-contain rounded-md cursor-default"
                       style={{
                         maxHeight: '100%',
                         maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
                       }}
                       onMouseDown={(e) => e.stopPropagation()}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onDragStart={(e) => e.preventDefault()}
                       draggable={false}
                     />
 
@@ -407,7 +423,7 @@ function FolderWindow({
                           type="button"
                           onClick={goPrev}
                           aria-label="Previous image"
-                          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
+                          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2 cursor-pointer"
                           style={{ color: borderColor }}
                           onMouseDown={(e) => e.stopPropagation()}
                         >
@@ -417,7 +433,7 @@ function FolderWindow({
                           type="button"
                           onClick={goNext}
                           aria-label="Next image"
-                          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
+                          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2 cursor-pointer"
                           style={{ color: borderColor }}
                           onMouseDown={(e) => e.stopPropagation()}
                         >
