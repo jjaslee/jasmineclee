@@ -8,7 +8,50 @@ import Footer from './components/Footer'
 
 function App() {
   const [heroColor, setHeroColor] = useState('purple')
-  const [showProjectsWindow, setShowProjectsWindow] = useState(true)
+  const [showPhotosWindow, setShowPhotosWindow] = useState(true)
+  const [showDesignWindow, setShowDesignWindow] = useState(false)
+  const [showTechnicalsWindow, setShowTechnicalsWindow] = useState(false)
+  const [openWindowStack, setOpenWindowStack] = useState(['photos'])
+  const [cascadeOrder, setCascadeOrder] = useState(['photos'])
+  const anyFolderWindowOpen =
+    showPhotosWindow || showDesignWindow || showTechnicalsWindow
+
+  const bringToFront = (id) => {
+    setOpenWindowStack((prev) => [...prev.filter((w) => w !== id), id])
+  }
+  const ensureInCascade = (id) => {
+    setCascadeOrder((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  }
+  const openPhotos = () => {
+    setShowPhotosWindow(true)
+    ensureInCascade('photos')
+    bringToFront('photos')
+  }
+  const openDesign = () => {
+    setShowDesignWindow(true)
+    ensureInCascade('design')
+    bringToFront('design')
+  }
+  const openTechnicals = () => {
+    setShowTechnicalsWindow(true)
+    ensureInCascade('technicals')
+    bringToFront('technicals')
+  }
+  const closePhotos = () => {
+    setShowPhotosWindow(false)
+    setOpenWindowStack((prev) => prev.filter((w) => w !== 'photos'))
+    setCascadeOrder((prev) => prev.filter((w) => w !== 'photos'))
+  }
+  const closeDesign = () => {
+    setShowDesignWindow(false)
+    setOpenWindowStack((prev) => prev.filter((w) => w !== 'design'))
+    setCascadeOrder((prev) => prev.filter((w) => w !== 'design'))
+  }
+  const closeTechnicals = () => {
+    setShowTechnicalsWindow(false)
+    setOpenWindowStack((prev) => prev.filter((w) => w !== 'technicals'))
+    setCascadeOrder((prev) => prev.filter((w) => w !== 'technicals'))
+  }
   const accentColorMap = {
     purple: '#6A22FF',
     red: '#F62F60',
@@ -22,9 +65,19 @@ function App() {
       <main>
         <HeroSection heroColor={heroColor} />
         <FoldersSection
-          showWindow={showProjectsWindow}
-          onCloseWindow={() => setShowProjectsWindow(false)}
-          onOpenWindow={() => setShowProjectsWindow(true)}
+          showPhotosWindow={showPhotosWindow}
+          onClosePhotosWindow={closePhotos}
+          onOpenPhotosWindow={openPhotos}
+          showDesignWindow={showDesignWindow}
+          onCloseDesignWindow={closeDesign}
+          onOpenDesignWindow={openDesign}
+          showTechnicalsWindow={showTechnicalsWindow}
+          onCloseTechnicalsWindow={closeTechnicals}
+          onOpenTechnicalsWindow={openTechnicals}
+          anyFolderWindowOpen={anyFolderWindowOpen}
+          openWindowStack={openWindowStack}
+          cascadeOrder={cascadeOrder}
+          onBringWindowToFront={bringToFront}
         />
         <ProjectsSection />
         <ContactSection />
