@@ -393,8 +393,11 @@ function FolderWindow({
                     <img
                       src={contentFiles[lightboxIndex]}
                       alt=""
-                      className="block object-contain rounded-md shadow-2xl bg-black/10 cursor-pointer"
-                      style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      className="block object-contain rounded-md cursor-pointer"
+                      style={{
+                        maxHeight: '100%',
+                        maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
+                      }}
                       draggable={false}
                     />
 
@@ -404,7 +407,7 @@ function FolderWindow({
                           type="button"
                           onClick={goPrev}
                           aria-label="Previous image"
-                          className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 text-4xl sm:text-5xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
+                          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
                           style={{ color: borderColor }}
                         >
                           {'<'}
@@ -413,7 +416,7 @@ function FolderWindow({
                           type="button"
                           onClick={goNext}
                           aria-label="Next image"
-                          className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-4xl sm:text-5xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
+                          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
                           style={{ color: borderColor }}
                         >
                           {'>'}
