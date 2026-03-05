@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const heroImages = [
   '/hero-purple.png',
@@ -45,16 +45,64 @@ export default function HeroSection({ heroColor = 'purple' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const pointerStartXRef = useRef(null)
+  const pointerStartYRef = useRef(null)
+  const didSwipeRef = useRef(false)
   const titleColor = heroColorMap[heroColor] ?? heroColorMap.purple
   const dotColors = ['#6A22FF', '#F62F60', '#8DFD19']
   const activeDotColor = dotColors[activeIndex] ?? dotColors[0]
   const postcardTextColor = activeIndex === 2 ? '#2F5D00' : activeDotColor
+
+  const goNext = () => {
+    setActiveIndex((prev) => (prev + 1) % heroImages.length)
+  }
+
+  const goPrev = () => {
+    setActiveIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const handlePointerDown = (e) => {
+    // Only track touch / pen interactions for swipe gestures
+    if (e.pointerType === 'mouse') return
+    pointerStartXRef.current = e.clientX
+    pointerStartYRef.current = e.clientY
+  }
+
+  const handlePointerUp = (e) => {
+    if (e.pointerType === 'mouse') return
+    if (pointerStartXRef.current == null || pointerStartYRef.current == null) return
+
+    const dx = e.clientX - pointerStartXRef.current
+    const dy = e.clientY - pointerStartYRef.current
+
+    const SWIPE_THRESHOLD = 40
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+      didSwipeRef.current = true
+      if (dx < 0) {
+        goNext()
+      } else {
+        goPrev()
+      }
+    }
+
+    pointerStartXRef.current = null
+    pointerStartYRef.current = null
+  }
+
+  const handleCardClick = () => {
+    // If the last interaction was a swipe, skip the flip to avoid accidental toggles
+    if (didSwipeRef.current) {
+      didSwipeRef.current = false
+      return
+    }
+    setShowBack((prev) => !prev)
+  }
 
   const parallaxOffset = scrollY * 0.22
 
@@ -90,7 +138,9 @@ export default function HeroSection({ heroColor = 'purple' }) {
           <div
             className="flip-card w-full"
             style={{ maxWidth: 740, aspectRatio: '800 / 540' }}
-            onClick={() => setShowBack((prev) => !prev)}
+            onClick={handleCardClick}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
           >
             <div className={`flip-card-inner ${showBack ? 'is-flipped' : ''}`}>
               {/* Front of postcard */}
@@ -177,15 +227,17 @@ export default function HeroSection({ heroColor = 'purple' }) {
                       </div>
 
                       {/* Bottom-left: date + message */}
-                      <div className="px-6 pb-6 flex flex-col gap-1 items-start">
-                        <p className="font-nanum postcard-text text-left leading-snug" style={{ color: postcardTextColor }}>
-                          {postcardContent[activeIndex].date}
-                        </p>
-                        {postcardContent[activeIndex].lines.map((line, i) => (
-                          <p key={i} className="font-nanum postcard-text text-left leading-snug" style={{ color: postcardTextColor }}>
-                            {line}
+                      <div className="px-6 pb-6 flex flex-col gap-1 items-start overflow-hidden">
+                        <div className="w-full max-h-[7.5rem] md:max-h-none overflow-y-auto md:overflow-visible pr-1">
+                          <p className="font-nanum postcard-text text-left leading-snug" style={{ color: postcardTextColor }}>
+                            {postcardContent[activeIndex].date}
                           </p>
-                        ))}
+                          {postcardContent[activeIndex].lines.map((line, i) => (
+                            <p key={i} className="font-nanum postcard-text text-left leading-snug" style={{ color: postcardTextColor }}>
+                              {line}
+                            </p>
+                          ))}
+                        </div>
                       </div>
 
                       {/* Bottom-right: address */}
