@@ -7,6 +7,23 @@ const folders = [
 ]
 
 const PHOTOS_INNER_FOLDERS = ['animālis', 'sēcūdēre', 'sōlītūdō', 'havaia', 'pacificus']
+
+// Display name → path slug in public/photos; each slug's folder holds image filenames
+const PHOTOS_FOLDER_SLUGS = {
+  animālis: 'animals',
+  sēcūdēre: 'seclusion',
+  sōlītūdō: 'solitude',
+  havaia: 'havaia',
+  pacificus: 'pacificus',
+}
+
+const PHOTOS_FOLDER_FILES = {
+  animālis: ['IMG_8861.jpg', 'IMG_4109.jpg', 'IMG_4020.jpg', 'IMG_4139.jpg', 'IMG_4086.jpg', 'IMG_4021.jpg'],
+  sēcūdēre: ['IMG_9424.jpg', 'IMG_3916.jpg', 'IMG_3917.jpg', 'IMG_3908.jpg'],
+  sōlītūdō: ['IMG_9437.jpg', 'IMG_9443.jpg', 'IMG_9083.jpg', 'IMG_9095.jpg', 'IMG_9446.jpg', 'IMG_9451.jpg', 'IMG_9439.jpg', 'IMG_8930.jpg'],
+  havaia: [],
+  pacificus: [],
+}
 const DESIGN_INNER_FOLDERS = [
   'Digital Drawing',
   'Cal Hacks',
@@ -128,9 +145,9 @@ function TitleBarIcon({ type }) {
   return null
 }
 
-const CASCADE_OFFSET_PX = 28
+const CASCADE_OFFSET_PX = 20 //28
 const CASCADE_RANDOM_X = 38
-const CASCADE_RANDOM_Y = 22
+const CASCADE_RANDOM_Y = 18 //22
 
 function FolderWindow({
   show,
@@ -146,12 +163,19 @@ function FolderWindow({
   cascadeSlot = 0,
   windowId,
   onBringToFront,
+  subfolderName = null,
+  contentFiles = [],
+  onOpenSubfolder,
+  onBack,
 }) {
   const [isMinimizing, setIsMinimizing] = useState(false)
   const [minimizeOrigin, setMinimizeOrigin] = useState(null)
   const [isMaximized, setIsMaximized] = useState(false)
   const [randomOffset, setRandomOffset] = useState({ x: 0, y: 0 })
   const windowRef = useRef(null)
+
+  const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
+  const isInsideSubfolder = Boolean(subfolderName)
 
   useEffect(() => {
     if (show && randomOffset.x === 0 && randomOffset.y === 0) {
@@ -209,7 +233,7 @@ function FolderWindow({
     >
       <div
         className={`mx-auto mt-16 transition-all duration-300 ease-out ${
-          isMaximized ? 'w-[calc(100%-5rem)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
+          isMaximized ? 'w-[min(90vw,1100px)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
         }`}
       >
       <div
@@ -229,7 +253,7 @@ function FolderWindow({
       >
         <div
           className={`bg-white border-2 rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
-            isMaximized ? 'min-h-[520px]' : ''
+            isMaximized ? 'min-h-[380px]' : ''
           }`}
           style={{
             borderColor,
@@ -240,7 +264,7 @@ function FolderWindow({
           <div className="bg-white px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10 shrink-0">
             <div className="flex items-center gap-3">
               <TitleBarIcon type={iconType} />
-              <span className="text-black font-medium text-sm">{title}</span>
+              <span className="text-black font-medium text-sm">{displayTitle}</span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -265,20 +289,53 @@ function FolderWindow({
           </div>
           <div
             className={`bg-white/85 p-8 flex items-center ${
-              isMaximized ? 'min-h-[14rem]' : 'flex-1 min-h-0 min-h-[300px]'
+              isMaximized ? 'min-h-[10rem]' : 'flex-1 min-h-0 min-h-[350px]'
             }`}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
-              {innerFolderNames.map((name) => (
+            {isInsideSubfolder ? (
+              <div className="w-full flex flex-col gap-4">
                 <button
-                  key={name}
-                  className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+                  type="button"
+                  onClick={onBack}
+                  className="self-start flex items-center gap-2 text-black/70 hover:text-black text-sm font-medium"
+                  aria-label="Back to folders"
                 >
-                  <SmallFolderIcon bodyColor={bodyColor} tabColor={tabColor} />
-                  <span className="text-black text-xs font-medium text-center">{name}</span>
+                  <span aria-hidden>← Back</span>
                 </button>
-              ))}
-            </div>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 md:gap-4 w-full content-start overflow-auto max-h-[min(50vh,400px)]">
+                  {contentFiles.length > 0 ? (
+                    contentFiles.map((src) => (
+                      <div
+                        key={src}
+                        className="aspect-square rounded-lg overflow-hidden bg-black/5 border border-black/10"
+                      >
+                        <img
+                          src={src}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
+                {innerFolderNames.map((name) => (
+                  <button
+                    key={name}
+                    type="button"
+                    className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+                    onClick={() => onOpenSubfolder?.(name)}
+                  >
+                    <SmallFolderIcon bodyColor={bodyColor} tabColor={tabColor} />
+                    <span className="text-black text-xs font-medium text-center">{name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -305,6 +362,18 @@ export default function FoldersSection({
   const photosFolderRef = useRef(null)
   const designFolderRef = useRef(null)
   const technicalsFolderRef = useRef(null)
+  const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
+
+  const photosContentFiles =
+    photosOpenFolder != null && PHOTOS_FOLDER_SLUGS[photosOpenFolder]
+      ? (PHOTOS_FOLDER_FILES[photosOpenFolder] || []).map(
+          (filename) => `/photos/${PHOTOS_FOLDER_SLUGS[photosOpenFolder]}/${filename}`
+        )
+      : []
+
+  useEffect(() => {
+    if (!showPhotosWindow) setPhotosOpenFolder(null)
+  }, [showPhotosWindow])
 
   return (
     <section id="work" className="relative">
@@ -380,6 +449,10 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('photos')}
           windowId="photos"
           onBringToFront={onBringWindowToFront}
+          subfolderName={photosOpenFolder}
+          contentFiles={photosContentFiles}
+          onOpenSubfolder={setPhotosOpenFolder}
+          onBack={() => setPhotosOpenFolder(null)}
         />
         <FolderWindow
           show={showDesignWindow}

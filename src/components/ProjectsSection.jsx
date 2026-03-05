@@ -45,7 +45,7 @@ export default function ProjectsSection() {
   }
 
   return (
-    <section id="about" className="relative -mt-8">
+    <section id="about" className="relative pt-2">
       {/* Sticky tab bar for ABOUT ME with translucent backing outside the tab */}
       <div className="sticky top-14 z-[60]">
         <div className="relative h-8 bg-black/60 backdrop-blur-sm">
