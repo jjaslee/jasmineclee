@@ -387,7 +387,6 @@ function FolderWindow({
                   aria-modal="true"
                   aria-label="Image preview"
                   className="relative w-full h-full max-w-[min(920px,100%)] max-h-full cursor-default"
-                  onMouseDown={(e) => e.stopPropagation()}
                 >
                   <div className="relative w-full h-full flex items-center justify-center">
                     <img
@@ -398,6 +397,7 @@ function FolderWindow({
                         maxHeight: '100%',
                         maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
                       }}
+                      onMouseDown={(e) => e.stopPropagation()}
                       draggable={false}
                     />
 
@@ -409,6 +409,7 @@ function FolderWindow({
                           aria-label="Previous image"
                           className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
                           style={{ color: borderColor }}
+                          onMouseDown={(e) => e.stopPropagation()}
                         >
                           {'<'}
                         </button>
@@ -418,6 +419,7 @@ function FolderWindow({
                           aria-label="Next image"
                           className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2"
                           style={{ color: borderColor }}
+                          onMouseDown={(e) => e.stopPropagation()}
                         >
                           {'>'}
                         </button>
