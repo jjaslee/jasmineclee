@@ -209,7 +209,7 @@ function FolderWindow({
     >
       <div
         className={`mx-auto mt-16 transition-all duration-300 ease-out ${
-          isMaximized ? 'w-[calc(100%-2rem)] max-w-none px-4' : 'w-[min(96vw,1920px)] max-w-none px-6'
+          isMaximized ? 'w-[calc(100%-2rem)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
         }`}
       >
       <div
@@ -229,7 +229,7 @@ function FolderWindow({
       >
         <div
           className={`bg-white border-2 rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
-            isMaximized ? 'aspect-[8/5]' : ''
+            isMaximized ? 'aspect-[2/1]' : ''
           }`}
           style={{
             borderColor,
@@ -265,7 +265,7 @@ function FolderWindow({
           </div>
           <div
             className={`bg-white/85 p-8 flex-1 min-h-0 flex items-center ${
-              isMaximized ? 'min-h-[12rem]' : 'min-h-[180px]'
+              isMaximized ? 'min-h-[8rem]' : 'min-h-[180px]'
             }`}
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
