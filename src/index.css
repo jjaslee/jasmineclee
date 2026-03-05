@@ -81,6 +81,11 @@
   .font-nanum {
     font-family: 'Nanum Brush Script', system-ui, cursive;
   }
+  .contact-placeholder::placeholder {
+    font-family: 'Nanum Brush Script', system-ui, cursive;
+    color: #2F5D00;
+    opacity: 0.9;
+  }
 
   /* Responsive postcard text sizing */
   .postcard-text {

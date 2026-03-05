@@ -21,11 +21,14 @@ export default function ContactSection() {
 
       {/* Grid section content below the sticky tab (green grid) */}
       <div className="grid-bg-green min-h-screen pt-16 pb-20">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="bg-gray-200 rounded-lg border-2 border-green-400 overflow-hidden">
-            <div className="grid md:grid-cols-2 gap-0">
-              <div className="p-6">
-                <div className="aspect-video bg-gray-400 rounded mb-6 overflow-hidden">
+        <div className="mx-auto px-6" style={{ maxWidth: 740 }}>
+          <div
+            className="bg-gray-200 border-2 border-green-400 overflow-hidden relative"
+            style={{ aspectRatio: '800 / 540' }}
+          >
+            <div className="grid grid-cols-2 gap-0 h-full">
+              <div className="p-6 flex flex-col">
+                <div className="flex-1 min-h-0 bg-gray-400 overflow-hidden mb-6">
                   <img
                     src="/hero-1.png"
                     alt=""
@@ -34,9 +37,14 @@ export default function ContactSection() {
                   />
                 </div>
               </div>
-              <div className="p-6 flex flex-col justify-between">
+              {/* Center line */}
+              <div
+                className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-px bg-green-400/60"
+                aria-hidden
+              />
+              <div className="p-6 flex flex-col justify-between relative" style={{ color: '#2F5D00' }}>
                 <div>
-                  <div className="w-16 h-16 rounded-full bg-gray-400 overflow-hidden mb-6">
+                  <div className="w-16 h-16 bg-gray-400 overflow-hidden mb-6">
                     <img
                       src="/hero-1.png"
                       alt="Profile"
@@ -46,23 +54,26 @@ export default function ContactSection() {
                   <input
                     type="text"
                     placeholder="Name *"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded mb-4 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50"
+                    className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 mb-4 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50"
+                    style={{ color: '#2F5D00' }}
                   />
                   <input
                     type="email"
                     placeholder="Email *"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded mb-4 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50"
+                    className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 mb-4 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50"
+                    style={{ color: '#2F5D00' }}
                   />
                   <textarea
                     placeholder="Your Message *"
                     rows={4}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 resize-none"
+                    className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50 resize-none"
+                    style={{ color: '#2F5D00' }}
                   />
                 </div>
                 <div className="flex justify-end mt-6">
-                  <button className="flex items-center gap-2 px-6 py-3 bg-green-400 text-black font-medium rounded hover:bg-green-300 transition-colors">
+                  <button className="flex items-center gap-2 px-6 py-3 font-bangers text-lg tracking-wide hover:opacity-80 transition-opacity">
                     <span>SEND</span>
-                    <span className="text-lg">→</span>
+                    <span className="text-lg" aria-hidden>▶</span>
                   </button>
                 </div>
               </div>
