@@ -19,14 +19,17 @@
   }
 }
 
+/* Shared translucent dark base for all grid sections; grid lines sit on top */
 .grid-bg {
-  background-image: 
+  background-color: rgba(0, 0, 0, 0.88);
+  background-image:
     linear-gradient(rgba(106, 34, 255, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(106, 34, 255, 0.18) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .grid-bg-purple {
+  background-color: rgba(0, 0, 0, 0.88);
   background-image:
     linear-gradient(rgba(106, 34, 255, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(106, 34, 255, 0.18) 1px, transparent 1px);
@@ -34,6 +37,7 @@
 }
 
 .grid-bg-red {
+  background-color: rgba(0, 0, 0, 0.88);
   background-image:
     linear-gradient(rgba(246, 47, 96, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(246, 47, 96, 0.18) 1px, transparent 1px);
@@ -41,6 +45,7 @@
 }
 
 .grid-bg-green {
+  background-color: rgba(0, 0, 0, 0.88);
   background-image:
     linear-gradient(rgba(141, 253, 25, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(141, 253, 25, 0.18) 1px, transparent 1px);

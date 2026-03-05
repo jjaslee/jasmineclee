@@ -26,7 +26,7 @@ const postcardContent = [
     date: '6 / 7 / 2024',
     lines: [
       'Past the bamboos, I find a place of peace where waters are calm and trees are abundant.',
-      'Thank you to my uncle for showing me around Japan.',
+      'Thank you for showing me around Japan.',
     ],
     name: 'Uncle Calvin',
     address: 'Saga Kamenoo-cho, Ukyo Ward, Kyoto, Japan',
