@@ -202,14 +202,14 @@ function FolderWindow({
       role="presentation"
       className="absolute top-0 left-0 right-0 transition-all duration-300 ease-out cursor-default"
       style={{
-        zIndex: 50 + layer,
+        zIndex: 30 + layer,
         transform: `translate(${offsetX}px, ${offsetY}px)`,
       }}
       onClick={handleWrapperClick}
     >
       <div
         className={`mx-auto mt-16 transition-all duration-300 ease-out ${
-          isMaximized ? 'w-[calc(100%-2rem)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
+          isMaximized ? 'w-[calc(100%-5rem)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
         }`}
       >
       <div
@@ -229,7 +229,7 @@ function FolderWindow({
       >
         <div
           className={`bg-white border-2 rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
-            isMaximized ? 'aspect-[2/1]' : ''
+            isMaximized ? 'min-h-[520px]' : ''
           }`}
           style={{
             borderColor,
@@ -264,11 +264,11 @@ function FolderWindow({
             </div>
           </div>
           <div
-            className={`bg-white/85 p-8 flex-1 min-h-0 flex items-center ${
-              isMaximized ? 'min-h-[8rem]' : 'min-h-[180px]'
+            className={`bg-white/85 p-8 flex items-center ${
+              isMaximized ? 'min-h-[14rem]' : 'flex-1 min-h-0 min-h-[320px]'
             }`}
           >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
               {innerFolderNames.map((name) => (
                 <button
                   key={name}
@@ -308,8 +308,8 @@ export default function FoldersSection({
 
   return (
     <section id="work" className="relative">
-      {/* Sticky tab bar for PROJECTS */}
-      <div className="sticky top-14 z-40">
+      {/* Sticky tab bar for PROJECTS - higher z so windows slide below it */}
+      <div className="sticky top-14 z-50">
         <div className="relative h-8 bg-black/90 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
@@ -326,13 +326,11 @@ export default function FoldersSection({
         </div>
       </div>
 
-      {/* Grid section content below the sticky tab (purple grid) */}
+      {/* Grid section content below the sticky tab (purple grid) - min-height transitions so About Me slides */}
       <div
-        className={
-          anyFolderWindowOpen
-            ? 'grid-bg-purple bg-black min-h-screen pt-16 pb-20'
-            : 'grid-bg-purple bg-black pt-16 pb-16'
-        }
+        className={`grid-bg-purple bg-black pt-16 pb-16 transition-[min-height] duration-500 ease-in-out ${
+          anyFolderWindowOpen ? 'min-h-screen pb-20' : 'min-h-0'
+        }`}
       >
         <div className="max-w-4xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16">
@@ -367,7 +365,7 @@ export default function FoldersSection({
           </div>
         </div>
 
-        <div className="relative min-h-[min(75vh,640px)]">
+        <div className={`relative transition-[min-height] duration-500 ease-in-out ${anyFolderWindowOpen ? 'min-h-[min(75vh,640px)]' : 'min-h-0'}`}>
         <FolderWindow
           show={showPhotosWindow}
           onClose={onClosePhotosWindow}
