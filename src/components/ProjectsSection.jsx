@@ -6,17 +6,17 @@ const ABOUT_CARDS = [
     image: '/about-me-book.JPEG',
     alt: 'About me',
     paragraphs: [
-      "I was born and raised in the East Bay, SF Bay Area. Shaped by immigrant parents, I've developed a deep connection with Hong Kong culture — including Canto, cinema, and cafes.",
-      "My passion lies in blending creative design in the age of digital technology. Growing up with Erb's palsy meant I learned early how design can include you or shut you out. That's why I'm drawn to accessible designs that use data-driven models to translate real needs into intuitive experiences.",
+      "I grew up inthe East Bay of SF. Shaped by immigrant parents, I've developed a connection with HK culture, like Canto, cinema, and cafes.",
+      "My passion lies in blending creative design with digital technology. Growing up with Erb's palsy showed me how design can include or exclude you. Thus, I'm drawn to accessible designs backed by data to translate real needs into intuitive experiences.",
     ],
   },
   {
-    title: 'PRACTICE',
+    title: 'HOBBIES',
     image: '/about-me-archery.jpg',
     alt: 'About me — 2',
     paragraphs: [
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      "Art and creativity have been with me all my life. I grew up learning traditional art before pivoting to digital media and design. I love storytelling through experimental, landscape, and street photography. From weekly piano lessons to becoming a self-taught guitarist and (hopefully) future drummer, music is another creative outlet that I enjoy.",
+      "In my free time, I also shoot compound archery with my school’s collegiate team.",
     ],
   },
   {
@@ -47,7 +47,7 @@ export default function ProjectsSection() {
   return (
     <section id="about" className="relative -mt-8">
       {/* Sticky tab bar for ABOUT ME with translucent backing outside the tab */}
-      <div className="sticky top-14 z-40">
+      <div className="sticky top-14 z-[60]">
         <div className="relative h-8 bg-black/60 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
@@ -88,9 +88,9 @@ export default function ProjectsSection() {
                     zIndex: s.zIndex,
                   }}
                 >
-                  <div className="relative w-full h-full bg-white rounded-lg border-2 border-pink-400 overflow-hidden shadow-xl flex flex-col md:flex-row">
-                    <div className="md:flex-[0_0_50%] md:min-w-0 aspect-square md:aspect-auto flex-1 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] md:p-[clamp(1rem,4vw,1.5rem)] bg-white overflow-hidden">
-                      <div className="w-full h-full max-w-full max-h-full rounded border-2 border-pink-400/60 bg-white overflow-hidden shadow-inner">
+                  <div className="relative w-full h-full bg-white rounded-none border-2 border-pink-400 overflow-hidden shadow-xl flex flex-row">
+                    <div className="flex-[0_0_50%] min-w-0 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] bg-white overflow-hidden">
+                      <div className="w-full h-full max-w-full max-h-full rounded-none bg-white overflow-hidden">
                         <img
                           src={card.image}
                           alt={card.alt}
@@ -98,25 +98,34 @@ export default function ProjectsSection() {
                         />
                       </div>
                     </div>
-                    <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-pink-400/60 -translate-x-px" aria-hidden />
-                    <div className="md:flex-[0_0_50%] md:min-w-0 p-6 md:p-8 flex flex-col justify-center relative flex-1 min-h-0">
-                      <div className="w-3 h-3 absolute top-4 right-4 md:top-6 md:right-6" style={{ backgroundColor: '#F62F60' }} />
-                      {card.title && (
-                        <h3 className="font-bangers text-xl md:text-2xl tracking-wide mb-3" style={{ color: '#F62F60' }}>
-                          {card.title}
-                        </h3>
-                      )}
-                      {card.paragraphs.map((text, j) => (
-                        <p key={j} className="font-nanum text-sm leading-relaxed mt-2 first:mt-0" style={{ color: '#F62F60' }}>
-                          {text}
-                        </p>
-                      ))}
+                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-pink-400/60 -translate-x-px" aria-hidden />
+                    <div className="flex-[0_0_50%] min-w-0 p-4 md:p-8 flex flex-col relative flex-1 min-h-0">
+                      <div className="w-3 h-3 absolute top-4 right-4 md:top-6 md:right-6 z-10" style={{ backgroundColor: '#F62F60' }} />
+                      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
+                        {card.title && (
+                          <h3
+                            className="font-bangers tracking-wide mb-2 md:mb-3"
+                            style={{ color: '#F62F60', fontSize: 'clamp(1.125rem, 2.8vw, 1.75rem)' }}
+                          >
+                            {card.title}
+                          </h3>
+                        )}
+                        {card.paragraphs.map((text, j) => (
+                          <p
+                            key={j}
+                            className="font-nanum leading-relaxed mt-1.5 md:mt-2 first:mt-0"
+                            style={{ color: '#F62F60', fontSize: 'clamp(0.875rem, 1.9vw, 1.0625rem)' }}
+                          >
+                            {text}
+                          </p>
+                        ))}
+                      </div>
                       {isFront && (
                         <button
                           type="button"
                           onClick={goToNext}
-                          className="font-nanum absolute bottom-4 right-4 md:bottom-6 md:right-6 w-8 h-8 flex items-center justify-center hover:opacity-90 rounded transition-opacity text-lg font-light"
-                          style={{ color: '#F62F60' }}
+                          className="font-nanum absolute bottom-2 right-4 md:bottom-3 md:right-3 w-3 h-3 flex items-center justify-center rounded-none transition-colors font-light bg-pink-200/40 hover:bg-pink-200/70"
+                          style={{ color: '#F62F60', fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}
                           aria-label="Next card"
                         >
                           &gt;

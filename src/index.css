@@ -132,3 +132,23 @@
 .flip-card-back {
   transform: rotateY(180deg);
 }
+
+/* Footer "back to top" – underline stretches on hover */
+.footer-back-to-top {
+  position: relative;
+  margin-bottom: 2rem;
+  text-decoration: none;
+}
+
+.footer-back-to-top-line {
+  display: block;
+  height: 1px;
+  width: 0;
+  margin: 0.25rem 0 0;
+  background: currentColor;
+  transition: width 0.35s ease-out;
+}
+
+.footer-back-to-top:hover .footer-back-to-top-line {
+  width: 100%;
+}
