@@ -245,12 +245,6 @@ function FolderWindow({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={onClose}
-                className="w-3 h-3 rounded-full bg-red-500 hover:brightness-110 transition"
-                aria-label={`Close ${title} window`}
-              />
-              <button
-                type="button"
                 onClick={handleMinimize}
                 className="w-3 h-3 rounded-full bg-yellow-400 hover:brightness-110 transition"
                 aria-label={`Minimize ${title} window`}
@@ -261,11 +255,17 @@ function FolderWindow({
                 className="w-3 h-3 rounded-full bg-green-400 hover:brightness-110 transition"
                 aria-label={isMaximized ? 'Restore window size' : 'Maximize window'}
               />
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-3 h-3 rounded-full bg-red-500 hover:brightness-110 transition"
+                aria-label={`Close ${title} window`}
+              />
             </div>
           </div>
           <div
             className={`bg-white/85 p-8 flex items-center ${
-              isMaximized ? 'min-h-[14rem]' : 'flex-1 min-h-0 min-h-[320px]'
+              isMaximized ? 'min-h-[14rem]' : 'flex-1 min-h-0 min-h-[300px]'
             }`}
           >
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
