@@ -2,17 +2,8 @@ import { useState } from 'react'
 
 const ABOUT_CARDS = [
   {
-    title: 'IDENTITY',
-    image: '/about-me-book.JPEG',
-    alt: 'About me',
-    paragraphs: [
-      "I grew up inthe East Bay of SF. Shaped by immigrant parents, I've developed a connection with HK culture, like Canto, cinema, and cafes.",
-      "My passion lies in blending creative design with digital technology. Growing up with Erb's palsy showed me how design can include or exclude you. Thus, I'm drawn to accessible designs backed by data to translate real needs into intuitive experiences.",
-    ],
-  },
-  {
     title: 'HOBBIES',
-    image: '/about-me-archery.jpg',
+    image: '/about-me-archery-2.jpg',
     alt: 'About me — 2',
     paragraphs: [
       "Art and creativity has been integral to my life. I grew up learning traditional art before pivoting to digital media and design. I love storytelling through experimental, landscape, and street photography. Music is another creative outlet that I enjoy, whether through playing piano, humming to my guitar, or picking out the drum pattern of a song. My happy place is the archery range, where I’m shooting arrows with music playing in the background.",
@@ -20,13 +11,22 @@ const ABOUT_CARDS = [
   },
   {
     title: 'GOALS',
-    image: '/about-me-goals.JPEG',
+    image: '/about-me-goals.jpg',
     alt: 'About me — 3',
     paragraphs: [
       'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
       'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.',
     ],
   },
+  {
+    title: 'IDENTITY',
+    image: '/about-me-book.jpg',
+    alt: 'About me',
+    paragraphs: [
+      "I grew up inthe East Bay of SF. Shaped by immigrant parents, I've developed a connection with HK culture, like Canto, cinema, and cafes.",
+      "My passion lies in blending creative design with digital technology. Growing up with Erb's palsy showed me how design can include or exclude you. Thus, I'm drawn to accessible designs backed by data to translate real needs into intuitive experiences.",
+    ],
+  }
 ]
 
 const STAGGER_PX = 16
