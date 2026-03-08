@@ -23,7 +23,7 @@ export default function ContactSection() {
       <div className="grid-bg-green min-h-screen pt-16 pb-20">
         <div className="mx-auto px-6" style={{ maxWidth: 740 }}>
           <div
-            className="bg-gray-200 border-2 border-[#8DFD19] relative"
+            className="bg-gray-200 border-[6px] border-[#8DFD19] relative"
             style={{ minHeight: 499 }}
           >
             <div className="grid grid-cols-2 grid-rows-[auto,1fr] min-h-[499px] relative">

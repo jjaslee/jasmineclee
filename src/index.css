@@ -19,9 +19,9 @@
   }
 }
 
-/* Shared translucent dark base for all grid sections; grid lines sit on top */
+/* Shared dark base for all grid sections; grid lines sit on top */
 .grid-bg {
-  background-color: rgba(0, 0, 0, 0.88);
+  background-color: #181919;
   background-image:
     linear-gradient(rgba(106, 34, 255, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(106, 34, 255, 0.18) 1px, transparent 1px);
@@ -29,7 +29,7 @@
 }
 
 .grid-bg-purple {
-  background-color: rgba(0, 0, 0, 0.88);
+  background-color: #181919;
   background-image:
     linear-gradient(rgba(106, 34, 255, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(106, 34, 255, 0.18) 1px, transparent 1px);
@@ -37,7 +37,7 @@
 }
 
 .grid-bg-red {
-  background-color: rgba(0, 0, 0, 0.88);
+  background-color: #181919;
   background-image:
     linear-gradient(rgba(246, 47, 96, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(246, 47, 96, 0.18) 1px, transparent 1px);
@@ -45,7 +45,7 @@
 }
 
 .grid-bg-green {
-  background-color: rgba(0, 0, 0, 0.88);
+  background-color: #181919;
   background-image:
     linear-gradient(rgba(141, 253, 25, 0.18) 1px, transparent 1px),
     linear-gradient(90deg, rgba(141, 253, 25, 0.18) 1px, transparent 1px);
@@ -87,9 +87,9 @@
     opacity: 0.9;
   }
 
-  /* Responsive postcard text sizing */
+  /* Responsive postcard text sizing – higher min so it doesn’t shrink as much on small screens */
   .postcard-text {
-    font-size: clamp(0.9rem, 1.1vw, 1.15rem);
+    font-size: clamp(1.2rem, 1.9vw, 1.3rem);
   }
 
   .postcard-body {

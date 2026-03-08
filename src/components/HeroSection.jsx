@@ -146,13 +146,13 @@ export default function HeroSection({ heroColor = 'purple' }) {
               {/* Front of postcard */}
               <div className="flip-card-face">
                 <div
-                  className="border-2 w-full h-full"
+                  className="border-[8px] w-full h-full"
                   style={{
                     borderColor: activeDotColor,
                     boxShadow: '0 0 30px rgba(0, 0, 0, 0.6)',
                   }}
                 >
-                  <div className="border-4 border-white w-full h-full">
+                  <div className="border-[12px] border-[#E3E3E3] w-full h-full">
                     <img
                       src={heroImages[activeIndex]}
                       alt="Portfolio showcase"
@@ -165,13 +165,13 @@ export default function HeroSection({ heroColor = 'purple' }) {
               {/* Back of postcard */}
               <div className="flip-card-face flip-card-back">
                 <div
-                  className="border-2 w-full h-full"
+                  className="border-[8px] w-full h-full"
                   style={{
                     borderColor: activeDotColor,
                     boxShadow: '0 0 30px rgba(0, 0, 0, 0.6)',
                   }}
                 >
-                  <div className="relative border-4 border-white bg-[#e5e5e5] w-full h-full">
+                  <div className="relative border-[12px] border-[#e5e5e5] bg-[#e5e5e5] w-full h-full">
                     {/* Center divider line */}
                     <div className="absolute inset-y-6 left-1/2 w-px bg-[#c4c4c4]" />
 

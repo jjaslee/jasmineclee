@@ -29,10 +29,10 @@ const ABOUT_CARDS = [
   }
 ]
 
-const STAGGER_PX = 16
+const STAGGER_PX = 28
 const SLOT_STYLES = [
-  { x: -STAGGER_PX, y: STAGGER_PX, rotate: -2, zIndex: 0 },
-  { x: STAGGER_PX, y: STAGGER_PX * 2, rotate: 2, zIndex: 1 },
+  { x: -STAGGER_PX, y: STAGGER_PX, rotate: -3, zIndex: 0 },
+  { x: STAGGER_PX, y: STAGGER_PX * 2, rotate: 3, zIndex: 1 },
   { x: 0, y: 0, rotate: 0, zIndex: 2 },
 ]
 
@@ -44,9 +44,9 @@ export default function ProjectsSection() {
   }
 
   return (
-    <section id="about" className="relative pt-2">
-      {/* Sticky tab bar for ABOUT ME with translucent backing outside the tab */}
-      <div className="sticky top-14 z-[60]">
+    <section id="about" className="relative z-30 -mt-12 pt-2">
+      {/* Sticky tab bar for ABOUT ME – high z so it overlaps Projects tab when scrolling */}
+      <div className="sticky top-14 z-[70]">
         <div className="relative h-8 bg-black/60 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
@@ -87,8 +87,11 @@ export default function ProjectsSection() {
                     zIndex: s.zIndex,
                   }}
                 >
-                  <div className="relative w-full h-full bg-white rounded-none border-2 border-pink-400 overflow-hidden shadow-xl flex flex-row">
-                    <div className="flex-[0_0_50%] min-w-0 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] bg-white overflow-hidden">
+                  <div
+                    className="relative w-full h-full bg-[#E3E3E3] rounded-none border-[6px] overflow-hidden shadow-xl flex flex-row"
+                    style={{ borderColor: '#F62F60' }}
+                  >
+                    <div className="flex-[0_0_50%] min-w-0 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] bg-[#E3E3E3] overflow-hidden">
                       <div className="w-full h-full max-w-full max-h-full rounded-none bg-white overflow-hidden">
                         <img
                           src={card.image}
@@ -97,7 +100,7 @@ export default function ProjectsSection() {
                         />
                       </div>
                     </div>
-                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-pink-400/60 -translate-x-px" aria-hidden />
+                    <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-px" style={{ backgroundColor: 'rgba(246, 47, 96, 0.6)' }} aria-hidden />
                     <div className="flex-[0_0_50%] min-w-0 p-4 md:p-8 flex flex-col relative flex-1 min-h-0">
                       <div className="w-3 h-3 absolute top-4 right-4 md:top-6 md:right-6 z-10" style={{ backgroundColor: '#F62F60' }} />
                       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
