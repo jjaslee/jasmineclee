@@ -85,7 +85,7 @@ export default function ContactSection() {
                   </a>
                   <a
                     href="mailto:jas.lee@berkeley.edu"
-                    className="flex items-center gap-2 text-sm flex-shrink-0"
+                    className="flex items-center gap-2 text-xs flex-shrink-0"
                     style={{ color: '#2F5D00' }}
                   >
                     <svg

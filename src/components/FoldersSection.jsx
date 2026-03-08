@@ -123,19 +123,32 @@ function TitleBarIcon({ type }) {
   }
   if (type === 'pen') {
     return (
-      <div className="relative w-5 h-5 flex items-center justify-center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-black">
-          <path d="M12 19l7-7 3 3-7 7-3-3z" />
-          <path d="M18 13l-1.5-7.5L2 2l3.5 15L13 18l5-5z" />
+      <div className="relative w-6 h-5 flex items-center justify-center">
+        <svg
+          viewBox="0 0 35 35"
+          stroke="currentColor"
+          strokeWidth="1"
+          
+          className="w-5 h-5 text-black"
+        >
+          <rect
+            x="6.36"
+            y="21.21"
+            width="30"
+            height="10"
+            transform="rotate(-45 6.36 21.21)"
+          />
+          <path d="M3.68 31.25L13.44 28.28L6.36 21.21Z" />
         </svg>
       </div>
     )
+  
   }
   if (type === 'monitor') {
     return (
       <div className="relative w-6 h-5 flex items-center justify-center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-black">
-          <rect x="2" y="3" width="20" height="14" rx="2" />
+        <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-black">
+          <rect x="0" y="4" width="24" height="13" rx="0" />
           <path d="M8 21h8" />
           <path d="M12 17v4" />
         </svg>
@@ -531,7 +544,7 @@ export default function FoldersSection({
                   ref={ref}
                   type="button"
                   className="group flex flex-col items-center gap-4 hover:scale-105 transition-transform cursor-pointer"
-                  onDoubleClick={onOpen}
+                  onClick={onOpen}
                 >
                   <FolderIcon bodyColor={folder.bodyColor} tabColor={folder.tabColor} />
                   <span className="text-white text-sm font-medium tracking-wide">
