@@ -244,43 +244,47 @@ export default function ContactSection() {
                 </div>
               </div>
             </form>
+
+            {/* Confirm modal (only blurs this postcard) */}
+            {isConfirmOpen ? (
+              <div
+                className="contact-modal-overlay"
+                role="presentation"
+                onMouseDown={() => (!isSending ? setIsConfirmOpen(false) : null)}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Confirm send"
+                  className="modal-card"
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
+                  <p className="modal-title">Send this message?</p>
+                  <p className="modal-body">I will send your note to Jasmine.</p>
+                  <div className="modal-actions">
+                    <button
+                      type="button"
+                      className="modal-btn"
+                      disabled={isSending}
+                      onClick={() => setIsConfirmOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="modal-btn modal-btn-primary"
+                      disabled={isSending}
+                      onClick={onSubmit}
+                    >
+                      {isSending ? 'Sending…' : 'Send'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
-
-      {/* Confirm modal */}
-      {isConfirmOpen ? (
-        <div className="modal-overlay" role="presentation" onMouseDown={() => (!isSending ? setIsConfirmOpen(false) : null)}>
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Confirm send"
-            className="modal-card"
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <p className="modal-title">Send this message?</p>
-            <p className="modal-body">I will send your note to Jasmine.</p>
-            <div className="modal-actions">
-              <button
-                type="button"
-                className="modal-btn"
-                disabled={isSending}
-                onClick={() => setIsConfirmOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="modal-btn modal-btn-primary"
-                disabled={isSending}
-                onClick={onSubmit}
-              >
-                {isSending ? 'Sending…' : 'Send'}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
 
       {/* Toast */}
       {toast ? (

@@ -102,20 +102,20 @@ html[data-theme="light"] {
 }
 
 /* Modal + toast (Contact form) */
-.modal-overlay {
-  position: fixed;
+.contact-modal-overlay {
+  position: absolute;
   inset: 0;
-  z-index: 10000;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(10px);
 }
 
-html[data-theme="light"] .modal-overlay {
-  background: rgba(0, 0, 0, 0.18);
+html[data-theme="light"] .contact-modal-overlay {
+  background: rgba(0, 0, 0, 0.14);
 }
 
 .modal-card {
@@ -148,8 +148,8 @@ html[data-theme="light"] .modal-overlay {
 }
 
 .modal-btn {
-  border-radius: 999px;
-  padding: 8px 14px;
+  border-radius: 8px;
+  padding: 9px 14px;
   font-family: 'Poppins', system-ui, sans-serif;
   font-size: 0.9rem;
   border: 1px solid rgba(var(--chrome-invert-rgb), 0.18);
@@ -182,7 +182,7 @@ html[data-theme="light"] .modal-overlay {
   transform: translateX(-50%);
   z-index: 10000;
   padding: 10px 14px;
-  border-radius: 999px;
+  border-radius: 10px;
   font-family: 'Poppins', system-ui, sans-serif;
   font-size: 0.9rem;
   letter-spacing: 0.02em;
@@ -202,7 +202,7 @@ html[data-theme="light"] .modal-overlay {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .modal-overlay,
+  .contact-modal-overlay,
   .toast {
     backdrop-filter: none;
   }
