@@ -111,14 +111,20 @@ export default function HeroSection({ heroColor = 'purple' }) {
       <div className="relative z-10 w-full px-6 text-center max-w-6xl mx-auto">
         <div className="max-w-3xl mx-auto">
           <h1
-            className="text-2xl md:text-3xl lg:text-4xl mb-3 leading-relaxed font-bangers"
-            style={{ color: titleColor }}
+            className="mb-3 leading-relaxed font-bangers"
+            style={{
+              color: titleColor,
+              fontSize: 'clamp(1.4rem, 1.1rem + 1.35vw, 2.25rem)',
+            }}
           >
-            Hi, I&apos;m Jasmine Lee.
+            Hi, I&apos;m Jasmine C. Lee.
           </h1>
           <p
-            className="text-base md:text-lg font-poppins mb-10"
-            style={{ color: titleColor }}
+            className="font-poppins mb-10"
+            style={{
+              color: titleColor,
+              fontSize: 'clamp(0.95rem, 0.88rem + 0.35vw, 1.125rem)',
+            }}
           >
             I like to collect postcards. Feel free to explore my page!
           </p>

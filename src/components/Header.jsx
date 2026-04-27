@@ -21,9 +21,10 @@ export default function Header({ heroColor, onHeroColorChange }) {
         {/* Left: name in Bangers */}
         <a
           href="#home"
-          className="text-white text-xl md:text-2xl tracking-wide font-bangers hover:opacity-90 transition-opacity"
+          className="text-white tracking-wide font-bangers hover:opacity-90 transition-opacity"
+          style={{ fontSize: 'clamp(1.1rem, 1rem + 0.8vw, 1.5rem)' }}
         >
-          JASMINE LEE
+          JCL
         </a>
 
         {/* Center: color boxes + nav links in a row */}
@@ -43,7 +44,10 @@ export default function Header({ heroColor, onHeroColorChange }) {
               )
             })}
           </div>
-          <nav className="flex gap-4 text-[11px] md:text-xs lg:text-sm font-poppins text-gray-200 tracking-[0.12em]">
+          <nav
+            className="flex gap-4 font-poppins text-gray-200 tracking-[0.12em]"
+            style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
+          >
             <a
               href="#work"
               className="relative uppercase pb-0.5 hover:text-white transition-colors group"
@@ -77,7 +81,8 @@ export default function Header({ heroColor, onHeroColorChange }) {
               setSpinTurns((prev) => prev + 1)
             }}
             onMouseEnter={() => setSpinTurns((prev) => prev + 1)}
-            className="flex items-center gap-1 group text-[11px] md:text-xs lg:text-sm"
+            className="flex items-center gap-1 group"
+            style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
           >
             <span
               className={`transition-transform duration-200 ease-out group-hover:-translate-x-1 ${

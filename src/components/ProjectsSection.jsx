@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const ABOUT_CARDS = [
   {
     title: 'HOBBIES',
-    image: '/about-me-archery-2.jpg',
+    image: '/about-me-hobbies.png',
     alt: 'About me — 2',
     paragraphs: [
       "Art and creativity has been integral to my life. I grew up learning traditional art before pivoting to digital media and design. I love storytelling through experimental, landscape, and street photography. Music is another creative outlet that I enjoy, whether through playing piano, humming to my guitar, or picking out the drum pattern of a song. My happy place is the archery range, where I’m shooting arrows with music playing in the background.",
@@ -29,18 +29,32 @@ const ABOUT_CARDS = [
   }
 ]
 
-const STAGGER_PX = 28
-const SLOT_STYLES = [
-  { x: -STAGGER_PX, y: STAGGER_PX, rotate: -3, zIndex: 0 },
-  { x: STAGGER_PX, y: STAGGER_PX * 2, rotate: 3, zIndex: 1 },
-  { x: 0, y: 0, rotate: 0, zIndex: 2 },
-]
-
 export default function ProjectsSection() {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)')
+    const update = () => setIsSmallScreen(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
+  // More spread on larger screens; auto-tighten on small screens.
+  const staggerPx = isSmallScreen ? 8 : 30
+  const slotStyles = [
+    { x: -staggerPx, y: staggerPx, rotate: -3, zIndex: 0 },
+    { x: staggerPx, y: staggerPx * 2, rotate: 3, zIndex: 1 },
+    { x: 0, y: 0, rotate: 0, zIndex: 2 },
+  ]
 
   const goToNext = () => {
     setActiveIndex((prev) => (prev + 1) % ABOUT_CARDS.length)
+  }
+
+  const goToPrev = () => {
+    setActiveIndex((prev) => (prev - 1 + ABOUT_CARDS.length) % ABOUT_CARDS.length)
   }
 
   return (
@@ -68,20 +82,50 @@ export default function ProjectsSection() {
         <div className="max-w-4xl mx-auto px-6">
           {/* Deck container: postcard aspect, scales with viewport */}
           <div
-            className="relative mx-auto w-full max-w-[min(740px,92vw)]"
+            className={`relative mx-auto w-full ${
+              isSmallScreen ? 'max-w-[min(520px,78vw)]' : 'max-w-[min(720px,90vw)]'
+            }`}
             style={{
               aspectRatio: '800 / 540',
             }}
           >
+            {/* Subtle navigation arrows (outside entire stack) */}
+            <button
+              type="button"
+              aria-label="Previous About Me card"
+              className="absolute -left-6 sm:-left-12 md:-left-20 lg:-left-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-3xl md:text-4xl font-light leading-none transition-opacity hover:opacity-90"
+              style={{
+                color: '#F62F60',
+                opacity: 0.32,
+                textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
+              }}
+              onClick={goToPrev}
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              aria-label="Next About Me card"
+              className="absolute -right-6 sm:-right-12 md:-right-20 lg:-right-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-3xl md:text-4xl font-light leading-none transition-opacity hover:opacity-90"
+              style={{
+                color: '#F62F60',
+                opacity: 0.32,
+                textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
+              }}
+              onClick={goToNext}
+            >
+              ›
+            </button>
+
             {ABOUT_CARDS.map((card, i) => {
               const slot = (i - activeIndex + ABOUT_CARDS.length) % ABOUT_CARDS.length
-              const s = SLOT_STYLES[slot]
+              const s = slotStyles[slot]
               const isFront = slot === 2
 
               return (
                 <div
                   key={i}
-                  className="absolute inset-0 transition-transform duration-300 ease-out"
+                  className="absolute inset-0 transition-transform duration-700 ease-out"
                   style={{
                     transform: `translate(${s.x}px, ${s.y}px) rotate(${s.rotate}deg)`,
                     zIndex: s.zIndex,

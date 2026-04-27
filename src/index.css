@@ -13,7 +13,7 @@
     color: #e5e7eb;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
-    cursor: url("/paper-airplane-cursor.svg") 28 15, auto;
+    cursor: url("/paper-airplane-cursor.svg") 4 6, auto;
   }
   #root {
     min-height: 100vh;
@@ -24,7 +24,7 @@
 a,
 button,
 [role="button"] {
-  cursor: url("/paper-airplane-cursor.svg") 28 15, pointer;
+  cursor: url("/paper-airplane-cursor.svg") 4 6, pointer;
 }
 
 input,
@@ -73,6 +73,7 @@ textarea,
 @layer utilities {
   .font-bangers {
     font-family: 'Playfair Display', ui-serif, Georgia, serif;
+    font-weight: 700;
   }
   .font-poppins {
     font-family: 'Poppins', system-ui, sans-serif;
@@ -125,7 +126,7 @@ textarea,
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: transform 0.95s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .flip-card-inner.is-flipped {

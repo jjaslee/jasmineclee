@@ -29,11 +29,11 @@ export default function ContactSection() {
             <div className="grid grid-cols-2 grid-rows-[auto,1fr] min-h-[499px] relative">
               {/* Top row: large image on the left, spacer on the right */}
               <div className="p-6 pb-3">
-                <div className="bg-gray-400 overflow-hidden">
+                <div className="bg-gray-400 overflow-hidden rounded-lg">
                   <img
                     src="/contact-sf.jpg"
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                     style={{ filter: 'grayscale(1) contrast(0.72) brightness(1.08)' }}
                   />
                 </div>
