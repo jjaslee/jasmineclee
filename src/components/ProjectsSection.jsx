@@ -63,8 +63,8 @@ export default function ProjectsSection() {
         </div>
       </div>
 
-      {/* Grid section content below the sticky tab (red grid) - layer above Projects (purple) grid */}
-      <div className="relative z-20 grid-bg-red min-h-screen pt-16 pb-20">
+      {/* Section content below the sticky tab */}
+      <div className="relative z-20 bg-[#181919] min-h-screen pt-16 pb-20">
         <div className="max-w-4xl mx-auto px-6">
           {/* Deck container: postcard aspect, scales with viewport */}
           <div

@@ -519,7 +519,7 @@ export default function FoldersSection({
 
       {/* Grid section content below the sticky tab (purple grid) - min-height transitions so About Me slides */}
       <div
-        className={`relative z-10 grid-bg-purple pt-16 pb-16 transition-[min-height] duration-500 ease-in-out ${
+        className={`relative z-10 bg-[#181919] pt-16 pb-16 transition-[min-height] duration-500 ease-in-out ${
           anyFolderWindowOpen ? 'min-h-screen pb-20' : 'min-h-0'
         }`}
       >

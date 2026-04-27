@@ -19,8 +19,8 @@ export default function ContactSection() {
         </div>
       </div>
 
-      {/* Grid section content below the sticky tab (green grid) */}
-      <div className="grid-bg-green min-h-screen pt-16 pb-20">
+      {/* Section content below the sticky tab */}
+      <div className="bg-[#181919] min-h-screen pt-16 pb-20">
         <div className="mx-auto px-6" style={{ maxWidth: 740 }}>
           <div
             className="bg-gray-200 border-[6px] border-[#8DFD19] relative rounded-xl overflow-hidden"
