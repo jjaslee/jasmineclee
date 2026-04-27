@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function ProjectsSection({ lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const aboutBodyFontClass = lang === 'ZH' ? 'font-zh-handwritten' : 'font-nanum'
+  const erbsRef = useRef(null)
 
   const ABOUT_CARDS = useMemo(() => {
     if (lang === 'ZH') {
@@ -12,11 +14,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
           image: '/about-me-hobbies.png',
           alt: 'About me — 2',
           paragraphs: [
-            '藝術同創作一直都係我生活中不可或缺嘅一部分。',
-            '我由細學習傳統藝術，其後轉向數碼媒體同設計。',
-            '我鍾意透過實驗性、風景同街頭攝影去講故事。',
-            '音樂亦係我另一個創作出口，無論係彈鋼琴、對住結他哼歌，定係研究一首歌嘅鼓節奏。',
-            '我最喜愛嘅地方係射箭場，我會一邊聽音樂一邊射箭。',
+            '藝術同創作一直都係我生活中不可或缺嘅一部分。我由細學習傳統藝術，其後轉向數碼媒體同設計。我鍾意透過實驗性、風景同街頭攝影去講故事。音樂亦係我另一個創作出口，無論係彈鋼琴、對住結他哼歌，定係研究一首歌嘅鼓節奏。我最喜愛嘅地方係射箭場，我會一邊聽音樂一邊射箭。',
           ],
         },
         {
@@ -24,9 +22,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
           image: '/about-me-goals.jpg',
           alt: 'About me — 3',
           paragraphs: [
-            '我希望做出真正好用、同時又有趣嘅產品。',
-            '我好重視細節、無障礙設計，同埋為真實用戶而設計。',
-            '長遠嚟講，我希望可以負責產品中更重要嘅部分，從用戶身上學習，並持續進步，將想法變成令人願意一再使用嘅作品。',
+            '我希望做出真正好用、同時又有趣嘅產品。我好重視細節、無障礙設計，同埋為真實用戶而設計。長遠嚟講，我希望可以負責產品中更重要嘅部分，從用戶身上學習，並持續進步，將想法變成令人願意一再使用嘅作品。',
           ],
         },
         {
@@ -34,11 +30,11 @@ export default function ProjectsSection({ lang = 'EN' }) {
           image: '/about-me-book.jpg',
           alt: 'About me',
           paragraphs: [
-            '我喺三藩市東灣長大。',
-            '喺移民父母嘅影響下，我同香港文化建立咗好深嘅連結，例如廣東話、電影同香港茶餐廳。',
-            '我熱衷於將創意設計同數碼科技結合。',
-            '由細到大因為 Erb\u2019s palsy，我更加體會到設計可以令人被包容，亦可以令人被忽略。',
-            '所以我特別關注以數據支持嘅無障礙設計，希望將真實需要轉化成直覺、易用嘅體驗。',
+            [
+              '我喺三藩市東灣長大。喺移民父母嘅影響下，我同香港文化建立咗好深嘅連結，例如廣東話、電影同香港茶餐廳。我熱衷於將創意設計同數碼科技結合。由細到大因為 ',
+              { type: 'latin', key: 'erbs', text: 'Erb\u2019s palsy' },
+              '，我更加體會到設計可以令人被包容，亦可以令人被忽略。所以我特別關注以數據支持嘅無障礙設計，希望將真實需要轉化成直覺、易用嘅體驗。',
+            ],
           ],
         },
       ]
@@ -50,11 +46,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
         image: '/about-me-hobbies.png',
         alt: 'About me — 2',
         paragraphs: [
-          'Art and creativity has been integral to my life.',
-          'I grew up learning traditional art before pivoting to digital media and design.',
-          'I love storytelling through experimental, landscape, and street photography.',
-          'Music is another creative outlet that I enjoy, whether through playing piano, humming to my guitar, or picking out the drum pattern of a song.',
-          'My happy place is the archery range, where I am shooting arrows with music playing in the background.',
+          'Art and creativity has been integral to my life. I grew up learning traditional art before pivoting to digital media and design. I love storytelling through experimental, landscape, and street photography. Music is another creative outlet that I enjoy, whether through playing piano, humming to my guitar, or picking out the drum pattern of a song. My happy place is the archery range, where I am shooting arrows with music playing in the background.',
         ],
       },
       {
@@ -62,9 +54,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
         image: '/about-me-goals.jpg',
         alt: 'About me — 3',
         paragraphs: [
-          'I want to make things that are actually fun to use and still work really well.',
-          'I care a lot about details, accessibility, and designing for real people.',
-          'Long term, I would love to grow into a role where I can own bigger pieces of a product, learn from users, and keep getting better at turning ideas into something people want to come back to.',
+          'I want to make things that are actually fun to use and still work really well. I care a lot about details, accessibility, and designing for real people. Long term, I would love to grow into a role where I can own bigger pieces of a product, learn from users, and keep getting better at turning ideas into something people want to come back to.',
         ],
       },
       {
@@ -72,15 +62,39 @@ export default function ProjectsSection({ lang = 'EN' }) {
         image: '/about-me-book.jpg',
         alt: 'About me',
         paragraphs: [
-          'I grew up in the East Bay of SF.',
-          "Shaped by immigrant parents, I've developed a connection with HK culture, like Canto, cinema, and cafes.",
-          'My passion lies in blending creative design with digital technology.',
-          "Growing up with Erb's palsy showed me how design can include or exclude you.",
-          "Thus, I'm drawn to accessible designs backed by data to translate real needs into intuitive experiences.",
+          "I grew up in the East Bay of SF. Shaped by immigrant parents, I've developed a connection with HK culture, like Canto, cinema, and cafes. My passion lies in blending creative design with digital technology. Growing up with Erb's palsy showed me how design can include or exclude you. Thus, I'm drawn to accessible designs backed by data to translate real needs into intuitive experiences.",
         ],
       },
     ]
   }, [lang])
+
+  const renderMixed = (value) => {
+    if (typeof value === 'string') return value
+    if (!Array.isArray(value)) return value
+    return value.map((part, idx) => {
+      if (typeof part === 'string') return part
+      if (part?.type === 'latin') {
+        const ref = part.key === 'erbs' ? erbsRef : null
+        return (
+          <span key={`${part.key}-${idx}`} ref={ref} className="font-nanum">
+            {part.text}
+          </span>
+        )
+      }
+      return String(part ?? '')
+    })
+  }
+
+  useEffect(() => {
+    if (lang !== 'ZH') return
+    if (activeIndex !== 2) return
+    const el = erbsRef.current
+    if (!el) return
+    const s = window.getComputedStyle(el)
+    // #region agent log
+    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'E1',location:'ProjectsSection.jsx:erbs',message:'erbs_font',data:{fontFamily:s.fontFamily,fontWeight:s.fontWeight,text:el.textContent},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+  }, [lang, activeIndex])
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 640px)')
@@ -208,10 +222,10 @@ export default function ProjectsSection({ lang = 'EN' }) {
                         {card.paragraphs.map((text, j) => (
                           <p
                             key={j}
-                            className="font-nanum leading-relaxed mt-1.5 md:mt-2 first:mt-0"
+                            className={`${aboutBodyFontClass} leading-relaxed mt-1.5 md:mt-2 first:mt-0`}
                             style={{ color: '#F62F60', fontSize: 'clamp(0.875rem, 1.9vw, 1.0625rem)' }}
                           >
-                            {text}
+                            {renderMixed(text)}
                           </p>
                         ))}
                       </div>
@@ -219,7 +233,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
                         <button
                           type="button"
                           onClick={goToNext}
-                          className="font-nanum absolute bottom-2 right-4 md:bottom-3 md:right-3 w-3 h-3 flex items-center justify-center rounded-none transition-colors font-light bg-pink-200/40 hover:bg-pink-200/70"
+                          className={`${aboutBodyFontClass} absolute bottom-2 right-4 md:bottom-3 md:right-3 w-3 h-3 flex items-center justify-center rounded-none transition-colors font-light bg-pink-200/40 hover:bg-pink-200/70`}
                           style={{ color: '#F62F60', fontSize: 'clamp(0.9rem, 2vw, 1.25rem)' }}
                           aria-label="Next card"
                         >

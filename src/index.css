@@ -246,6 +246,10 @@ textarea,
   .font-nanum {
     font-family: 'Nanum Brush Script', system-ui, cursive;
   }
+  .font-zh-handwritten {
+    font-family: 'Noto Serif TC', 'PingFang HK', 'Hiragino Sans GB', system-ui, serif;
+    font-weight: 400;
+  }
   .contact-placeholder::placeholder {
     font-family: 'Nanum Brush Script', system-ui, cursive;
     color: #2F5D00;

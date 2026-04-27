@@ -47,9 +47,9 @@ const postcardContentZh = [
     date: '6 / 14 / 2024',
     lines: [
       '喺去探婆婆嘅長途車程上，窗外景色一幕幕掠過，我隨住巴士嘅節奏慢慢放空。',
-      '我好快會去 Long Beach 探你啦 :D',
+      ['我好快會去 ', { type: 'latin', key: 'longBeach', text: 'Long Beach' }, ' 探你啦 :D'],
     ],
-    name: 'Neli',
+    name: [{ type: 'latin', key: 'neli', text: 'Neli' }],
     address: '香港屯門龍鼓灘',
   },
   {
@@ -58,7 +58,7 @@ const postcardContentZh = [
       '穿過竹林之後，我搵到一個寧靜嘅地方，水面平靜，林木茂密。',
       '多謝你帶我去日本玩。',
     ],
-    name: '表舅父（Calvin）',
+    name: ['表舅父（', { type: 'latin', key: 'calvin', text: 'Calvin' }, '）'],
     address: '日本京都市右京區嵯峨龜尾町',
   },
   {
@@ -68,13 +68,21 @@ const postcardContentZh = [
       '走出自己嘅舒適圈，突破界限，搵到真正令我有熱誠同動力嘅方向。',
     ],
     name: '寫俾以前嘅自己',
-    address: '加州大學伯克利分校（University of California, Berkeley）',
+    address: ['加州大學伯克利分校（', { type: 'latin', key: 'ucb', text: 'University of California, Berkeley' }, '）'],
   },
 ]
 
 export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
+  const dateRef = useRef(null)
+  const firstLineRef = useRef(null)
+  const addressBlockRef = useRef(null)
+  const longBeachRef = useRef(null)
+  const neliRef = useRef(null)
+  const calvinRef = useRef(null)
+  const ucbRef = useRef(null)
+  const fontLogRafRef = useRef(null)
   const pointerStartXRef = useRef(null)
   const pointerStartYRef = useRef(null)
   const didSwipeRef = useRef(false)
@@ -83,6 +91,76 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
   const activeDotColor = dotColors[activeIndex] ?? dotColors[0]
   const postcardTextColor = activeIndex === 2 ? '#2F5D00' : activeDotColor
   const postcardContent = lang === 'ZH' ? postcardContentZh : postcardContentEn
+  const postcardFontClass = lang === 'ZH' ? 'font-zh-handwritten' : 'font-nanum'
+  const dateFontClass = 'font-nanum'
+  const englishInlineClass = 'font-nanum'
+
+  const renderMixed = (value) => {
+    if (typeof value === 'string') return value
+    if (!Array.isArray(value)) return value
+    return value.map((part, idx) => {
+      if (typeof part === 'string') return part
+      if (part?.type === 'latin') {
+        const ref =
+          part.key === 'longBeach'
+            ? longBeachRef
+            : part.key === 'neli'
+              ? neliRef
+              : part.key === 'calvin'
+                ? calvinRef
+                : part.key === 'ucb'
+                  ? ucbRef
+                : null
+        return (
+          <span key={`${part.key}-${idx}`} ref={ref} className={englishInlineClass}>
+            {part.text}
+          </span>
+        )
+      }
+      return String(part ?? '')
+    })
+  }
+
+  useEffect(() => {
+    // Only log when the back is visible (writing side)
+    if (!showBack) return
+    if (lang !== 'ZH') return
+
+    const log = () => {
+      fontLogRafRef.current = null
+      const dateEl = dateRef.current
+      const lineEl = firstLineRef.current
+      const addrEl = addressBlockRef.current
+      if (!dateEl || !lineEl || !addrEl) return
+
+      const dateStyle = window.getComputedStyle(dateEl)
+      const lineStyle = window.getComputedStyle(lineEl)
+      const addrStyle = window.getComputedStyle(addrEl)
+      const lbEl = longBeachRef.current
+      const nEl = neliRef.current
+      const cEl = calvinRef.current
+      const uEl = ucbRef.current
+      const lbStyle = lbEl ? window.getComputedStyle(lbEl) : null
+      const nStyle = nEl ? window.getComputedStyle(nEl) : null
+      const cStyle = cEl ? window.getComputedStyle(cEl) : null
+      const uStyle = uEl ? window.getComputedStyle(uEl) : null
+
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'F1',location:'HeroSection.jsx:font',message:'hero_postcard_fonts',data:{lang,activeIndex,showBack,date:{fontFamily:dateStyle.fontFamily,fontWeight:dateStyle.fontWeight,text:dateEl.textContent?.slice(0,32)},line:{fontFamily:lineStyle.fontFamily,fontWeight:lineStyle.fontWeight,text:lineEl.textContent?.slice(0,48)},address:{fontFamily:addrStyle.fontFamily,fontWeight:addrStyle.fontWeight,text:addrEl.textContent?.slice(0,48)}},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'F2',location:'HeroSection.jsx:fontLatin',message:'hero_postcard_latin_fonts',data:{lang,activeIndex,showBack,longBeach:lbStyle?{fontFamily:lbStyle.fontFamily,fontWeight:lbStyle.fontWeight,text:lbEl.textContent}:null,neli:nStyle?{fontFamily:nStyle.fontFamily,fontWeight:nStyle.fontWeight,text:nEl.textContent}:null,calvin:cStyle?{fontFamily:cStyle.fontFamily,fontWeight:cStyle.fontWeight,text:cEl.textContent}:null,ucb:uStyle?{fontFamily:uStyle.fontFamily,fontWeight:uStyle.fontWeight,text:uEl.textContent}:null},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    }
+
+    if (fontLogRafRef.current) return
+    fontLogRafRef.current = requestAnimationFrame(log)
+
+    return () => {
+      if (fontLogRafRef.current) cancelAnimationFrame(fontLogRafRef.current)
+    }
+  }, [lang, activeIndex, showBack])
 
   const goNext = () => {
     setActiveIndex((prev) => (prev + 1) % heroImages.length)
@@ -284,12 +362,12 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
                       {/* Bottom-left: date + message */}
                       <div className="px-6 pb-6 flex flex-col gap-1 items-start overflow-hidden">
                         <div className="w-full max-h-[7.5rem] md:max-h-none overflow-y-auto md:overflow-visible pr-1">
-                          <p className="font-nanum postcard-text text-left leading-snug" style={{ color: postcardTextColor }}>
-                            {postcardContent[activeIndex].date}
+                          <p className={`${dateFontClass} postcard-text text-left leading-snug`} style={{ color: postcardTextColor }}>
+                            <span ref={dateRef}>{postcardContent[activeIndex].date}</span>
                           </p>
                           {postcardContent[activeIndex].lines.map((line, i) => (
-                            <p key={i} className="font-nanum postcard-text text-left leading-snug" style={{ color: postcardTextColor }}>
-                              {line}
+                            <p key={i} className={`${postcardFontClass} postcard-text text-left leading-snug`} style={{ color: postcardTextColor }}>
+                              {i === 0 ? <span ref={firstLineRef}>{renderMixed(line)}</span> : renderMixed(line)}
                             </p>
                           ))}
                         </div>
@@ -297,9 +375,13 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
 
                       {/* Bottom-right: address */}
                       <div className="px-6 pb-6 flex flex-col justify-start">
-                        <div className="font-nanum postcard-text text-left space-y-1 leading-snug" style={{ color: postcardTextColor }}>
-                          <p>{postcardContent[activeIndex].name}</p>
-                          <p>{postcardContent[activeIndex].address}</p>
+                        <div className={`${postcardFontClass} postcard-text text-left space-y-1 leading-snug`} style={{ color: postcardTextColor }}>
+                          <div ref={addressBlockRef}>
+                            <p>
+                              {renderMixed(postcardContent[activeIndex].name)}
+                            </p>
+                            <p>{renderMixed(postcardContent[activeIndex].address)}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
