@@ -13,9 +13,60 @@
     color: #e5e7eb;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    cursor: url("/paper-airplane-cursor.svg") 28 15, auto;
   }
   #root {
     min-height: 100vh;
+  }
+}
+
+/* Keep expected cursors for common controls */
+a,
+button,
+[role="button"] {
+  cursor: url("/paper-airplane-cursor.svg") 28 15, pointer;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text;
+}
+
+/* Paper-airplane trail */
+.cursor-trail-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.cursor-trail-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  animation: cursorTrailFade 420ms ease-out forwards;
+}
+
+@keyframes cursorTrailFade {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0px);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.15);
+    opacity: 0;
+    filter: blur(1.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-trail-layer {
+    display: none;
   }
 }
 
@@ -52,28 +103,9 @@
   background-size: 24px 24px;
 }
 
-.wavy-lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.85;
-  mask-image: url("/squiggly-line.png");
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-mode: luminance;
-  -webkit-mask-image: url("/squiggly-line.png");
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-mode: luminance;
-}
-
 @layer utilities {
   .font-bangers {
-    font-family: 'Bangers', system-ui, sans-serif;
+    font-family: 'Playfair Display', ui-serif, Georgia, serif;
   }
   .font-poppins {
     font-family: 'Poppins', system-ui, sans-serif;

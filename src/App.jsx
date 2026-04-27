@@ -5,6 +5,7 @@ import FoldersSection from './components/FoldersSection'
 import ProjectsSection from './components/ProjectsSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
+import CursorTrail from './components/CursorTrail'
 
 function App() {
   const [heroColor, setHeroColor] = useState('purple')
@@ -61,6 +62,7 @@ function App() {
 
   return (
     <div style={{ minHeight: '100vh' }}>
+      <CursorTrail />
       <Header heroColor={heroColor} onHeroColorChange={setHeroColor} />
       <main>
         <HeroSection heroColor={heroColor} />

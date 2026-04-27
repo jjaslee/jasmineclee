@@ -26,7 +26,7 @@ export default function Footer({ accentColor = '#6A22FF' }) {
         }}
       /> */}
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <p className={`${primaryTextClass} font-medium text-lg mb-4`} style={{ fontFamily: "'Bangers', cursive" }}>
+        <p className={`${primaryTextClass} font-nanum text-lg mb-4`}>
           THANKS FOR STOPPING BY!
         </p>
         <a href="#home" className={`${primaryTextClass} text-sm font-light inline-block footer-back-to-top group`}>

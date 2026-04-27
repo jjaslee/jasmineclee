@@ -108,16 +108,6 @@ export default function HeroSection({ heroColor = 'purple' }) {
 
   return (
     <section id="home" className="relative min-h-screen pt-24 pb-16 flex flex-col items-center justify-center overflow-hidden">
-      {/* Squiggly line background – moves slower (parallax) so content moves over it quicker */}
-      <div
-        className="wavy-lines"
-        style={{
-          backgroundColor: titleColor,
-          transform: `translateY(${parallaxOffset}px)`,
-        }}
-        aria-hidden
-      />
-
       <div className="relative z-10 w-full px-6 text-center max-w-6xl mx-auto">
         <div className="max-w-3xl mx-auto">
           <h1
@@ -136,23 +126,57 @@ export default function HeroSection({ heroColor = 'purple' }) {
 
         <div className="relative mb-8 flex flex-col items-center">
           <div
-            className="flip-card w-full"
+            className="flip-card relative w-full"
             style={{ maxWidth: 740, aspectRatio: '800 / 540' }}
             onClick={handleCardClick}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
           >
+            {/* Subtle navigation arrows (don’t trigger flip) */}
+            <button
+              type="button"
+              aria-label="Previous postcard"
+              className="absolute -left-7 md:-left-10 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-3xl md:text-4xl font-light leading-none transition-opacity hover:opacity-90"
+              style={{
+                color: activeDotColor,
+                opacity: 0.35,
+                textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
+              }}
+              onClick={(e) => {
+                e.stopPropagation()
+                goPrev()
+              }}
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              aria-label="Next postcard"
+              className="absolute -right-7 md:-right-10 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-3xl md:text-4xl font-light leading-none transition-opacity hover:opacity-90"
+              style={{
+                color: activeDotColor,
+                opacity: 0.35,
+                textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
+              }}
+              onClick={(e) => {
+                e.stopPropagation()
+                goNext()
+              }}
+            >
+              ›
+            </button>
+
             <div className={`flip-card-inner ${showBack ? 'is-flipped' : ''}`}>
               {/* Front of postcard */}
               <div className="flip-card-face">
                 <div
-                  className="border-[8px] w-full h-full"
+                  className="border-[8px] w-full h-full rounded-xl overflow-hidden"
                   style={{
                     borderColor: activeDotColor,
                     boxShadow: '0 0 30px rgba(0, 0, 0, 0.6)',
                   }}
                 >
-                  <div className="border-[12px] border-[#E3E3E3] w-full h-full">
+                  <div className="border-[12px] border-[#E3E3E3] w-full h-full rounded-[4px] overflow-hidden">
                     <img
                       src={heroImages[activeIndex]}
                       alt="Portfolio showcase"
@@ -165,13 +189,13 @@ export default function HeroSection({ heroColor = 'purple' }) {
               {/* Back of postcard */}
               <div className="flip-card-face flip-card-back">
                 <div
-                  className="border-[8px] w-full h-full"
+                  className="border-[8px] w-full h-full rounded-xl overflow-hidden"
                   style={{
                     borderColor: activeDotColor,
                     boxShadow: '0 0 30px rgba(0, 0, 0, 0.6)',
                   }}
                 >
-                  <div className="relative border-[12px] border-[#e5e5e5] bg-[#e5e5e5] w-full h-full">
+                  <div className="relative border-[12px] border-[#e5e5e5] bg-[#e5e5e5] w-full h-full rounded-[4px] overflow-hidden">
                     {/* Center divider line */}
                     <div className="absolute inset-y-6 left-1/2 w-px bg-[#c4c4c4]" />
 

@@ -88,11 +88,11 @@ export default function ProjectsSection() {
                   }}
                 >
                   <div
-                    className="relative w-full h-full bg-[#E3E3E3] rounded-none border-[6px] overflow-hidden shadow-xl flex flex-row"
+                    className="relative w-full h-full bg-[#E3E3E3] rounded-xl border-[6px] overflow-hidden shadow-xl flex flex-row"
                     style={{ borderColor: '#F62F60' }}
                   >
                     <div className="flex-[0_0_50%] min-w-0 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] bg-[#E3E3E3] overflow-hidden">
-                      <div className="w-full h-full max-w-full max-h-full rounded-none bg-white overflow-hidden">
+                      <div className="w-full h-full max-w-full max-h-full rounded-lg bg-white overflow-hidden">
                         <img
                           src={card.image}
                           alt={card.alt}
