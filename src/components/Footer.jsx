@@ -33,7 +33,7 @@ export default function Footer({ accentColor = '#6A22FF' }) {
           back to top
           <span className="footer-back-to-top-line" />
         </a>
-        <p className={`${secondaryTextClass} text-xs`}>© 2026 Jasmine Lee. All Rights Reserved.</p>
+        <p className={`${secondaryTextClass} text-xs`}>© 2026 Jasmine C. Lee. All Rights Reserved.</p>
       </div>
     </footer>
   )

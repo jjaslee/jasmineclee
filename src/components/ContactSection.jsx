@@ -1,4 +1,87 @@
+import { useEffect, useMemo, useState } from 'react'
+
+const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
 export default function ContactSection() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [honeypot, setHoneypot] = useState('')
+
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [toast, setToast] = useState(null) // { type: 'success' | 'error', text: string }
+  const [isSending, setIsSending] = useState(false)
+
+  const isValid = useMemo(() => {
+    if (!name.trim()) return false
+    if (!email.trim() || !validateEmail(email.trim())) return false
+    if (!message.trim()) return false
+    return true
+  }, [name, email, message])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = window.setTimeout(() => setToast(null), 2600)
+    return () => window.clearTimeout(t)
+  }, [toast])
+
+  const onSubmit = async () => {
+    if (honeypot) {
+      // Spam: pretend success but do nothing.
+      setToast({ type: 'success', text: 'Thank you. Message sent.' })
+      setName('')
+      setEmail('')
+      setMessage('')
+      setIsConfirmOpen(false)
+      return
+    }
+
+    if (!FORMSPREE_ENDPOINT) {
+      setToast({ type: 'error', text: 'Form is not configured yet.' })
+      setIsConfirmOpen(false)
+      return
+    }
+
+    if (!isValid) {
+      setToast({ type: 'error', text: 'Please fill out all required fields.' })
+      setIsConfirmOpen(false)
+      return
+    }
+
+    setIsSending(true)
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+        }),
+      })
+
+      if (!res.ok) throw new Error('Request failed')
+
+      setToast({ type: 'success', text: 'Thank you. Message sent.' })
+      setName('')
+      setEmail('')
+      setMessage('')
+      setIsConfirmOpen(false)
+    } catch {
+      setToast({ type: 'error', text: 'Could not send. Please try again.' })
+      setIsConfirmOpen(false)
+    } finally {
+      setIsSending(false)
+    }
+  }
+
   return (
     <section id="contact" className="relative -mt-8">
       {/* Sticky tab bar for CONTACT with translucent backing outside the tab */}
@@ -26,7 +109,13 @@ export default function ContactSection() {
             className="paper-bg border-[6px] border-[#8DFD19] relative rounded-xl overflow-hidden"
             style={{ minHeight: 499 }}
           >
-            <div className="grid grid-cols-2 grid-rows-[auto,1fr] min-h-[499px] relative">
+            <form
+              className="grid grid-cols-2 grid-rows-[auto,1fr] min-h-[499px] relative"
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (!isSending) setIsConfirmOpen(true)
+              }}
+            >
               {/* Top row: large image on the left, spacer on the right */}
               <div className="p-6 pb-3">
                 <div className="bg-gray-400 overflow-hidden rounded-lg">
@@ -61,6 +150,8 @@ export default function ContactSection() {
                     rows={6}
                     className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50 resize-none"
                     style={{ color: '#2F5D00' }}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                   />
                 </div>
                 <div className="mt-6 flex items-center gap-3 flex-shrink-0 pl-1">
@@ -112,30 +203,91 @@ export default function ContactSection() {
               {/* Bottom row: Let's Connect + form */}
               <div className="p-6 pt-3 pb-1 flex flex-col h-full" style={{ color: '#2F5D00' }}>
                 <div>
+                  {/* Honeypot (hidden from users) */}
+                  <label className="sr-only" aria-hidden>
+                    Website
+                    <input
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      className="hidden"
+                      name="website"
+                    />
+                  </label>
                   <input
                     type="text"
                     placeholder="Your name *"
                     className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 mb-4 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50"
                     style={{ color: '#2F5D00' }}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                   <input
                     type="email"
                     placeholder="Your email *"
                     className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 mb-4 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50"
                     style={{ color: '#2F5D00' }}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="flex justify-end mt-auto -mr-6 flex-shrink-0">
-                  <button className="flex items-center gap-2 px-7 py-3 font-bangers text-xl tracking-wide hover:opacity-80 transition-opacity">
-                    <span>SEND</span>
+                  <button
+                    type="submit"
+                    disabled={isSending}
+                    className="flex items-center gap-2 px-7 py-3 font-bangers text-xl tracking-wide hover:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span>{isSending ? 'SENDING' : 'SEND'}</span>
                     <span className="text-lg" aria-hidden>▶</span>
                   </button>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
+
+      {/* Confirm modal */}
+      {isConfirmOpen ? (
+        <div className="modal-overlay" role="presentation" onMouseDown={() => (!isSending ? setIsConfirmOpen(false) : null)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Confirm send"
+            className="modal-card"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <p className="modal-title">Send this message?</p>
+            <p className="modal-body">I will send your note to Jasmine.</p>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-btn"
+                disabled={isSending}
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="modal-btn modal-btn-primary"
+                disabled={isSending}
+                onClick={onSubmit}
+              >
+                {isSending ? 'Sending…' : 'Send'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Toast */}
+      {toast ? (
+        <div className={`toast ${toast.type === 'success' ? 'toast-success' : 'toast-error'}`} role="status" aria-live="polite">
+          {toast.text}
+        </div>
+      ) : null}
     </section>
   )
 }
