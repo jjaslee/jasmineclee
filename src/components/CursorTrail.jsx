@@ -98,6 +98,7 @@ export default function CursorTrail() {
       }
 
       pts.length = writeIndex
+
       rafRef.current = requestAnimationFrame(draw)
     }
 
