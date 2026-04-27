@@ -61,7 +61,7 @@ export default function ProjectsSection() {
     <section id="about" className="relative z-30 -mt-12 pt-2">
       {/* Sticky tab bar for ABOUT ME – high z so it overlaps Projects tab when scrolling */}
       <div className="sticky top-14 z-[70]">
-        <div className="relative h-8 bg-black/60 backdrop-blur-sm">
+        <div className="relative h-8 chrome-bg-60 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
             style={{
@@ -78,7 +78,7 @@ export default function ProjectsSection() {
       </div>
 
       {/* Section content below the sticky tab */}
-      <div className="relative z-20 bg-[#181919] min-h-screen pt-16 pb-20">
+      <div className="relative z-20 section-bg min-h-screen pt-16 pb-20">
         <div className="max-w-4xl mx-auto px-6">
           {/* Deck container: postcard aspect, scales with viewport */}
           <div
@@ -132,10 +132,10 @@ export default function ProjectsSection() {
                   }}
                 >
                   <div
-                    className="relative w-full h-full bg-[#E3E3E3] rounded-xl border-[6px] overflow-hidden shadow-xl flex flex-row"
+                    className="relative w-full h-full paper-bg rounded-xl border-[6px] overflow-hidden shadow-xl flex flex-row"
                     style={{ borderColor: '#F62F60' }}
                   >
-                    <div className="flex-[0_0_50%] min-w-0 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] bg-[#E3E3E3] overflow-hidden">
+                    <div className="flex-[0_0_50%] min-w-0 flex items-center justify-center p-[clamp(0.75rem,3vw,1.5rem)] paper-bg overflow-hidden">
                       <div className="w-full h-full max-w-full max-h-full rounded-lg bg-white overflow-hidden">
                         <img
                           src={card.image}

@@ -3,7 +3,7 @@ export default function ContactSection() {
     <section id="contact" className="relative -mt-8">
       {/* Sticky tab bar for CONTACT with translucent backing outside the tab */}
       <div className="sticky top-14 z-[70]">
-        <div className="relative h-8 bg-black/60 backdrop-blur-sm">
+        <div className="relative h-8 chrome-bg-60 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
             style={{
@@ -20,10 +20,10 @@ export default function ContactSection() {
       </div>
 
       {/* Section content below the sticky tab */}
-      <div className="bg-[#181919] min-h-screen pt-16 pb-20">
+      <div className="section-bg min-h-screen pt-16 pb-20">
         <div className="mx-auto px-6" style={{ maxWidth: 740 }}>
           <div
-            className="bg-gray-200 border-[6px] border-[#8DFD19] relative rounded-xl overflow-hidden"
+            className="paper-bg border-[6px] border-[#8DFD19] relative rounded-xl overflow-hidden"
             style={{ minHeight: 499 }}
           >
             <div className="grid grid-cols-2 grid-rows-[auto,1fr] min-h-[499px] relative">

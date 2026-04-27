@@ -179,10 +179,10 @@ export default function HeroSection({ heroColor = 'purple' }) {
                   className="border-[8px] w-full h-full rounded-xl overflow-hidden"
                   style={{
                     borderColor: activeDotColor,
-                    boxShadow: '0 0 30px rgba(0, 0, 0, 0.6)',
+                    boxShadow: '0 22px 38px -22px rgba(0, 0, 0, 0.85)',
                   }}
                 >
-                  <div className="border-[12px] border-[#E3E3E3] w-full h-full rounded-[4px] overflow-hidden">
+                  <div className="border-[12px] paper-border w-full h-full rounded-[4px] overflow-hidden">
                     <img
                       src={heroImages[activeIndex]}
                       alt="Portfolio showcase"
@@ -198,10 +198,10 @@ export default function HeroSection({ heroColor = 'purple' }) {
                   className="border-[8px] w-full h-full rounded-xl overflow-hidden"
                   style={{
                     borderColor: activeDotColor,
-                    boxShadow: '0 0 30px rgba(0, 0, 0, 0.6)',
+                    boxShadow: '0 22px 38px -22px rgba(0, 0, 0, 0.85)',
                   }}
                 >
-                  <div className="relative border-[12px] border-[#e5e5e5] bg-[#e5e5e5] w-full h-full rounded-[4px] overflow-hidden">
+                  <div className="relative border-[12px] paper-border paper-bg w-full h-full rounded-[4px] overflow-hidden">
                     {/* Center divider line */}
                     <div className="absolute inset-y-6 left-1/2 w-px bg-[#c4c4c4]" />
 

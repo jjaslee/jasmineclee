@@ -117,7 +117,7 @@ function TitleBarIcon({ type }) {
           className="absolute -top-0.5 left-0.5 bg-black"
           style={{ width: '10px', height: '4px' }}
         />
-        <div className="absolute inset-y-0.5 right-1.5 w-2 h-2 rounded-full bg-[#E3E3E3]" />
+        <div className="absolute inset-y-0.5 right-1.5 w-2 h-2 rounded-full paper-bg" />
       </div>
     )
   }
@@ -310,7 +310,7 @@ function FolderWindow({
             onTransitionEnd={handleMinimizeTransitionEnd}
           >
             <div
-              className={`bg-[#E3E3E3] font-poppins border-[4px] rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
+              className={`paper-bg font-poppins border-[4px] rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
                 isMaximized ? 'min-h-[380px]' : ''
               }`}
               style={{
@@ -319,7 +319,7 @@ function FolderWindow({
                   'polygon(0 0, 26% 0, 30% -14%, 62% -14%, 66% 0, 100% 0, 100% 100%, 0 100%)',
               }}
             >
-          <div className="bg-[#E3E3E3] px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10 shrink-0">
+          <div className="paper-bg px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10 shrink-0">
             <div className="flex items-center gap-3">
               <TitleBarIcon type={iconType} />
               <span className="text-black font-medium text-sm">{displayTitle}</span>
@@ -346,7 +346,7 @@ function FolderWindow({
             </div>
           </div>
           <div
-            className={`relative bg-[#E3E3E3]/85 px-8 pb-8 pt-5 flex ${
+            className={`relative paper-bg-muted px-8 pb-8 pt-5 flex ${
               isInsideSubfolder ? 'items-start' : 'items-center'
             } ${isMaximized ? 'flex-1 min-h-[420px]' : 'flex-1 min-h-0 min-h-[350px]'}`}
           >
@@ -501,7 +501,7 @@ export default function FoldersSection({
     <section id="work" className="relative z-20">
       {/* Sticky tab bar for PROJECTS - higher z so windows slide below it */}
       <div className="sticky top-14 z-50">
-        <div className="relative h-8 bg-black/90 backdrop-blur-sm">
+        <div className="relative h-8 chrome-bg-90 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
             style={{
@@ -519,7 +519,7 @@ export default function FoldersSection({
 
       {/* Grid section content below the sticky tab (purple grid) - min-height transitions so About Me slides */}
       <div
-        className={`relative z-10 bg-[#181919] pt-16 pb-16 transition-[min-height] duration-500 ease-in-out ${
+        className={`relative z-10 section-bg pt-16 pb-16 transition-[min-height] duration-500 ease-in-out ${
           anyFolderWindowOpen ? 'min-h-screen pb-20' : 'min-h-0'
         }`}
       >
@@ -547,7 +547,7 @@ export default function FoldersSection({
                   onClick={onOpen}
                 >
                   <FolderIcon bodyColor={folder.bodyColor} tabColor={folder.tabColor} />
-                  <span className="text-white text-sm font-medium tracking-wide">
+                  <span className="app-text text-sm font-medium tracking-wide">
                     {folder.label}
                   </span>
                 </button>

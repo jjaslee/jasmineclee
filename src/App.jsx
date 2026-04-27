@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import HeroSection from './components/HeroSection'
 import FoldersSection from './components/FoldersSection'
@@ -9,6 +9,7 @@ import CursorTrail from './components/CursorTrail'
 
 function App() {
   const [heroColor, setHeroColor] = useState('purple')
+  const [theme, setTheme] = useState('dark')
   const [showPhotosWindow, setShowPhotosWindow] = useState(true)
   const [showDesignWindow, setShowDesignWindow] = useState(false)
   const [showTechnicalsWindow, setShowTechnicalsWindow] = useState(false)
@@ -16,6 +17,10 @@ function App() {
   const [cascadeOrder, setCascadeOrder] = useState(['photos'])
   const anyFolderWindowOpen =
     showPhotosWindow || showDesignWindow || showTechnicalsWindow
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+  }, [theme])
 
   const bringToFront = (id) => {
     setOpenWindowStack((prev) => [...prev.filter((w) => w !== id), id])
@@ -63,7 +68,12 @@ function App() {
   return (
     <div style={{ minHeight: '100vh' }}>
       <CursorTrail />
-      <Header heroColor={heroColor} onHeroColorChange={setHeroColor} />
+      <Header
+        heroColor={heroColor}
+        onHeroColorChange={setHeroColor}
+        theme={theme}
+        onThemeChange={setTheme}
+      />
       <main>
         <HeroSection heroColor={heroColor} />
         <FoldersSection

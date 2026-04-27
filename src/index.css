@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --app-bg: #000;
+  --app-text: #e5e7eb;
+  --section-bg: #181919;
+  --chrome-rgb: 0, 0, 0;
+  --chrome-invert-rgb: 255, 255, 255;
+  --chrome-text: #ffffff;
+  --chrome-muted: rgba(229, 231, 235, 0.9);
+  --chrome-outline: rgba(255, 255, 255, 0.92);
+  --trail-rgb: 255, 255, 255;
+  --trail-shadow-rgb: 255, 255, 255;
+  --paper-bg: #e3e3e3;
+  --paper-border: #e3e3e3;
+  --paper-bg-muted: rgba(227, 227, 227, 0.85);
+}
+
+html[data-theme="light"] {
+  --app-bg: #f7f7f7;
+  --app-text: #111827;
+  --section-bg: #f1f2f4;
+  --chrome-rgb: 255, 255, 255;
+  --chrome-invert-rgb: 0, 0, 0;
+  --chrome-text: #111827;
+  --chrome-muted: rgba(17, 24, 39, 0.8);
+  --chrome-outline: rgba(17, 24, 39, 0.7);
+  --trail-rgb: 17, 24, 39;
+  --trail-shadow-rgb: 17, 24, 39;
+  --paper-bg: #ffffff;
+  --paper-border: #f3f4f6;
+  --paper-bg-muted: rgba(255, 255, 255, 0.92);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -9,8 +41,8 @@
   }
   body {
     margin: 0;
-    background: #000 !important;
-    color: #e5e7eb;
+    background: var(--app-bg) !important;
+    color: var(--app-text);
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     cursor: url("/paper-airplane-cursor.svg") 4 6, auto;
@@ -18,6 +50,55 @@
   #root {
     min-height: 100vh;
   }
+}
+
+.section-bg {
+  background-color: var(--section-bg);
+}
+
+.app-text {
+  color: var(--app-text);
+}
+
+.paper-bg {
+  background-color: var(--paper-bg);
+}
+
+.paper-border {
+  border-color: var(--paper-border);
+}
+
+.paper-bg-muted {
+  background-color: var(--paper-bg-muted);
+}
+
+/* Translucent “chrome” bars (header + sticky tabs) */
+.chrome-bg-90 {
+  background-color: rgba(var(--chrome-rgb), 0.9);
+}
+
+.chrome-bg-60 {
+  background-color: rgba(var(--chrome-rgb), 0.6);
+}
+
+.chrome-text {
+  color: var(--chrome-text);
+}
+
+.chrome-muted {
+  color: var(--chrome-muted);
+}
+
+.chrome-outline {
+  border-color: var(--chrome-outline);
+}
+
+.chrome-invert-bg {
+  background-color: rgb(var(--chrome-invert-rgb));
+}
+
+.chrome-solid-bg {
+  background-color: rgb(var(--chrome-rgb));
 }
 
 /* Keep expected cursors for common controls */
@@ -47,8 +128,8 @@ textarea,
   height: 6px;
   border-radius: 999px;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.65);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  background: rgba(var(--trail-rgb), 0.55);
+  box-shadow: 0 0 10px rgba(var(--trail-shadow-rgb), 0.28);
   animation: cursorTrailFade 420ms ease-out forwards;
 }
 
