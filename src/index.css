@@ -222,34 +222,11 @@ textarea,
 }
 
 /* Paper-airplane trail */
-.cursor-trail-layer {
+.cursor-trail-canvas {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-}
-
-.cursor-trail-dot {
-  position: fixed;
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-  background: rgba(var(--trail-rgb), 0.55);
-  box-shadow: 0 0 10px rgba(var(--trail-shadow-rgb), 0.28);
-  animation: cursorTrailFade 420ms ease-out forwards;
-}
-
-@keyframes cursorTrailFade {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    filter: blur(0px);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0.15);
-    opacity: 0;
-    filter: blur(1.5px);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

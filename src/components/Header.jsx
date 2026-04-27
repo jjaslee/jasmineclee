@@ -6,9 +6,15 @@ const colorOptions = [
   { id: 'green', className: 'bg-lime-400', style: null, border: '#a3e635' },
 ]
 
-export default function Header({ heroColor, onHeroColorChange, theme = 'dark', onThemeChange }) {
+export default function Header({
+  heroColor,
+  onHeroColorChange,
+  lang = 'EN',
+  onLangChange,
+  theme = 'dark',
+  onThemeChange,
+}) {
   const active = colorOptions.find((c) => c.id === heroColor) ?? colorOptions[0]
-  const [lang, setLang] = useState('EN')
   const [spinTurns, setSpinTurns] = useState(0)
 
   return (
@@ -76,7 +82,7 @@ export default function Header({ heroColor, onHeroColorChange, theme = 'dark', o
           <button
             type="button"
             onClick={() => {
-              setLang((prev) => (prev === 'EN' ? 'ZH' : 'EN'))
+              onLangChange?.(lang === 'EN' ? 'ZH' : 'EN')
               setSpinTurns((prev) => prev + 1)
             }}
             onMouseEnter={() => setSpinTurns((prev) => prev + 1)}

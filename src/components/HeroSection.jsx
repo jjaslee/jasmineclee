@@ -12,7 +12,7 @@ const heroColorMap = {
   green: '#8DFD19',
 }
 
-const postcardContent = [
+const postcardContentEn = [
   {
     date: '6 / 14 / 2024',
     lines: [
@@ -34,17 +34,47 @@ const postcardContent = [
   {
     date: '4 / 27 / 2024',
     lines: [
-      'To explore the intersection of behavior and technology, while growing not only as a leader but as a person. To step out of my shell, push my boundaries, and discover what truly excites and motivates me.',
+      'To explore the intersection of behavior and technology, while growing not only as a leader but as a person.',
+      'To step out of my shell, push my boundaries, and discover what truly excites and motivates me.',
     ],
     name: 'To my younger self',
     address: 'University of California, Berkeley',
   },
 ]
 
-export default function HeroSection({ heroColor = 'purple' }) {
+const postcardContentZh = [
+  {
+    date: '6 / 14 / 2024',
+    lines: [
+      '喺去探婆婆嘅長途車程上，窗外景色一幕幕掠過，我隨住巴士嘅節奏慢慢放空。',
+      '我好快會去 Long Beach 探你啦 :D',
+    ],
+    name: 'Neli',
+    address: '香港屯門龍鼓灘',
+  },
+  {
+    date: '6 / 7 / 2024',
+    lines: [
+      '穿過竹林之後，我搵到一個寧靜嘅地方，水面平靜，林木茂密。',
+      '多謝你帶我去日本玩。',
+    ],
+    name: '表舅父（Calvin）',
+    address: '日本京都市右京區嵯峨龜尾町',
+  },
+  {
+    date: '4 / 27 / 2024',
+    lines: [
+      '希望可以探索人類行為同科技之間嘅交匯點，同時喺領導能力同個人成長兩方面都有所提升。',
+      '走出自己嘅舒適圈，突破界限，搵到真正令我有熱誠同動力嘅方向。',
+    ],
+    name: '寫俾以前嘅自己',
+    address: '加州大學伯克利分校（University of California, Berkeley）',
+  },
+]
+
+export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
   const pointerStartXRef = useRef(null)
   const pointerStartYRef = useRef(null)
   const didSwipeRef = useRef(false)
@@ -52,6 +82,7 @@ export default function HeroSection({ heroColor = 'purple' }) {
   const dotColors = ['#6A22FF', '#F62F60', '#8DFD19']
   const activeDotColor = dotColors[activeIndex] ?? dotColors[0]
   const postcardTextColor = activeIndex === 2 ? '#2F5D00' : activeDotColor
+  const postcardContent = lang === 'ZH' ? postcardContentZh : postcardContentEn
 
   const goNext = () => {
     setActiveIndex((prev) => (prev + 1) % heroImages.length)
@@ -60,12 +91,6 @@ export default function HeroSection({ heroColor = 'purple' }) {
   const goPrev = () => {
     setActiveIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)
   }
-
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
 
   const handlePointerDown = (e) => {
     // Only track touch / pen interactions for swipe gestures
@@ -104,8 +129,6 @@ export default function HeroSection({ heroColor = 'purple' }) {
     setShowBack((prev) => !prev)
   }
 
-  const parallaxOffset = scrollY * 0.22
-
   return (
     <section id="home" className="relative min-h-screen pt-24 pb-16 flex flex-col items-center justify-center overflow-hidden">
       <div className="relative z-10 w-full px-6 text-center max-w-6xl mx-auto">
@@ -117,7 +140,7 @@ export default function HeroSection({ heroColor = 'purple' }) {
               fontSize: 'clamp(1.4rem, 1.1rem + 1.35vw, 2.25rem)',
             }}
           >
-            Hi, I&apos;m Jasmine C. Lee.
+            {lang === 'ZH' ? '你好，我係 李靜文。' : 'Hi, I\u2019m Jasmine C. Lee.'}
           </h1>
           <p
             className="font-poppins mb-10"
@@ -126,7 +149,9 @@ export default function HeroSection({ heroColor = 'purple' }) {
               fontSize: 'clamp(0.95rem, 0.88rem + 0.35vw, 1.125rem)',
             }}
           >
-            I like to collect postcards. Feel free to explore my page!
+            {lang === 'ZH'
+              ? '我鍾意收集明信片，歡迎隨意瀏覽我嘅網站！'
+              : 'I like to collect postcards. Feel free to explore my page!'}
           </p>
         </div>
 

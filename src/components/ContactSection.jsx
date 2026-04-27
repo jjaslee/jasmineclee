@@ -6,7 +6,7 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
-export default function ContactSection() {
+export default function ContactSection({ lang = 'EN' }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -146,7 +146,7 @@ export default function ContactSection() {
               <div className="p-6 pt-3 flex flex-col justify-between">
                 <div>
                   <textarea
-                    placeholder="Your message *"
+                    placeholder={lang === 'ZH' ? '你嘅訊息 *' : 'Your message *'}
                     rows={6}
                     className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50 resize-none"
                     style={{ color: '#2F5D00' }}
@@ -217,7 +217,7 @@ export default function ContactSection() {
                   </label>
                   <input
                     type="text"
-                    placeholder="Your name *"
+                    placeholder={lang === 'ZH' ? '你嘅姓名 *' : 'Your name *'}
                     className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 mb-4 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50"
                     style={{ color: '#2F5D00' }}
                     value={name}
@@ -225,7 +225,7 @@ export default function ContactSection() {
                   />
                   <input
                     type="email"
-                    placeholder="Your email *"
+                    placeholder={lang === 'ZH' ? '你嘅電郵 *' : 'Your email *'}
                     className="contact-placeholder w-full px-4 py-3 bg-white border border-gray-300 mb-4 placeholder:opacity-80 focus:outline-none focus:ring-2 focus:ring-green-400/50"
                     style={{ color: '#2F5D00' }}
                     value={email}

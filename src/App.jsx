@@ -10,6 +10,7 @@ import CursorTrail from './components/CursorTrail'
 function App() {
   const [heroColor, setHeroColor] = useState('purple')
   const [theme, setTheme] = useState('dark')
+  const [lang, setLang] = useState('EN')
   const [showPhotosWindow, setShowPhotosWindow] = useState(true)
   const [showDesignWindow, setShowDesignWindow] = useState(false)
   const [showTechnicalsWindow, setShowTechnicalsWindow] = useState(false)
@@ -71,11 +72,13 @@ function App() {
       <Header
         heroColor={heroColor}
         onHeroColorChange={setHeroColor}
+        lang={lang}
+        onLangChange={setLang}
         theme={theme}
         onThemeChange={setTheme}
       />
       <main>
-        <HeroSection heroColor={heroColor} />
+        <HeroSection heroColor={heroColor} lang={lang} />
         <FoldersSection
           showPhotosWindow={showPhotosWindow}
           onClosePhotosWindow={closePhotos}
@@ -91,9 +94,9 @@ function App() {
           cascadeOrder={cascadeOrder}
           onBringWindowToFront={bringToFront}
         />
-        <ProjectsSection />
-        <ContactSection />
-        <Footer accentColor={footerColor} />
+        <ProjectsSection lang={lang} />
+        <ContactSection lang={lang} />
+        <Footer accentColor={footerColor} lang={lang} />
       </main>
     </div>
   )

@@ -1,4 +1,4 @@
-export default function Footer({ accentColor = '#6A22FF' }) {
+export default function Footer({ accentColor = '#6A22FF', lang = 'EN' }) {
   const isBrightGreen = accentColor.toLowerCase() === '#8dfd19'
   const primaryTextClass = isBrightGreen ? 'text-black' : 'text-white'
   const secondaryTextClass = isBrightGreen ? 'text-black/70' : 'text-gray-300'
@@ -27,13 +27,17 @@ export default function Footer({ accentColor = '#6A22FF' }) {
       /> */}
       <div className="max-w-4xl mx-auto px-6 text-center">
         <p className={`${primaryTextClass} font-nanum text-lg mb-3`}>
-          THANKS FOR STOPPING BY!
+          {lang === 'ZH' ? '多謝你到訪！' : 'THANKS FOR STOPPING BY!'}
         </p>
         <a href="#home" className={`${primaryTextClass} text-sm font-light inline-block footer-back-to-top group`}>
           back to top
           <span className="footer-back-to-top-line" />
         </a>
-        <p className={`${secondaryTextClass} text-xs`}>© 2026 Jasmine C. Lee. All Rights Reserved.</p>
+        <p className={`${secondaryTextClass} text-xs`}>
+          {lang === 'ZH'
+            ? '© 2026 Jasmine C. Lee 版權所有'
+            : '© 2026 Jasmine C. Lee. All Rights Reserved.'}
+        </p>
       </div>
     </footer>
   )
