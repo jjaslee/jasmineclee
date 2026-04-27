@@ -228,9 +228,6 @@ function FolderWindow({
     setIsMaximized((prev) => {
       const next = !prev
       onMaximizeChange?.(windowId, next)
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H2',location:'FoldersSection.jsx:toggleMaximize',message:'toggleMaximize called',data:{windowId,prev,next,show,title,subfolderName},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       return next
     })
   }
@@ -276,9 +273,6 @@ function FolderWindow({
     if (!show) return
     const rect = windowRef.current?.getBoundingClientRect?.()
     onMetricsChange?.(windowId, rect, { lightboxOpen })
-    // #region agent log
-    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H1',location:'FoldersSection.jsx:FolderWindow useEffect(show/isMaximized)',message:'window metrics snapshot',data:{windowId,show,isMaximized,title,subfolderName,rect:rect?{top:Math.round(rect.top),bottom:Math.round(rect.bottom),height:Math.round(rect.height)}:null,viewportH:typeof window!=='undefined'?window.innerHeight:null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
   }, [show, isMaximized, subfolderName, contentFiles?.length, lightboxOpen])
 
   useEffect(() => {
@@ -286,9 +280,6 @@ function FolderWindow({
     const onResize = () => {
       const rect = windowRef.current?.getBoundingClientRect?.()
       onMetricsChange?.(windowId, rect, { lightboxOpen })
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H7',location:'FoldersSection.jsx:FolderWindow onResize',message:'window metrics on resize',data:{windowId,lightboxOpen,rect:rect?{bottom:Math.round(rect.bottom),height:Math.round(rect.height)}:null,viewportH:typeof window!=='undefined'?window.innerHeight:null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
     }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
@@ -300,9 +291,6 @@ function FolderWindow({
     const ro = new ResizeObserver(() => {
       const rect = el.getBoundingClientRect()
       onMetricsChange?.(windowId, rect, { lightboxOpen })
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H9',location:'FoldersSection.jsx:FolderWindow ResizeObserver',message:'window metrics on resize observer',data:{windowId,lightboxOpen,rect:{bottom:Math.round(rect.bottom),height:Math.round(rect.height)}},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
     })
     ro.observe(el)
     return () => ro.disconnect()
@@ -333,9 +321,6 @@ function FolderWindow({
         const r = b.getBoundingClientRect()
         return { top: Math.round(r.top - gridRect.top), left: Math.round(r.left - gridRect.left) }
       })
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H8',location:'FoldersSection.jsx:measure thumbs viewport',message:'thumb grid geometry',data:{windowId,subfolderName,colsClass:thumbsGridColsClass,cols,gridW,colGap,rowGap,tilePx,clientH:gridEl.clientHeight,scrollH:gridEl.scrollHeight,sample},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
     }
 
     measure()
@@ -634,11 +619,6 @@ export default function FoldersSection({
   const [windowStateById, setWindowStateById] = useState({})
   const projectsWrapRef = useRef(null)
   const [projectsExtraPbPx, setProjectsExtraPbPx] = useState(0)
-  const projectsExtraPbPxRef = useRef(0)
-
-  useEffect(() => {
-    projectsExtraPbPxRef.current = projectsExtraPbPx
-  }, [projectsExtraPbPx])
 
   const updateProjectsExtraPadding = (nextWindowStateById) => {
     const sentinel = projectsBottomSentinelRef.current
@@ -661,10 +641,6 @@ export default function FoldersSection({
     const marginPx = 48
     const extraPbPx = Math.max(0, Math.round(targetBottom + marginPx - baseContentBottom))
     setProjectsExtraPbPx(extraPbPx)
-
-    // #region agent log
-    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H10',location:'FoldersSection.jsx:updateProjectsExtraPadding(anchor)',message:'computed extra pb (anchor)',data:{baseContentBottom:Math.round(baseContentBottom),maxWindowBottom:maxWindowBottom==null?null:Math.round(maxWindowBottom),foldersBottom:foldersBottom==null?null:Math.round(foldersBottom),targetBottom:targetBottom==null?null:Math.round(targetBottom),marginPx,extraPbPx,windowStateById:nextWindowStateById},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
   }
 
   const handleWindowMetrics = (id, rect, meta = {}) => {
@@ -683,9 +659,6 @@ export default function FoldersSection({
     if (!anyFolderWindowOpen) {
       setWindowStateById({})
       setProjectsExtraPbPx(0)
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H6',location:'FoldersSection.jsx:useEffect(anyFolderWindowOpen)',message:'cleared window metrics (no windows open)',data:{},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       return
     }
     updateProjectsExtraPadding(windowStateById)
@@ -713,17 +686,7 @@ export default function FoldersSection({
     if (!showTechnicalsWindow) handleWindowMetrics('technicals', null)
   }, [showTechnicalsWindow])
 
-  useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H3',location:'FoldersSection.jsx:FoldersSection useEffect(maximizedByWindowId)',message:'maximizedByWindowId changed',data:{maximizedByWindowId,anyProjectWindowMaximized},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-  }, [anyProjectWindowMaximized, maximizedByWindowId])
-
-  useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H4',location:'FoldersSection.jsx:FoldersSection useEffect(padding)',message:'projects padding state',data:{anyFolderWindowOpen,anyProjectWindowMaximized,maximizedByWindowId},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-  }, [anyFolderWindowOpen, anyProjectWindowMaximized, maximizedByWindowId])
+  // (debug logging removed)
 
   const photosContentFiles =
     photosOpenFolder != null && PHOTOS_FOLDER_SLUGS[photosOpenFolder]

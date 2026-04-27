@@ -22,18 +22,16 @@ export default function Header({
       className="fixed top-0 left-0 right-0 z-[100] chrome-bg-90 backdrop-blur-sm border-b"
       style={{ borderBottomColor: active.border }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        {/* Left: name in Bangers */}
-        <a
-          href="#home"
-          className="chrome-text tracking-wide font-bangers hover:opacity-90 transition-opacity"
-          style={{ fontSize: 'clamp(1.1rem, 1rem + 0.8vw, 1.5rem)' }}
-        >
-          JCL
-        </a>
-
-        {/* Center: color boxes + nav links in a row */}
+      <div className="max-w-7xl mx-auto px-6 py-3 relative flex items-center justify-between">
+        {/* Left: name + color boxes */}
         <div className="flex items-center gap-5">
+          <a
+            href="#home"
+            className="chrome-text tracking-wide font-bangers hover:opacity-90 transition-opacity"
+            style={{ fontSize: 'clamp(1.1rem, 1rem + 0.8vw, 1.5rem)' }}
+          >
+            JCL
+          </a>
           <div className="flex gap-1">
             {colorOptions.map((opt) => {
               const isActive = heroColor === opt.id
@@ -49,33 +47,26 @@ export default function Header({
               )
             })}
           </div>
-          <nav
-            className="flex gap-4 font-poppins chrome-muted tracking-[0.12em]"
-            style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
-          >
-            <a
-              href="#work"
-              className="relative uppercase pb-0.5 hover:chrome-text transition-colors group"
-            >
-              <span>Projects</span>
-              <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-            </a>
-            <a
-              href="#about"
-              className="relative uppercase pb-0.5 hover:chrome-text transition-colors group"
-            >
-              <span>About</span>
-              <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-            </a>
-            <a
-              href="#contact"
-              className="relative uppercase pb-0.5 hover:chrome-text transition-colors group"
-            >
-              <span>Contact</span>
-              <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-            </a>
-          </nav>
         </div>
+
+        {/* Center: nav links (truly centered) */}
+        <nav
+          className="absolute left-1/2 -translate-x-1/2 flex gap-4 font-poppins chrome-muted tracking-[0.12em]"
+          style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
+        >
+          <a href="#work" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+            <span>Projects</span>
+            <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
+          </a>
+          <a href="#about" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+            <span>About</span>
+            <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
+          </a>
+          <a href="#contact" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+            <span>Contact</span>
+            <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
+          </a>
+        </nav>
 
         {/* Right: language + toggle */}
         <div className="flex items-center gap-4 font-poppins chrome-muted">
