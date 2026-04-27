@@ -14,8 +14,8 @@ const ABOUT_CARDS = [
     image: '/about-me-goals.jpg',
     alt: 'About me — 3',
     paragraphs: [
-      'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.',
-      'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.',
+      'I want to make things that are actually fun to use and still work really well. I care a lot about details, accessibility, and designing for real people.',
+      'Long term, I would love to grow into a role where I can own bigger pieces of a product, learn from users, and keep getting better at turning ideas into something people want to come back to.',
     ],
   },
   {

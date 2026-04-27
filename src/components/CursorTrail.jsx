@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 
 const MAX_PARTICLES = 18
 const MIN_DISTANCE_PX = 10
+// Offset from cursor hotspot so trail appears from plane “back notch”.
+const TRAIL_OFFSET_PX = { x: 12, y: 14 }
 
 function prefersReducedMotion() {
   if (typeof window === 'undefined') return false
@@ -64,8 +66,8 @@ export default function CursorTrail() {
           key={p.id}
           className="cursor-trail-dot"
           style={{
-            left: p.x,
-            top: p.y,
+            left: p.x + TRAIL_OFFSET_PX.x,
+            top: p.y + TRAIL_OFFSET_PX.y,
             opacity: 0.45 * ((i + 1) / particles.length),
           }}
           onAnimationEnd={() => {
