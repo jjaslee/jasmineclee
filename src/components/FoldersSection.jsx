@@ -26,6 +26,7 @@ const PHOTOS_FOLDER_FILES = {
 }
 const DESIGN_INNER_FOLDERS = [
   'Digital Drawing',
+  'Astron',
   'Cal Hacks',
   'Visual Communication',
   'CSSA',
@@ -33,6 +34,28 @@ const DESIGN_INNER_FOLDERS = [
   'Lazy Day Lines',
   'MISC Mediums',
 ]
+
+const DESIGN_FOLDER_SLUGS = {
+  'Digital Drawing': 'digital-drawing',
+  Astron: 'astron',
+}
+
+const DESIGN_FOLDER_FILES = {
+  'Digital Drawing': ['magazine-cover.png', 'forest-elder.png', 'shattering.png'],
+  Astron: [
+    'astron-01.png',
+    'astron-02.png',
+    'astron-03.png',
+    'astron-04.png',
+    'astron-05.png',
+    'astron-06.png',
+  ],
+}
+
+const DESIGN_FOLDER_CAPTIONS = {
+  Astron:
+    'An astronomy magazine that presents the eight planets through an approachable, illustrative style, using hand-drawn elements and annotated layouts to make complex information more engaging and accessible.',
+}
 const TECHNICALS_INNER_FOLDERS = [
   'Find the Flower',
   'Ngordnet',
@@ -180,19 +203,37 @@ function FolderWindow({
   contentFiles = [],
   onOpenSubfolder,
   onBack,
+  onMaximizeChange,
+  onMetricsChange,
 }) {
   const [isMinimizing, setIsMinimizing] = useState(false)
   const [minimizeOrigin, setMinimizeOrigin] = useState(null)
   const [isMaximized, setIsMaximized] = useState(false)
   const [randomOffset, setRandomOffset] = useState({ x: 0, y: 0 })
   const [lightboxIndex, setLightboxIndex] = useState(null)
+  const [thumbViewportHeightPx, setThumbViewportHeightPx] = useState(null)
+  const [thumbTilePx, setThumbTilePx] = useState(null)
   const windowRef = useRef(null)
+  const thumbsGridRef = useRef(null)
 
   const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
   const isInsideSubfolder = Boolean(subfolderName)
   const lightboxOpen = lightboxIndex != null && contentFiles?.length > 0
+  const thumbsGridColsClass = 'grid-cols-2 sm:grid-cols-4'
+  const folderCaption =
+    title === 'Design' && subfolderName ? DESIGN_FOLDER_CAPTIONS[subfolderName] : null
 
   const closeLightbox = () => setLightboxIndex(null)
+  const toggleMaximize = () => {
+    setIsMaximized((prev) => {
+      const next = !prev
+      onMaximizeChange?.(windowId, next)
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H2',location:'FoldersSection.jsx:toggleMaximize',message:'toggleMaximize called',data:{windowId,prev,next,show,title,subfolderName},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      return next
+    })
+  }
 
   const goPrev = () => {
     if (!contentFiles?.length) return
@@ -223,6 +264,84 @@ function FolderWindow({
     // Reset lightbox when leaving a folder view or closing window
     if (!show || !isInsideSubfolder) setLightboxIndex(null)
   }, [show, isInsideSubfolder])
+
+  useEffect(() => {
+    if (!show && isMaximized) {
+      setIsMaximized(false)
+      onMaximizeChange?.(windowId, false)
+    }
+  }, [show])
+
+  useEffect(() => {
+    if (!show) return
+    const rect = windowRef.current?.getBoundingClientRect?.()
+    onMetricsChange?.(windowId, rect, { lightboxOpen })
+    // #region agent log
+    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H1',location:'FoldersSection.jsx:FolderWindow useEffect(show/isMaximized)',message:'window metrics snapshot',data:{windowId,show,isMaximized,title,subfolderName,rect:rect?{top:Math.round(rect.top),bottom:Math.round(rect.bottom),height:Math.round(rect.height)}:null,viewportH:typeof window!=='undefined'?window.innerHeight:null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+  }, [show, isMaximized, subfolderName, contentFiles?.length, lightboxOpen])
+
+  useEffect(() => {
+    if (!show) return
+    const onResize = () => {
+      const rect = windowRef.current?.getBoundingClientRect?.()
+      onMetricsChange?.(windowId, rect, { lightboxOpen })
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H7',location:'FoldersSection.jsx:FolderWindow onResize',message:'window metrics on resize',data:{windowId,lightboxOpen,rect:rect?{bottom:Math.round(rect.bottom),height:Math.round(rect.height)}:null,viewportH:typeof window!=='undefined'?window.innerHeight:null},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [show, windowId, lightboxOpen])
+
+  useEffect(() => {
+    if (!show || !windowRef.current || typeof ResizeObserver === 'undefined') return
+    const el = windowRef.current
+    const ro = new ResizeObserver(() => {
+      const rect = el.getBoundingClientRect()
+      onMetricsChange?.(windowId, rect, { lightboxOpen })
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H9',location:'FoldersSection.jsx:FolderWindow ResizeObserver',message:'window metrics on resize observer',data:{windowId,lightboxOpen,rect:{bottom:Math.round(rect.bottom),height:Math.round(rect.height)}},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [show, windowId, lightboxOpen, subfolderName])
+
+  useEffect(() => {
+    if (!show || !subfolderName) return
+
+    const measure = () => {
+      const gridEl = thumbsGridRef.current
+      if (!gridEl) return
+      const buttons = Array.from(gridEl.querySelectorAll('button'))
+      const firstThumb = buttons[0]
+      if (!firstThumb) return
+      const styles = window.getComputedStyle(gridEl)
+      const rowGap = parseFloat(styles.rowGap || styles.gap || '0') || 0
+      const colGap = parseFloat(styles.columnGap || styles.gap || '0') || 0
+      const cols = (styles.gridTemplateColumns || '').split(' ').filter(Boolean).length || 1
+      const gridW = gridEl.clientWidth
+      const tilePx = Math.max(1, Math.round((gridW - colGap * (cols - 1)) / cols))
+      setThumbTilePx((prev) => (prev === tilePx ? prev : tilePx))
+
+      const target = Math.round(tilePx * 1.5 + rowGap)
+      setThumbViewportHeightPx((prev) => (prev === target ? prev : target))
+
+      const gridRect = gridEl.getBoundingClientRect()
+      const sample = buttons.slice(0, 6).map((b) => {
+        const r = b.getBoundingClientRect()
+        return { top: Math.round(r.top - gridRect.top), left: Math.round(r.left - gridRect.left) }
+      })
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H8',location:'FoldersSection.jsx:measure thumbs viewport',message:'thumb grid geometry',data:{windowId,subfolderName,colsClass:thumbsGridColsClass,cols,gridW,colGap,rowGap,tilePx,clientH:gridEl.clientHeight,scrollH:gridEl.scrollHeight,sample},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+    }
+
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [show, subfolderName, contentFiles?.length, isMaximized])
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -333,7 +452,7 @@ function FolderWindow({
               />
               <button
                 type="button"
-                onClick={() => setIsMaximized((prev) => !prev)}
+                onClick={toggleMaximize}
                 className="w-3 h-3 rounded-full bg-green-400 hover:brightness-110 transition"
                 aria-label={isMaximized ? 'Restore window size' : 'Maximize window'}
               />
@@ -348,10 +467,18 @@ function FolderWindow({
           <div
             className={`relative paper-bg-muted px-8 pb-8 pt-5 flex ${
               isInsideSubfolder ? 'items-start' : 'items-center'
-            } ${isMaximized ? 'flex-1 min-h-[420px]' : 'flex-1 min-h-0 min-h-[350px]'}`}
+            } ${
+              isMaximized
+                ? isInsideSubfolder
+                  ? 'flex-1 h-[min(80vh,740px)]'
+                  : 'flex-1 h-[min(68vh,620px)]'
+                : isInsideSubfolder
+                  ? 'flex-1 h-[min(72vh,660px)]'
+                  : 'flex-1 h-[min(56vh,520px)]'
+            }`}
           >
             {isInsideSubfolder ? (
-              <div className="w-full flex flex-col gap-3">
+              <div className="w-full flex flex-col gap-3 min-h-0">
                 <button
                   type="button"
                   onClick={onBack}
@@ -360,16 +487,30 @@ function FolderWindow({
                 >
                   <span aria-hidden>← Back</span>
                 </button>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 md:gap-4 w-full content-start overflow-auto max-h-[min(50vh,400px)]">
+                {folderCaption ? (
+                  <p className="text-black/70 text-sm leading-relaxed w-full">
+                    {folderCaption}
+                  </p>
+                ) : null}
+                <div
+                  ref={thumbsGridRef}
+                  className={`grid ${thumbsGridColsClass} gap-3 md:gap-4 w-full content-start overflow-auto`}
+                  style={
+                    thumbViewportHeightPx && thumbTilePx
+                      ? { height: `${thumbViewportHeightPx}px`, gridAutoRows: `${thumbTilePx}px` }
+                      : undefined
+                  }
+                >
                   {contentFiles.length > 0 ? (
                     contentFiles.map((src, i) => (
                       <button
                         key={src}
                         type="button"
-                        className="group aspect-square rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] cursor-pointer"
+                        className="group w-full rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] cursor-pointer"
                         onClick={() => setLightboxIndex(i)}
                         aria-label={`Open image ${i + 1} of ${contentFiles.length}`}
                         onContextMenu={(e) => e.preventDefault()}
+                        style={thumbTilePx ? { height: `${thumbTilePx}px` } : undefined}
                       >
                         <img
                           src={src}
@@ -484,7 +625,105 @@ export default function FoldersSection({
   const photosFolderRef = useRef(null)
   const designFolderRef = useRef(null)
   const technicalsFolderRef = useRef(null)
+  const foldersRowRef = useRef(null)
+  const projectsBottomSentinelRef = useRef(null)
   const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
+  const [designOpenFolder, setDesignOpenFolder] = useState(null)
+  const [maximizedByWindowId, setMaximizedByWindowId] = useState({})
+  const anyProjectWindowMaximized = Object.values(maximizedByWindowId).some(Boolean)
+  const [windowStateById, setWindowStateById] = useState({})
+  const projectsWrapRef = useRef(null)
+  const [projectsExtraPbPx, setProjectsExtraPbPx] = useState(0)
+  const projectsExtraPbPxRef = useRef(0)
+
+  useEffect(() => {
+    projectsExtraPbPxRef.current = projectsExtraPbPx
+  }, [projectsExtraPbPx])
+
+  const updateProjectsExtraPadding = (nextWindowStateById) => {
+    const sentinel = projectsBottomSentinelRef.current
+    if (!sentinel) return
+
+    // Base content bottom that is NOT affected by paddingBottom.
+    const sentinelRect = sentinel.getBoundingClientRect()
+    const baseContentBottom = sentinelRect.top + (window.scrollY || 0)
+
+    const states = Object.values(nextWindowStateById || {}).filter(Boolean)
+    const windowBottoms = states
+      .map((s) => s?.bottom)
+      .filter((v) => typeof v === 'number' && Number.isFinite(v))
+    const maxWindowBottom = windowBottoms.length ? Math.max(...windowBottoms) : null
+
+    const foldersRect = foldersRowRef.current?.getBoundingClientRect?.()
+    const foldersBottom = foldersRect ? foldersRect.bottom + (window.scrollY || 0) : null
+
+    const targetBottom = maxWindowBottom ?? foldersBottom ?? baseContentBottom
+    const marginPx = 48
+    const extraPbPx = Math.max(0, Math.round(targetBottom + marginPx - baseContentBottom))
+    setProjectsExtraPbPx(extraPbPx)
+
+    // #region agent log
+    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H10',location:'FoldersSection.jsx:updateProjectsExtraPadding(anchor)',message:'computed extra pb (anchor)',data:{baseContentBottom:Math.round(baseContentBottom),maxWindowBottom:maxWindowBottom==null?null:Math.round(maxWindowBottom),foldersBottom:foldersBottom==null?null:Math.round(foldersBottom),targetBottom:targetBottom==null?null:Math.round(targetBottom),marginPx,extraPbPx,windowStateById:nextWindowStateById},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+  }
+
+  const handleWindowMetrics = (id, rect, meta = {}) => {
+    const pageBottom =
+      rect && typeof rect.bottom === 'number' ? rect.bottom + (window.scrollY || 0) : null
+    setWindowStateById((prev) => {
+      const next = { ...prev }
+      if (pageBottom == null) delete next[id]
+      else next[id] = { bottom: pageBottom, lightboxOpen: Boolean(meta?.lightboxOpen) }
+      updateProjectsExtraPadding(next)
+      return next
+    })
+  }
+
+  useEffect(() => {
+    if (!anyFolderWindowOpen) {
+      setWindowStateById({})
+      setProjectsExtraPbPx(0)
+      // #region agent log
+      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H6',location:'FoldersSection.jsx:useEffect(anyFolderWindowOpen)',message:'cleared window metrics (no windows open)',data:{},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      return
+    }
+    updateProjectsExtraPadding(windowStateById)
+  }, [anyFolderWindowOpen])
+
+  useEffect(() => {
+    const onResizeOrScroll = () => updateProjectsExtraPadding(windowStateById)
+    window.addEventListener('resize', onResizeOrScroll)
+    window.addEventListener('scroll', onResizeOrScroll, { passive: true })
+    return () => {
+      window.removeEventListener('resize', onResizeOrScroll)
+      window.removeEventListener('scroll', onResizeOrScroll)
+    }
+  }, [windowStateById])
+
+  useEffect(() => {
+    if (!showPhotosWindow) handleWindowMetrics('photos', null)
+  }, [showPhotosWindow])
+
+  useEffect(() => {
+    if (!showDesignWindow) handleWindowMetrics('design', null)
+  }, [showDesignWindow])
+
+  useEffect(() => {
+    if (!showTechnicalsWindow) handleWindowMetrics('technicals', null)
+  }, [showTechnicalsWindow])
+
+  useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H3',location:'FoldersSection.jsx:FoldersSection useEffect(maximizedByWindowId)',message:'maximizedByWindowId changed',data:{maximizedByWindowId,anyProjectWindowMaximized},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+  }, [anyProjectWindowMaximized, maximizedByWindowId])
+
+  useEffect(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'H4',location:'FoldersSection.jsx:FoldersSection useEffect(padding)',message:'projects padding state',data:{anyFolderWindowOpen,anyProjectWindowMaximized,maximizedByWindowId},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+  }, [anyFolderWindowOpen, anyProjectWindowMaximized, maximizedByWindowId])
 
   const photosContentFiles =
     photosOpenFolder != null && PHOTOS_FOLDER_SLUGS[photosOpenFolder]
@@ -493,9 +732,20 @@ export default function FoldersSection({
         )
       : []
 
+  const designContentFiles =
+    designOpenFolder != null && DESIGN_FOLDER_SLUGS[designOpenFolder]
+      ? (DESIGN_FOLDER_FILES[designOpenFolder] || []).map(
+          (filename) => `/design/${DESIGN_FOLDER_SLUGS[designOpenFolder]}/${filename}`
+        )
+      : []
+
   useEffect(() => {
     if (!showPhotosWindow) setPhotosOpenFolder(null)
   }, [showPhotosWindow])
+
+  useEffect(() => {
+    if (!showDesignWindow) setDesignOpenFolder(null)
+  }, [showDesignWindow])
 
   return (
     <section id="work" className="relative z-20">
@@ -519,12 +769,21 @@ export default function FoldersSection({
 
       {/* Grid section content below the sticky tab (purple grid) - min-height transitions so About Me slides */}
       <div
-        className={`relative z-10 section-bg pt-16 pb-16 transition-[min-height] duration-500 ease-in-out ${
-          anyFolderWindowOpen ? 'min-h-screen pb-20' : 'min-h-0'
+        ref={projectsWrapRef}
+        className={`relative z-10 section-bg pt-16 pb-16 transition-[min-height,padding-bottom] duration-500 ease-in-out ${
+          anyFolderWindowOpen
+            ? anyProjectWindowMaximized
+              ? 'min-h-screen pb-44'
+              : 'min-h-screen pb-20'
+            : 'min-h-0'
         }`}
+        style={{ paddingBottom: `${64 + projectsExtraPbPx}px` }}
       >
         <div className="max-w-4xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16">
+          <div
+            ref={foldersRowRef}
+            className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16"
+          >
             {folders.map((folder) => {
               const onOpen =
                 folder.label === 'PHOTOS'
@@ -571,6 +830,10 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('photos')}
           windowId="photos"
           onBringToFront={onBringWindowToFront}
+          onMaximizeChange={(id, isMax) =>
+            setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
+          }
+          onMetricsChange={handleWindowMetrics}
           subfolderName={photosOpenFolder}
           contentFiles={photosContentFiles}
           onOpenSubfolder={setPhotosOpenFolder}
@@ -590,6 +853,14 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('design')}
           windowId="design"
           onBringToFront={onBringWindowToFront}
+          onMaximizeChange={(id, isMax) =>
+            setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
+          }
+          onMetricsChange={handleWindowMetrics}
+          subfolderName={designOpenFolder}
+          contentFiles={designContentFiles}
+          onOpenSubfolder={setDesignOpenFolder}
+          onBack={() => setDesignOpenFolder(null)}
         />
         <FolderWindow
           show={showTechnicalsWindow}
@@ -605,8 +876,13 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('technicals')}
           windowId="technicals"
           onBringToFront={onBringWindowToFront}
+          onMaximizeChange={(id, isMax) =>
+            setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
+          }
+          onMetricsChange={handleWindowMetrics}
         />
         </div>
+        <div ref={projectsBottomSentinelRef} style={{ height: 1 }} />
       </div>
     </section>
   )
