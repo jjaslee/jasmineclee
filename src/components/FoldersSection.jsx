@@ -639,6 +639,7 @@ function FolderWindow({
   cascadeSlot = 0,
   windowId,
   onBringToFront,
+  isFrontWindow = false,
   subfolderName = null,
   contentFiles = [],
   onOpenSubfolder,
@@ -936,18 +937,24 @@ function FolderWindow({
   const offsetY = baseOffset + randomOffset.y
 
   const handleWrapperClick = (e) => {
-    if (!e.target.closest('button')) onBringToFront?.(windowId)
+    const target = e.target
+    const closestButtonLabel =
+      target instanceof HTMLElement ? target.closest('button')?.getAttribute('aria-label') || null : null
+    if (!closestButtonLabel) onBringToFront?.(windowId)
+  }
+
+  const handleInactiveWindowClick = () => {
+    onBringToFront?.(windowId)
   }
 
   return (
     <div
       role="presentation"
-      className="absolute top-0 left-0 right-0 transition-all duration-300 ease-out cursor-default"
+      className="pointer-events-none absolute top-0 left-0 right-0 transition-all duration-300 ease-out cursor-default"
       style={{
         zIndex: 30 + layer,
         transform: `translate(${offsetX}px, ${offsetY}px)`,
       }}
-      onClick={handleWrapperClick}
     >
         <div
           className={`mx-auto mt-16 transition-all duration-300 ease-out ${
@@ -956,7 +963,7 @@ function FolderWindow({
         >
           <div
             ref={windowRef}
-            className="relative shadow-2xl bg"
+            className="relative pointer-events-auto shadow-2xl bg"
             style={{
               transformOrigin: minimizeOrigin
                 ? `${minimizeOrigin.x}px ${minimizeOrigin.y}px`
@@ -967,8 +974,21 @@ function FolderWindow({
                 opacity: 0,
               }),
             }}
+            onClick={handleWrapperClick}
             onTransitionEnd={handleMinimizeTransitionEnd}
           >
+            {!isFrontWindow ? (
+              <button
+                type="button"
+                className="absolute inset-0 z-[70] cursor-default bg-transparent"
+                aria-label={`Bring ${title} window to front`}
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleInactiveWindowClick()
+                }}
+              />
+            ) : null}
             <div
               className={`paper-bg font-poppins border-[4px] rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
                 isMaximized ? 'min-h-[380px]' : ''
@@ -1628,7 +1648,7 @@ export default function FoldersSection({
         style={{ paddingBottom: `${64 + projectsExtraPbPx}px` }}
       >
         <div className="max-w-4xl mx-auto px-6 -mt-8 mb-6">
-          <p className="-ml-12 text-[11px] tracking-wide uppercase text-white/55">
+          <p className="text-center text-[11px] tracking-wide uppercase text-white/35">
             Hint: press Shift
           </p>
         </div>
@@ -1687,6 +1707,7 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('photos')}
           windowId="photos"
           onBringToFront={onBringWindowToFront}
+          isFrontWindow={openWindowStack.indexOf('photos') === openWindowStack.length - 1}
           onMaximizeChange={(id, isMax) =>
             setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
           }
@@ -1710,6 +1731,7 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('design')}
           windowId="design"
           onBringToFront={onBringWindowToFront}
+          isFrontWindow={openWindowStack.indexOf('design') === openWindowStack.length - 1}
           onMaximizeChange={(id, isMax) =>
             setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
           }
@@ -1733,6 +1755,7 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('technicals')}
           windowId="technicals"
           onBringToFront={onBringWindowToFront}
+          isFrontWindow={openWindowStack.indexOf('technicals') === openWindowStack.length - 1}
           onMaximizeChange={(id, isMax) =>
             setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
           }
@@ -1752,6 +1775,7 @@ export default function FoldersSection({
           cascadeSlot={cascadeOrder.indexOf('past-notes')}
           windowId="past-notes"
           onBringToFront={onBringWindowToFront}
+          isFrontWindow={openWindowStack.indexOf('past-notes') === openWindowStack.length - 1}
           onMaximizeChange={(id, isMax) =>
             setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
           }

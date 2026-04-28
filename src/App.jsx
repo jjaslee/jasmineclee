@@ -24,7 +24,10 @@ function App() {
   }, [theme])
 
   const bringToFront = (id) => {
-    setOpenWindowStack((prev) => [...prev.filter((w) => w !== id), id])
+    setOpenWindowStack((prev) => {
+      const next = [...prev.filter((w) => w !== id), id]
+      return next
+    })
   }
   const ensureInCascade = (id) => {
     setCascadeOrder((prev) => (prev.includes(id) ? prev : [...prev, id]))
