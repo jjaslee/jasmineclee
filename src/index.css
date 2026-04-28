@@ -201,6 +201,17 @@ html[data-theme="light"] .contact-modal-overlay {
   border-color: rgba(246, 47, 96, 0.45);
 }
 
+.toast-projects-hint {
+  bottom: 30px;
+  background: rgba(106, 34, 255, 0.88);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-family: 'Bangers', system-ui, sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .contact-modal-overlay,
   .toast {

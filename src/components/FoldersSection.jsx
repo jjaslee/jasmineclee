@@ -6,6 +6,12 @@ const folders = [
   { label: 'TECHNICALS', bodyColor: '#C0F000', tabColor: '#8EAC12' },
 ]
 
+const PAST_NOTES_FOLDER = {
+  label: 'PAST NOTES',
+  bodyColor: '#FF8A00',
+  tabColor: '#E66500',
+}
+
 const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Warmth', 'Peace']
 
 // Display name → path slug in public/photos; each slug folder holds image filenames
@@ -1462,15 +1468,20 @@ export default function FoldersSection({
   const photosFolderRef = useRef(null)
   const designFolderRef = useRef(null)
   const technicalsFolderRef = useRef(null)
+  const pastNotesFolderRef = useRef(null)
   const foldersRowRef = useRef(null)
   const projectsBottomSentinelRef = useRef(null)
   const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
   const [designOpenFolder, setDesignOpenFolder] = useState(null)
+  const [showPastNotesFolder, setShowPastNotesFolder] = useState(false)
+  const [showPastNotesWindow, setShowPastNotesWindow] = useState(false)
   const [maximizedByWindowId, setMaximizedByWindowId] = useState({})
   const anyProjectWindowMaximized = Object.values(maximizedByWindowId).some(Boolean)
   const [windowStateById, setWindowStateById] = useState({})
   const projectsWrapRef = useRef(null)
   const [projectsExtraPbPx, setProjectsExtraPbPx] = useState(0)
+  const visibleFolders = showPastNotesFolder ? [...folders, PAST_NOTES_FOLDER] : folders
+  const anyVisibleFolderWindowOpen = anyFolderWindowOpen || showPastNotesWindow
 
   const updateProjectsExtraPadding = (nextWindowStateById) => {
     const sentinel = projectsBottomSentinelRef.current
@@ -1508,13 +1519,13 @@ export default function FoldersSection({
   }
 
   useEffect(() => {
-    if (!anyFolderWindowOpen) {
+    if (!anyVisibleFolderWindowOpen) {
       setWindowStateById({})
       setProjectsExtraPbPx(0)
       return
     }
     updateProjectsExtraPadding(windowStateById)
-  }, [anyFolderWindowOpen])
+  }, [anyVisibleFolderWindowOpen])
 
   useEffect(() => {
     const onResizeOrScroll = () => updateProjectsExtraPadding(windowStateById)
@@ -1537,6 +1548,10 @@ export default function FoldersSection({
   useEffect(() => {
     if (!showTechnicalsWindow) handleWindowMetrics('technicals', null)
   }, [showTechnicalsWindow])
+
+  useEffect(() => {
+    if (!showPastNotesWindow) handleWindowMetrics('past-notes', null)
+  }, [showPastNotesWindow])
 
   // (debug logging removed)
 
@@ -1566,6 +1581,20 @@ export default function FoldersSection({
     if (!showDesignWindow) setDesignOpenFolder(null)
   }, [showDesignWindow])
 
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key !== 'Shift' || e.repeat) return
+      setShowPastNotesFolder((prev) => {
+        const next = !prev
+        if (!next) setShowPastNotesWindow(false)
+        return next
+      })
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   return (
     <section id="work" className="relative z-20">
       {/* Sticky tab bar for PROJECTS - higher z so windows slide below it */}
@@ -1590,7 +1619,7 @@ export default function FoldersSection({
       <div
         ref={projectsWrapRef}
         className={`relative z-10 section-bg pt-16 pb-16 transition-[min-height,padding-bottom] duration-500 ease-in-out ${
-          anyFolderWindowOpen
+          anyVisibleFolderWindowOpen
             ? anyProjectWindowMaximized
               ? 'min-h-screen pb-44'
               : 'min-h-screen pb-20'
@@ -1598,24 +1627,33 @@ export default function FoldersSection({
         }`}
         style={{ paddingBottom: `${64 + projectsExtraPbPx}px` }}
       >
+        <div className="max-w-4xl mx-auto px-6 -mt-8 mb-6">
+          <p className="-ml-12 text-[11px] tracking-wide uppercase text-white/55">
+            Hint: press Shift
+          </p>
+        </div>
         <div className="max-w-4xl mx-auto px-6">
           <div
             ref={foldersRowRef}
             className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16"
           >
-            {folders.map((folder) => {
+            {visibleFolders.map((folder) => {
               const onOpen =
                 folder.label === 'PHOTOS'
                   ? onOpenPhotosWindow
                   : folder.label === 'DESIGN'
                     ? onOpenDesignWindow
-                    : onOpenTechnicalsWindow
+                    : folder.label === 'TECHNICALS'
+                      ? onOpenTechnicalsWindow
+                      : () => setShowPastNotesWindow(true)
               const ref =
                 folder.label === 'PHOTOS'
                   ? photosFolderRef
                   : folder.label === 'DESIGN'
                     ? designFolderRef
-                    : technicalsFolderRef
+                    : folder.label === 'TECHNICALS'
+                      ? technicalsFolderRef
+                      : pastNotesFolderRef
               return (
                 <button
                   key={folder.label}
@@ -1634,7 +1672,7 @@ export default function FoldersSection({
           </div>
         </div>
 
-        <div className={`relative transition-[min-height] duration-500 ease-in-out ${anyFolderWindowOpen ? 'min-h-[min(75vh,640px)]' : 'min-h-0'}`}>
+        <div className={`relative transition-[min-height] duration-500 ease-in-out ${anyVisibleFolderWindowOpen ? 'min-h-[min(75vh,640px)]' : 'min-h-0'}`}>
         <FolderWindow
           show={showPhotosWindow}
           onClose={onClosePhotosWindow}
@@ -1694,6 +1732,25 @@ export default function FoldersSection({
           stackIndex={openWindowStack.indexOf('technicals')}
           cascadeSlot={cascadeOrder.indexOf('technicals')}
           windowId="technicals"
+          onBringToFront={onBringWindowToFront}
+          onMaximizeChange={(id, isMax) =>
+            setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
+          }
+          onMetricsChange={handleWindowMetrics}
+        />
+        <FolderWindow
+          show={showPastNotesWindow}
+          onClose={() => setShowPastNotesWindow(false)}
+          folderRef={pastNotesFolderRef}
+          title="Past Notes"
+          iconType="pen"
+          borderColor="#FF8A00"
+          bodyColor="#FF8A00"
+          tabColor="#E66500"
+          innerFolderNames={[]}
+          stackIndex={openWindowStack.indexOf('past-notes')}
+          cascadeSlot={cascadeOrder.indexOf('past-notes')}
+          windowId="past-notes"
           onBringToFront={onBringWindowToFront}
           onMaximizeChange={(id, isMax) =>
             setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
