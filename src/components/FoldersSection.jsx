@@ -40,6 +40,7 @@ const DESIGN_FOLDER_SLUGS = {
   'Digital Drawing': 'digital-drawing',
   Astron: 'astron',
   AquaSync: 'aquasync',
+  'Lazy Day Lines': 'lazy-day-lines',
 }
 
 const DESIGN_FOLDER_FILES = {
@@ -62,6 +63,7 @@ const DESIGN_FOLDER_FILES = {
     'aquasync-07.jpg',
     'aquasync-08.jpg',
   ],
+  'Lazy Day Lines': ['lazy-day-lines-color-palette.png', 'lazy-day-lines-logo-exploration.png'],
 }
 
 const AQUASYNC_ITEMS = [
@@ -151,6 +153,40 @@ Reinforce habits through real-time feedback
 Outcome
 Transforms any cup into a connected system, making hydration visible, trackable, and consistent.
 `,
+  'Lazy Day Lines': `A brand concept exploring color, line, and form through cozy, slow-paced visuals that reframe rest and productivity as part of the same rhythm.
+
+DESIGN FOUNDATION
+
+Insight
+Young adults associate rest and productivity with conflicting aesthetics, often lacking visual language that normalizes slow, cozy routines.
+
+Principles
+
+Embrace softness without losing structure
+Use muted, warm tones to evoke calm and familiarity
+Keep forms simple, fluid, and approachable
+Balance stillness with subtle visual movement
+
+Creative Direction
+A visual identity built on layered shapes, hand-drawn lines, and a warm, desaturated palette to capture a “cozy productivity” aesthetic.
+
+PRODUCT OVERVIEW
+
+Overview
+A brand concept exploring how color, form, and line can shape a calm, cozy visual language around rest, study, and self-care.
+
+Problem
+Existing productivity visuals feel rigid or high-energy, while rest-focused visuals lack structure—leaving a gap in representing balanced, everyday routines.
+
+Approach
+
+Experiment with color palettes that evoke warmth and calm
+Iterate on logo forms using loose, hand-drawn linework
+Layer soft geometric shapes to create depth and rhythm
+Explore compositions that reflect relaxed, everyday moments
+
+Outcome
+A cohesive visual system that communicates comfort, softness, and quiet productivity, resonating with a younger audience seeking balance in their routines.`,
 }
 const TECHNICALS_INNER_FOLDERS = [
   'Find the Flower',
@@ -268,6 +304,11 @@ function FolderCaption({ caption, fixedHeight = false }) {
       if (bulletedSections.has(trimmed)) {
         const items = []
         let j = i + 1
+        // Allow an empty line after the section header (common in copy).
+        for (; j < lines.length; j++) {
+          const peek = String(lines[j] ?? '').replace(/\r/g, '').trim()
+          if (peek) break
+        }
         for (; j < lines.length; j++) {
           const next = String(lines[j] ?? '').replace(/\r/g, '').trim()
           if (!next) break
@@ -457,6 +498,36 @@ const AQUASYNC_GRID_HOVER = [
   { title: 'Desktop UI', desc: 'Long-term habit insights' },
 ]
 
+const LAZY_DAY_LINES_GRID_HOVER = [
+  { title: 'Color Palette', desc: 'Warm, muted tones for a calm, cozy feel' },
+  { title: 'Logo Exploration', desc: 'Soft, minimal mark variations' },
+  { title: 'Illustration Style', desc: 'Soft compositions exploring cozy, everyday scenes' },
+  { title: 'Applications', desc: 'Playful applications across stickers and everyday items' },
+]
+
+const LAZY_DAY_LINES_ITEMS = [
+  { type: 'image', src: '/design/lazy-day-lines/lazy-day-lines-color-palette.png' },
+  { type: 'image', src: '/design/lazy-day-lines/lazy-day-lines-logo-exploration.png' },
+  {
+    type: 'doc',
+    coverSrc: '/design/lazy-day-lines/lazy-day-lines-illustration-style-01.png',
+    pages: [
+      '/design/lazy-day-lines/lazy-day-lines-illustration-style-01.png',
+      '/design/lazy-day-lines/lazy-day-lines-illustration-style-02.png',
+      '/design/lazy-day-lines/lazy-day-lines-illustration-style-03.png',
+    ],
+  },
+  {
+    type: 'doc',
+    coverSrc: '/design/lazy-day-lines/lazy-day-lines-applications-01.jpg',
+    pages: [
+      '/design/lazy-day-lines/lazy-day-lines-applications-01.jpg',
+      '/design/lazy-day-lines/lazy-day-lines-applications-02.jpg',
+      '/design/lazy-day-lines/lazy-day-lines-applications-03.jpg',
+    ],
+  },
+]
+
 function FolderWindow({
   show,
   onClose,
@@ -505,6 +576,23 @@ function FolderWindow({
   const aquaSelectedIsPhoneScroll = isAquaSync && aquaSelectedItem?.type === 'phoneScrollImage'
   const aquaSelectedPhoneFrameSrc = aquaSelectedIsPhoneScroll ? aquaSelectedItem.frameSrc : null
   const aquaSelectedPhoneScreenSrc = aquaSelectedIsPhoneScroll ? aquaSelectedItem.screenSrc : null
+
+  const selectedNonAquaItem =
+    !isAquaSync && typeof lightboxIndex === 'number' ? contentFiles?.[lightboxIndex] : null
+  const selectedNonAquaIsObj = Boolean(selectedNonAquaItem && typeof selectedNonAquaItem === 'object')
+  const selectedNonAquaType = selectedNonAquaIsObj ? selectedNonAquaItem.type : 'image'
+  const selectedNonAquaDocPages =
+    selectedNonAquaIsObj && selectedNonAquaType === 'doc' ? selectedNonAquaItem.pages || [] : []
+  const selectedNonAquaImageSrc =
+    selectedNonAquaIsObj && selectedNonAquaType === 'image'
+      ? selectedNonAquaItem.src
+      : typeof selectedNonAquaItem === 'string'
+        ? selectedNonAquaItem
+        : null
+  const selectedNonAquaDocMaxWidthClass =
+    title === 'Design' && subfolderName === 'Lazy Day Lines'
+      ? 'max-w-[min(620px,100%)]'
+      : 'max-w-[min(780px,100%)]'
 
   const lightboxOpen = isAquaSync
     ? lightboxIndex != null && (aquaItems?.length || 0) > 0
@@ -657,6 +745,17 @@ function FolderWindow({
       el.scrollTop = 0
     })
   }, [lightboxOpen, isAquaSync, aquaSelectedIsDoc, lightboxIndex])
+
+  useEffect(() => {
+    if (!lightboxOpen) return
+    if (isAquaSync) return
+    if (selectedNonAquaType !== 'doc') return
+    const el = aquaScrollRef.current
+    if (!el) return
+    requestAnimationFrame(() => {
+      el.scrollTop = 0
+    })
+  }, [lightboxOpen, isAquaSync, selectedNonAquaType, lightboxIndex])
 
   useLayoutEffect(() => {
     if (!lightboxOpen) return
@@ -908,26 +1007,61 @@ function FolderWindow({
                       <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
                     )
                   ) : contentFiles.length > 0 ? (
-                    contentFiles.map((src, i) => (
-                      <button
-                        key={src}
-                        type="button"
-                        className="group w-full rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] cursor-pointer"
-                        onClick={() => setLightboxIndex(i)}
-                        aria-label={`Open image ${i + 1} of ${contentFiles.length}`}
-                        onContextMenu={(e) => e.preventDefault()}
-                        style={thumbTilePx ? { height: `${thumbTilePx}px` } : undefined}
-                      >
-                        <img
-                          src={src}
-                          alt=""
-                          className="w-full h-full object-cover select-none transition-transform duration-200 ease-out group-hover:scale-[1.08]"
+                    contentFiles.map((item, i) => {
+                      const isObj = Boolean(item && typeof item === 'object')
+                      const coverSrc = !isObj
+                        ? item
+                        : item.type === 'image'
+                          ? item.src
+                          : item.type === 'doc'
+                            ? item.coverSrc || item.pages?.[0]
+                            : null
+                      if (!coverSrc) return null
+
+                      const showHover =
+                        title === 'Design' &&
+                        subfolderName === 'Lazy Day Lines' &&
+                        i < LAZY_DAY_LINES_GRID_HOVER.length
+                      const hoverCopy = showHover ? LAZY_DAY_LINES_GRID_HOVER[i] : null
+
+                      return (
+                        <button
+                          key={`${coverSrc}-${i}`}
+                          type="button"
+                          className={`group relative w-full rounded-lg overflow-hidden bg-black/5 border border-black/10 hover:brightness-[0.96] cursor-pointer ${
+                            showHover ? 'group-hover:border-transparent' : ''
+                          }`}
+                          onClick={() => setLightboxIndex(i)}
+                          aria-label={`Open image ${i + 1} of ${contentFiles.length}`}
                           onContextMenu={(e) => e.preventDefault()}
-                          onDragStart={(e) => e.preventDefault()}
-                          draggable={false}
-                        />
-                      </button>
-                    ))
+                          style={thumbTilePx ? { height: `${thumbTilePx}px` } : undefined}
+                        >
+                          <img
+                            src={coverSrc}
+                            alt=""
+                            className={`w-full h-full object-cover select-none transition-transform duration-200 ease-out ${
+                              showHover
+                                ? 'group-hover:scale-[1.06] group-hover:blur-[2px] group-hover:brightness-[0.92]'
+                                : 'group-hover:scale-[1.08]'
+                            }`}
+                            onContextMenu={(e) => e.preventDefault()}
+                            onDragStart={(e) => e.preventDefault()}
+                            draggable={false}
+                          />
+                          {hoverCopy ? (
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100">
+                              <div className="absolute -inset-px overflow-hidden rounded-[9px] bg-white/55 backdrop-blur-[6px]" />
+                              <div className="relative px-3 text-center">
+                                <div className="text-black/90 font-semibold text-sm">
+                                  {hoverCopy.title}
+                                </div>
+                                <div className="text-black/70 text-xs mt-1">{hoverCopy.desc}</div>
+                              </div>
+                            </div>
+                          ) : null}
+                        </button>
+                      )
+                    })
                   ) : (
                     <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
                   )}
@@ -1090,19 +1224,44 @@ function FolderWindow({
                     </div>
                   ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
-                      <img
-                        src={contentFiles[lightboxIndex]}
-                        alt=""
-                        className="block object-contain rounded-md cursor-default"
-                        style={{
-                          maxHeight: '100%',
-                          maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
-                        }}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onDragStart={(e) => e.preventDefault()}
-                        draggable={false}
-                      />
+                      {selectedNonAquaType === 'doc' ? (
+                        <div
+                          ref={aquaScrollRef}
+                          className={`relative h-full w-full ${selectedNonAquaDocMaxWidthClass} overflow-auto rounded-md cursor-default`}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onContextMenu={(e) => e.preventDefault()}
+                          onDragStart={(e) => e.preventDefault()}
+                        >
+                          <div className="mx-auto w-full py-4 sm:py-6 px-3 sm:px-6 flex flex-col gap-4">
+                            {selectedNonAquaDocPages.map((src) => (
+                              <div key={src} className="w-full">
+                                <img
+                                  src={src}
+                                  alt=""
+                                  className="block w-full h-auto rounded-md bg-white/5"
+                                  onContextMenu={(e) => e.preventDefault()}
+                                  onDragStart={(e) => e.preventDefault()}
+                                  draggable={false}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <img
+                          src={selectedNonAquaImageSrc}
+                          alt=""
+                          className="block object-contain rounded-md cursor-default"
+                          style={{
+                            maxHeight: '100%',
+                            maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
+                          }}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onContextMenu={(e) => e.preventDefault()}
+                          onDragStart={(e) => e.preventDefault()}
+                          draggable={false}
+                        />
+                      )}
 
                       {contentFiles.length > 1 ? (
                         <button
@@ -1265,11 +1424,13 @@ export default function FoldersSection({
       : []
 
   const designContentFiles =
-    designOpenFolder != null && DESIGN_FOLDER_SLUGS[designOpenFolder]
-      ? (DESIGN_FOLDER_FILES[designOpenFolder] || []).map(
-          (filename) => `/design/${DESIGN_FOLDER_SLUGS[designOpenFolder]}/${filename}`
-        )
-      : []
+    designOpenFolder === 'Lazy Day Lines'
+      ? LAZY_DAY_LINES_ITEMS
+      : designOpenFolder != null && DESIGN_FOLDER_SLUGS[designOpenFolder]
+        ? (DESIGN_FOLDER_FILES[designOpenFolder] || []).map(
+            (filename) => `/design/${DESIGN_FOLDER_SLUGS[designOpenFolder]}/${filename}`
+          )
+        : []
 
   useEffect(() => {
     if (!showPhotosWindow) setPhotosOpenFolder(null)
