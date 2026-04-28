@@ -29,17 +29,15 @@ const DESIGN_INNER_FOLDERS = [
   'Astron',
   'AquaSync',
   'Cal Hacks',
-  'Visual Communication',
   'CSSA',
-  'Web',
   'Lazy Day Lines',
-  'MISC Mediums',
 ]
 
 const DESIGN_FOLDER_SLUGS = {
   'Digital Drawing': 'digital-drawing',
   Astron: 'astron',
   AquaSync: 'aquasync',
+  'Cal Hacks': 'cal-hacks',
   'Lazy Day Lines': 'lazy-day-lines',
 }
 
@@ -63,6 +61,7 @@ const DESIGN_FOLDER_FILES = {
     'aquasync-07.jpg',
     'aquasync-08.jpg',
   ],
+  'Cal Hacks': [],
   'Lazy Day Lines': ['lazy-day-lines-color-palette.png', 'lazy-day-lines-logo-exploration.png'],
 }
 
@@ -187,6 +186,33 @@ Explore compositions that reflect relaxed, everyday moments
 
 Outcome
 A cohesive visual system that communicates comfort, softness, and quiet productivity, resonating with a younger audience seeking balance in their routines.`,
+  'Cal Hacks': `Led the visual direction and design execution for Cal Hacks, shaping themes, branding systems, and deliverables across recruitment, events, and hackathons.
+
+DESIGN FOUNDATION
+
+Insight
+Students are drawn to hackathons through strong visual identity and clear messaging, but engagement drops when branding feels inconsistent or disconnected across platforms.
+
+Principles
+
+Create a cohesive identity across all touchpoints
+Design for clarity and fast communication
+Balance innovation with accessibility
+Maintain consistency across a large team
+
+Creative Direction
+Developed adaptable visual themes that translate across digital and physical formats, guiding a team of designers to produce cohesive assets for recruitment campaigns, event materials, and hackathon experiences.
+
+APPROACH
+Defined seasonal themes and visual systems for each event cycle
+Directed and collaborated with a team of designers on asset creation
+Designed materials for recruitment, social media, and event branding
+Ensured consistency across platforms, timelines, and teams
+
+OUTCOME
+Delivered a cohesive visual identity across large-scale events, supporting engagement for thousands of participants and enabling clear, consistent communication throughout the hackathon experience.
+
+https://ai.hackberkeley.org/`,
 }
 const TECHNICALS_INNER_FOLDERS = [
   'Find the Flower',
@@ -246,10 +272,11 @@ function FolderCaption({ caption, fixedHeight = false }) {
 
   const lines = String(caption || '').split('\n')
   const subtitleRe = /^[A-Z][A-Za-z]*(?:\s[A-Z][A-Za-z]*)*$/
-  const bulletedSections = new Set(['Principles', 'Approach'])
+  const bulletedSections = new Set(['Principles', 'Approach', 'APPROACH'])
   const SUBTITLE_INDENT_CLASS = 'pl-4'
   const heroBoldLine =
     'AquaSync is a universal hydration tracking system that turns any cup into a connected experience. By combining passive sensing with a companion interface, it makes water intake visible, effortless, and consistent over time.'
+  const isUrlLine = (t) => /^https?:\/\/\S+$/i.test(t.trim())
 
   const isAllCapsLine = (t) => {
     const s = t.trim()
@@ -297,7 +324,18 @@ function FolderCaption({ caption, fixedHeight = false }) {
 
       out.push(
         <div key={`ln-${i}`} className={lineClass || undefined}>
-          {trimmed}
+          {isUrlLine(trimmed) ? (
+            <a
+              href={trimmed}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 hover:opacity-80"
+            >
+              {trimmed}
+            </a>
+          ) : (
+            trimmed
+          )}
         </div>,
       )
 
@@ -505,6 +543,19 @@ const LAZY_DAY_LINES_GRID_HOVER = [
   { title: 'Applications', desc: 'Playful applications across stickers and everyday items' },
 ]
 
+const CAL_HACKS_GRID_HOVER = [
+  { title: "Spring '26 Recruitment Campaign", desc: 'Multi-platform visuals for fast, clear engagement.' },
+  {
+    title: 'Cal Hacks 12.0 Event Branding',
+    desc: 'Large-scale physical assets for clarity, navigation, and consistency',
+  },
+  {
+    title: 'Mid-Cycle Activation',
+    desc: 'Extends the recruitment system to sustain engagement leading up to the event',
+  },
+  { title: 'AI Hackathon', desc: 'Led cohesive visual direction across the event' },
+]
+
 const LAZY_DAY_LINES_ITEMS = [
   { type: 'image', src: '/design/lazy-day-lines/lazy-day-lines-color-palette.png' },
   { type: 'image', src: '/design/lazy-day-lines/lazy-day-lines-logo-exploration.png' },
@@ -525,6 +576,46 @@ const LAZY_DAY_LINES_ITEMS = [
       '/design/lazy-day-lines/lazy-day-lines-applications-02.jpg',
       '/design/lazy-day-lines/lazy-day-lines-applications-03.jpg',
     ],
+  },
+]
+
+const CAL_HACKS_ITEMS = [
+  {
+    type: 'doc',
+    coverSrc: '/design/cal-hacks/cal-hacks-spr26-recruitment-01.png',
+    pages: [
+      '/design/cal-hacks/cal-hacks-spr26-recruitment-01.png',
+      '/design/cal-hacks/cal-hacks-spr26-recruitment-02.png',
+      '/design/cal-hacks/cal-hacks-spr26-recruitment-03.png',
+      '/design/cal-hacks/cal-hacks-spr26-recruitment-04.png',
+      '/design/cal-hacks/cal-hacks-spr26-recruitment-05.png',
+    ],
+  },
+  {
+    type: 'doc',
+    coverSrc: '/design/cal-hacks/cal-hacks-12-event-branding-01.jpg',
+    pages: [
+      '/design/cal-hacks/cal-hacks-12-event-branding-01.jpg',
+      '/design/cal-hacks/cal-hacks-12-event-branding-02.jpg',
+      '/design/cal-hacks/cal-hacks-12-event-branding-03.jpg',
+      '/design/cal-hacks/cal-hacks-12-event-branding-04.png',
+      '/design/cal-hacks/cal-hacks-12-event-branding-05.png',
+    ],
+  },
+  {
+    type: 'doc',
+    coverSrc: '/design/cal-hacks/cal-hacks-mid-cycle-activation-01.png',
+    pages: [
+      '/design/cal-hacks/cal-hacks-mid-cycle-activation-01.png',
+      '/design/cal-hacks/cal-hacks-mid-cycle-activation-02.png',
+      '/design/cal-hacks/cal-hacks-mid-cycle-activation-03.png',
+      '/design/cal-hacks/cal-hacks-mid-cycle-activation-04.jpg',
+    ],
+  },
+  {
+    type: 'scrollImage',
+    coverSrc: '/design/cal-hacks/cal-hacks-ai-hackathon-scroll.png',
+    src: '/design/cal-hacks/cal-hacks-ai-hackathon-scroll.png',
   },
 ]
 
@@ -589,9 +680,13 @@ function FolderWindow({
       : typeof selectedNonAquaItem === 'string'
         ? selectedNonAquaItem
         : null
+  const selectedNonAquaScrollImageSrc =
+    selectedNonAquaIsObj && selectedNonAquaType === 'scrollImage' ? selectedNonAquaItem.src : null
   const selectedNonAquaDocMaxWidthClass =
     title === 'Design' && subfolderName === 'Lazy Day Lines'
       ? 'max-w-[min(620px,100%)]'
+      : title === 'Design' && subfolderName === 'Cal Hacks'
+        ? 'max-w-[min(560px,100%)]'
       : 'max-w-[min(780px,100%)]'
 
   const lightboxOpen = isAquaSync
@@ -1015,14 +1110,21 @@ function FolderWindow({
                           ? item.src
                           : item.type === 'doc'
                             ? item.coverSrc || item.pages?.[0]
+                            : item.type === 'scrollImage'
+                              ? item.coverSrc || item.src
                             : null
                       if (!coverSrc) return null
 
                       const showHover =
                         title === 'Design' &&
-                        subfolderName === 'Lazy Day Lines' &&
-                        i < LAZY_DAY_LINES_GRID_HOVER.length
-                      const hoverCopy = showHover ? LAZY_DAY_LINES_GRID_HOVER[i] : null
+                        ((subfolderName === 'Lazy Day Lines' && i < LAZY_DAY_LINES_GRID_HOVER.length) ||
+                          (subfolderName === 'Cal Hacks' && i < CAL_HACKS_GRID_HOVER.length))
+                      const hoverCopy =
+                        title === 'Design' && subfolderName === 'Lazy Day Lines'
+                          ? LAZY_DAY_LINES_GRID_HOVER[i] || null
+                          : title === 'Design' && subfolderName === 'Cal Hacks'
+                            ? CAL_HACKS_GRID_HOVER[i] || null
+                            : null
 
                       return (
                         <button
@@ -1247,6 +1349,28 @@ function FolderWindow({
                             ))}
                           </div>
                         </div>
+                      ) : selectedNonAquaType === 'scrollImage' ? (
+                        <div
+                          className="h-full w-full flex items-center justify-center"
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onContextMenu={(e) => e.preventDefault()}
+                          onDragStart={(e) => e.preventDefault()}
+                        >
+                          <div className="w-full max-w-[min(520px,100%)] h-full max-h-full border-[10px] border-black rounded-[28px] bg-white overflow-hidden shadow-xl">
+                            <div className="h-full w-full overflow-y-auto overflow-x-hidden">
+                              {selectedNonAquaScrollImageSrc ? (
+                                <img
+                                  src={selectedNonAquaScrollImageSrc}
+                                  alt=""
+                                  className="block w-full h-auto select-none"
+                                  draggable={false}
+                                  onDragStart={(e) => e.preventDefault()}
+                                  onContextMenu={(e) => e.preventDefault()}
+                                />
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
                       ) : (
                         <img
                           src={selectedNonAquaImageSrc}
@@ -1426,11 +1550,13 @@ export default function FoldersSection({
   const designContentFiles =
     designOpenFolder === 'Lazy Day Lines'
       ? LAZY_DAY_LINES_ITEMS
-      : designOpenFolder != null && DESIGN_FOLDER_SLUGS[designOpenFolder]
-        ? (DESIGN_FOLDER_FILES[designOpenFolder] || []).map(
-            (filename) => `/design/${DESIGN_FOLDER_SLUGS[designOpenFolder]}/${filename}`
-          )
-        : []
+      : designOpenFolder === 'Cal Hacks'
+        ? CAL_HACKS_ITEMS
+        : designOpenFolder != null && DESIGN_FOLDER_SLUGS[designOpenFolder]
+          ? (DESIGN_FOLDER_FILES[designOpenFolder] || []).map(
+              (filename) => `/design/${DESIGN_FOLDER_SLUGS[designOpenFolder]}/${filename}`
+            )
+          : []
 
   useEffect(() => {
     if (!showPhotosWindow) setPhotosOpenFolder(null)
