@@ -245,10 +245,10 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
             <button
               type="button"
               aria-label="Previous postcard"
-              className="absolute -left-7 md:-left-10 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-3xl md:text-4xl font-light leading-none transition-opacity hover:opacity-90"
+              className="absolute -left-7 md:-left-10 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
               style={{
                 color: activeDotColor,
-                opacity: 0.35,
+                opacity: 0.6,
                 textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
               }}
               onClick={(e) => {
@@ -261,10 +261,10 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
             <button
               type="button"
               aria-label="Next postcard"
-              className="absolute -right-7 md:-right-10 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-3xl md:text-4xl font-light leading-none transition-opacity hover:opacity-90"
+              className="absolute -right-7 md:-right-10 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
               style={{
                 color: activeDotColor,
-                opacity: 0.35,
+                opacity: 0.6,
                 textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
               }}
               onClick={(e) => {

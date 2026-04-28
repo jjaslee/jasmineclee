@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 
 const folders = [
-  { label: 'PHOTOS', bodyColor: '#C96AED', tabColor: '#A825D9' },
   { label: 'DESIGN', bodyColor: '#50C0FA', tabColor: '#1688C4' },
   { label: 'TECHNICALS', bodyColor: '#C0F000', tabColor: '#8EAC12' },
+  { label: 'PHOTOS', bodyColor: '#C96AED', tabColor: '#A825D9' },
 ]
 
 const PAST_NOTES_FOLDER = {
@@ -31,12 +31,12 @@ const PHOTOS_FOLDER_FILES = {
   Peace: [],
 }
 const DESIGN_INNER_FOLDERS = [
-  'Digital Drawing',
-  'Astron',
-  'AquaSync',
   'Cal Hacks',
-  'CSSA',
+  'AquaSync',
+  'Astron',
   'Lazy Day Lines',
+  'Digital Drawing',
+  'CSSA',
 ]
 
 const DESIGN_FOLDER_SLUGS = {
@@ -225,6 +225,64 @@ const TECHNICALS_INNER_FOLDERS = [
   'Ngordnet',
   'Fabrication and Prototyping',
   'Mechatronic Goniometer',
+  'Kinetic Origamic',
+]
+
+const TECHNICALS_FOLDER_CAPTIONS = {
+  'Kinetic Origamic': `A kinetic installation combining physical design and embedded systems to explore how folded structures transform through controlled motion.
+
+DESIGN FOUNDATION
+
+Insight
+Designing for motion requires both form exploration and precise control-balancing aesthetics with mechanical behavior.
+
+Principles
+
+Design for smooth, continuous motion
+Balance structure with flexibility
+Maintain clarity across movement states
+Integrate form and mechanism as one system
+
+System Design
+A servo-driven mechanism controlled through Arduino sweep motion, enabling the origami structure to transition between states of expansion and contraction.
+
+APPROACH
+Prototyped folding behaviors through iterative paper models
+Defined discrete motion states (resting, intermediate, lifted)
+Implemented servo sweep control using Arduino
+Integrated mechanical and structural components into a cohesive system
+
+OUTCOME
+
+A working kinetic system that demonstrates the integration of physical design and simple embedded control, highlighting both form exploration and technical execution.`,
+}
+
+const KINETIC_ORIGAMIC_ITEMS = [
+  {
+    type: 'image',
+    src: '/technicals/kinetic-origamic/kinetic-origamic-motion-01.gif',
+    title: 'Motion Study',
+    desc: 'Servo-driven movement of transitions between states.',
+  },
+  {
+    type: 'image',
+    src: '/technicals/kinetic-origamic/kinetic-origamic-final-prototype-01.jpg',
+    title: 'Final Prototype',
+    desc: 'Integrated form and mechanism in the completed kinetic system.',
+  },
+  {
+    type: 'doc',
+    coverSrc: '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-01.jpg',
+    title: 'Process & System',
+    desc: 'Prototyping, mechanism design, and motion development.',
+    pages: [
+      '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-01.jpg',
+      '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-02.jpg',
+      '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-03.jpg',
+      '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-04.jpg',
+      '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-05.jpg',
+    ],
+  },
 ]
 
 const MINIMIZE_DURATION_MS = 350
@@ -700,7 +758,11 @@ function FolderWindow({
     ? lightboxIndex != null && (aquaItems?.length || 0) > 0
     : lightboxIndex != null && (contentFiles?.length || 0) > 0
   const folderCaption =
-    title === 'Design' && subfolderName ? DESIGN_FOLDER_CAPTIONS[subfolderName] : null
+    title === 'Design' && subfolderName
+      ? DESIGN_FOLDER_CAPTIONS[subfolderName]
+      : title === 'Technicals' && subfolderName
+        ? TECHNICALS_FOLDER_CAPTIONS[subfolderName]
+        : null
   const folderCaptionLineCount = folderCaption
     ? String(folderCaption)
         .split('\n')
@@ -1141,16 +1203,18 @@ function FolderWindow({
                             : null
                       if (!coverSrc) return null
 
-                      const showHover =
-                        title === 'Design' &&
-                        ((subfolderName === 'Lazy Day Lines' && i < LAZY_DAY_LINES_GRID_HOVER.length) ||
-                          (subfolderName === 'Cal Hacks' && i < CAL_HACKS_GRID_HOVER.length))
-                      const hoverCopy =
-                        title === 'Design' && subfolderName === 'Lazy Day Lines'
+                      const itemHoverCopy =
+                        isObj && (item.title || item.desc)
+                          ? { title: item.title, desc: item.desc }
+                          : null
+                      const hoverCopy = itemHoverCopy
+                        ? itemHoverCopy
+                        : title === 'Design' && subfolderName === 'Lazy Day Lines'
                           ? LAZY_DAY_LINES_GRID_HOVER[i] || null
                           : title === 'Design' && subfolderName === 'Cal Hacks'
                             ? CAL_HACKS_GRID_HOVER[i] || null
                             : null
+                      const showHover = Boolean(hoverCopy)
 
                       return (
                         <button
@@ -1300,7 +1364,7 @@ function FolderWindow({
                             </div>
                           </div>
                         ) : aquaSelectedImageSrc ? (
-                          <div className="relative w-full h-full max-w-[min(780px,100%)] flex items-center justify-center">
+                          <div className="relative w-full h-full max-w-[min(780px,100%)] flex items-center justify-center px-4 py-4 sm:px-8 sm:py-6">
                             <img
                               src={aquaSelectedImageSrc}
                               alt=""
@@ -1398,19 +1462,21 @@ function FolderWindow({
                           </div>
                         </div>
                       ) : (
-                        <img
-                          src={selectedNonAquaImageSrc}
-                          alt=""
-                          className="block object-contain rounded-md cursor-default"
-                          style={{
-                            maxHeight: '100%',
-                            maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
-                          }}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          onContextMenu={(e) => e.preventDefault()}
-                          onDragStart={(e) => e.preventDefault()}
-                          draggable={false}
-                        />
+                        <div className="flex h-full w-full items-center justify-center px-4 py-4 sm:px-8 sm:py-6">
+                          <img
+                            src={selectedNonAquaImageSrc}
+                            alt=""
+                            className="block object-contain rounded-md cursor-default"
+                            style={{
+                              maxHeight: '100%',
+                              maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
+                            }}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onContextMenu={(e) => e.preventDefault()}
+                            onDragStart={(e) => e.preventDefault()}
+                            draggable={false}
+                          />
+                        </div>
                       )}
 
                       {contentFiles.length > 1 ? (
@@ -1493,6 +1559,7 @@ export default function FoldersSection({
   const projectsBottomSentinelRef = useRef(null)
   const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
   const [designOpenFolder, setDesignOpenFolder] = useState(null)
+  const [technicalsOpenFolder, setTechnicalsOpenFolder] = useState(null)
   const [showPastNotesFolder, setShowPastNotesFolder] = useState(false)
   const [showPastNotesWindow, setShowPastNotesWindow] = useState(false)
   const [maximizedByWindowId, setMaximizedByWindowId] = useState({})
@@ -1502,6 +1569,14 @@ export default function FoldersSection({
   const [projectsExtraPbPx, setProjectsExtraPbPx] = useState(0)
   const visibleFolders = showPastNotesFolder ? [...folders, PAST_NOTES_FOLDER] : folders
   const anyVisibleFolderWindowOpen = anyFolderWindowOpen || showPastNotesWindow
+
+  const togglePastNotesFolder = () => {
+    setShowPastNotesFolder((prev) => {
+      const next = !prev
+      if (!next) setShowPastNotesWindow(false)
+      return next
+    })
+  }
 
   const updateProjectsExtraPadding = (nextWindowStateById) => {
     const sentinel = projectsBottomSentinelRef.current
@@ -1593,6 +1668,9 @@ export default function FoldersSection({
             )
           : []
 
+  const technicalsContentFiles =
+    technicalsOpenFolder === 'Kinetic Origamic' ? KINETIC_ORIGAMIC_ITEMS : []
+
   useEffect(() => {
     if (!showPhotosWindow) setPhotosOpenFolder(null)
   }, [showPhotosWindow])
@@ -1602,13 +1680,13 @@ export default function FoldersSection({
   }, [showDesignWindow])
 
   useEffect(() => {
+    if (!showTechnicalsWindow) setTechnicalsOpenFolder(null)
+  }, [showTechnicalsWindow])
+
+  useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key !== 'Shift' || e.repeat) return
-      setShowPastNotesFolder((prev) => {
-        const next = !prev
-        if (!next) setShowPastNotesWindow(false)
-        return next
-      })
+      togglePastNotesFolder()
     }
 
     window.addEventListener('keydown', onKeyDown)
@@ -1648,9 +1726,14 @@ export default function FoldersSection({
         style={{ paddingBottom: `${64 + projectsExtraPbPx}px` }}
       >
         <div className="max-w-4xl mx-auto px-6 -mt-8 mb-6">
-          <p className="text-center text-[11px] tracking-wide uppercase text-white/35">
+          <button
+            type="button"
+            onClick={togglePastNotesFolder}
+            className="block w-full text-center text-[11px] tracking-wide uppercase text-white/35"
+            aria-label={showPastNotesFolder ? 'Hide hidden folder' : 'Reveal hidden folder'}
+          >
             Hint: press Shift
-          </p>
+          </button>
         </div>
         <div className="max-w-4xl mx-auto px-6">
           <div
@@ -1760,6 +1843,10 @@ export default function FoldersSection({
             setMaximizedByWindowId((prev) => ({ ...prev, [id]: isMax }))
           }
           onMetricsChange={handleWindowMetrics}
+          subfolderName={technicalsOpenFolder}
+          contentFiles={technicalsContentFiles}
+          onOpenSubfolder={setTechnicalsOpenFolder}
+          onBack={() => setTechnicalsOpenFolder(null)}
         />
         <FolderWindow
           show={showPastNotesWindow}
