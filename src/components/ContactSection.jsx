@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 
 const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT
+const CONTACT_EMAIL = 'jas.lee@berkeley.edu'
+const RESUME_PDF_PATH = '/jasmine-lee-resume.pdf'
 
 function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -28,6 +30,27 @@ export default function ContactSection({ lang = 'EN' }) {
     const t = window.setTimeout(() => setToast(null), 2600)
     return () => window.clearTimeout(t)
   }, [toast])
+
+  const copyEmailToClipboard = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(CONTACT_EMAIL)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = CONTACT_EMAIL
+        textarea.setAttribute('readonly', '')
+        textarea.style.position = 'absolute'
+        textarea.style.left = '-9999px'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setToast({ type: 'success', text: 'Copied!' })
+    } catch {
+      setToast({ type: 'error', text: 'Could not copy email.' })
+    }
+  }
 
   const onSubmit = async () => {
     if (honeypot) {
@@ -159,7 +182,7 @@ export default function ContactSection({ lang = 'EN' }) {
                     href="https://www.linkedin.com/in/jasmineclee"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-shrink-0"
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-out hover:scale-110 focus-visible:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50"
                     aria-label="LinkedIn"
                   >
                     <svg
@@ -175,9 +198,23 @@ export default function ContactSection({ lang = 'EN' }) {
                     </svg>
                   </a>
                   <a
-                    href="mailto:jas.lee@berkeley.edu"
-                    className="flex items-center gap-2 text-xs flex-shrink-0"
+                    href={RESUME_PDF_PATH}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-out hover:scale-110 focus-visible:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50"
                     style={{ color: '#2F5D00' }}
+                    aria-label="Open resume PDF"
+                  >
+                    <span className="font-bangers text-base leading-none" aria-hidden>
+                      PDF
+                    </span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={copyEmailToClipboard}
+                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-out hover:scale-110 focus-visible:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50"
+                    style={{ color: '#2F5D00' }}
+                    aria-label="Copy email address"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -195,8 +232,7 @@ export default function ContactSection({ lang = 'EN' }) {
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
-                    jas.lee@berkeley.edu
-                  </a>
+                  </button>
                 </div>
               </div>
 
