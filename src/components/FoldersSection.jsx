@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 
 const folders = [
   { label: 'PHOTOS', bodyColor: '#C96AED', tabColor: '#A825D9' },
@@ -27,6 +27,7 @@ const PHOTOS_FOLDER_FILES = {
 const DESIGN_INNER_FOLDERS = [
   'Digital Drawing',
   'Astron',
+  'AquaSync',
   'Cal Hacks',
   'Visual Communication',
   'CSSA',
@@ -38,6 +39,7 @@ const DESIGN_INNER_FOLDERS = [
 const DESIGN_FOLDER_SLUGS = {
   'Digital Drawing': 'digital-drawing',
   Astron: 'astron',
+  AquaSync: 'aquasync',
 }
 
 const DESIGN_FOLDER_FILES = {
@@ -50,11 +52,105 @@ const DESIGN_FOLDER_FILES = {
     'astron-05.png',
     'astron-06.png',
   ],
+  AquaSync: [
+    'aquasync-01.jpg',
+    'aquasync-02.jpg',
+    'aquasync-03.jpg',
+    'aquasync-04.jpg',
+    'aquasync-05.jpg',
+    'aquasync-06.jpg',
+    'aquasync-07.jpg',
+    'aquasync-08.jpg',
+  ],
 }
+
+const AQUASYNC_ITEMS = [
+  {
+    type: 'doc',
+    pages: [
+      '/design/aquasync/aquasync-01.jpg',
+      '/design/aquasync/aquasync-02.jpg',
+      '/design/aquasync/aquasync-03.jpg',
+      '/design/aquasync/aquasync-04.jpg',
+      '/design/aquasync/aquasync-05.jpg',
+      '/design/aquasync/aquasync-06.jpg',
+      '/design/aquasync/aquasync-07.jpg',
+      '/design/aquasync/aquasync-08.jpg',
+    ],
+  },
+  {
+    type: 'doc',
+    pages: [
+      '/design/aquasync/aquasync-doc2-01.jpg',
+      '/design/aquasync/aquasync-doc2-02.jpg',
+      '/design/aquasync/aquasync-doc2-03.jpg',
+      '/design/aquasync/aquasync-doc2-04.jpg',
+      '/design/aquasync/aquasync-doc2-05.jpg',
+      '/design/aquasync/aquasync-doc2-06.jpg',
+      '/design/aquasync/aquasync-doc2-07.jpg',
+      '/design/aquasync/aquasync-doc2-08.jpg',
+      '/design/aquasync/aquasync-doc2-09.jpg',
+      '/design/aquasync/aquasync-doc2-10.jpg',
+      '/design/aquasync/aquasync-doc2-11.jpg',
+      '/design/aquasync/aquasync-doc2-12.jpg',
+      '/design/aquasync/aquasync-doc2-13.jpg',
+      '/design/aquasync/aquasync-doc2-14.jpg',
+      '/design/aquasync/aquasync-doc2-15.jpg',
+      '/design/aquasync/aquasync-doc2-16.jpg',
+      '/design/aquasync/aquasync-doc2-17.jpg',
+    ],
+  },
+  {
+    type: 'doc',
+    pages: ['/design/aquasync/aquasync-doc3-02.jpg', '/design/aquasync/aquasync-doc3-01.jpg'],
+  },
+  {
+    type: 'phoneScrollImage',
+    coverSrc: '/design/aquasync/aquasync-figma-cover.jpg',
+    frameSrc: '/design/aquasync/aquasync-phone-frame.svg',
+    screenSrc: '/design/aquasync/aquasync-gui-scroll.png',
+  },
+  {
+    type: 'image',
+    src: '/design/aquasync/aquasync-dashboard-ui.png',
+  },
+]
 
 const DESIGN_FOLDER_CAPTIONS = {
   Astron:
     'An astronomy magazine that presents the eight planets through an approachable, illustrative style, using hand-drawn elements and annotated layouts to make complex information more engaging and accessible.',
+  AquaSync:
+    `AquaSync is a universal hydration tracking system that turns any cup into a connected experience. By combining passive sensing with a companion interface, it makes water intake visible, effortless, and consistent over time.
+    
+    DESIGN FOUNDATION
+Insight
+Users struggle to track hydration across different containers and lack awareness of total daily intake.
+
+Principles
+Make hydration visible in real time
+Remove dependency on a single bottle
+Fit seamlessly into daily routines
+Provide clear, intuitive feedback
+
+System Decision
+A smart sensing base with wireless syncing and a companion interface that enables real-time tracking across any cup.
+
+PRODUCT OVERVIEW
+Overview
+A universal hydration tracking system that pairs a smart sensing base with a companion app to monitor water intake across any cup.
+
+Problem
+Hydration is inconsistent due to fragmented tracking and lack of immediate feedback.
+
+Approach
+Measure intake through a sensing base
+Sync data from cup to phone
+Support universal cup usage
+Reinforce habits through real-time feedback
+
+Outcome
+Transforms any cup into a connected system, making hydration visible, trackable, and consistent.
+`,
 }
 const TECHNICALS_INNER_FOLDERS = [
   'Find the Flower',
@@ -64,6 +160,159 @@ const TECHNICALS_INNER_FOLDERS = [
 ]
 
 const MINIMIZE_DURATION_MS = 350
+
+const CAPTION_MAX_LINES = 23
+const CAPTION_LINE_HEIGHT_EM = 1.625 // tailwind `leading-relaxed`
+const CAPTION_MAX_HEIGHT_EM = CAPTION_MAX_LINES * CAPTION_LINE_HEIGHT_EM
+
+function FolderCaption({ caption, fixedHeight = false }) {
+  const scrollRef = useRef(null)
+  const [showBottomFade, setShowBottomFade] = useState(false)
+  const [showTopFade, setShowTopFade] = useState(false)
+
+  const computeFade = () => {
+    const el = scrollRef.current
+    if (!el) return
+    const isOverflowing = el.scrollHeight > el.clientHeight + 1
+    const isAtTop = el.scrollTop <= 1
+    const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1
+    setShowTopFade(isOverflowing && !isAtTop)
+    setShowBottomFade(isOverflowing && !isAtBottom)
+  }
+
+  useEffect(() => {
+    computeFade()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caption])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onScroll = () => computeFade()
+    el.addEventListener('scroll', onScroll, { passive: true })
+
+    const onResize = () => computeFade()
+    window.addEventListener('resize', onResize)
+
+    let ro
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => computeFade())
+      ro.observe(el)
+    }
+
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      if (ro) ro.disconnect()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const lines = String(caption || '').split('\n')
+  const subtitleRe = /^[A-Z][A-Za-z]*(?:\s[A-Z][A-Za-z]*)*$/
+  const bulletedSections = new Set(['Principles', 'Approach'])
+  const SUBTITLE_INDENT_CLASS = 'pl-4'
+  const heroBoldLine =
+    'AquaSync is a universal hydration tracking system that turns any cup into a connected experience. By combining passive sensing with a companion interface, it makes water intake visible, effortless, and consistent over time.'
+
+  const isAllCapsLine = (t) => {
+    const s = t.trim()
+    if (!s) return false
+    if (!/[A-Z]/.test(s)) return false
+    if (!/^[A-Z0-9][A-Z0-9\s&/-]*$/.test(s)) return false
+    return true
+  }
+
+  const isSubtitleLine = (t) => {
+    const s = t.trim()
+    if (!s) return false
+    if (s.length > 28) return false
+    if (!subtitleRe.test(s)) return false
+    if (/[.!?]$/.test(s)) return false
+    return true
+  }
+
+  const nodes = (() => {
+    const out = []
+    let indentActive = false
+    for (let i = 0; i < lines.length; i++) {
+      const line = String(lines[i] ?? '').replace(/\r/g, '')
+      const trimmed = line.trim()
+
+      if (!trimmed) {
+        out.push(<div key={`sp-${i}`} className="h-3" aria-hidden />)
+        indentActive = false
+        continue
+      }
+
+      const allCaps = isAllCapsLine(trimmed)
+      const subtitle = isSubtitleLine(trimmed) && !allCaps
+
+      if (allCaps) indentActive = false
+      if (subtitle) indentActive = true
+
+      const shouldBold = allCaps || subtitle || trimmed === heroBoldLine
+      const lineClass = [
+        shouldBold ? 'font-semibold text-black/80' : undefined,
+        indentActive && !allCaps ? SUBTITLE_INDENT_CLASS : undefined,
+      ]
+        .filter(Boolean)
+        .join(' ')
+
+      out.push(
+        <div key={`ln-${i}`} className={lineClass || undefined}>
+          {trimmed}
+        </div>,
+      )
+
+      if (bulletedSections.has(trimmed)) {
+        const items = []
+        let j = i + 1
+        for (; j < lines.length; j++) {
+          const next = String(lines[j] ?? '').replace(/\r/g, '').trim()
+          if (!next) break
+          items.push(next)
+        }
+
+        if (items.length) {
+          out.push(
+            <div
+              key={`ulwrap-${i}`}
+              className={indentActive ? SUBTITLE_INDENT_CLASS : undefined}
+            >
+              <ul className="list-disc pl-5 space-y-0.5">
+                {items.map((t, k) => (
+                  <li key={`li-${i}-${k}`}>{t}</li>
+                ))}
+              </ul>
+            </div>,
+          )
+        }
+
+        i = j - 1
+      }
+    }
+    return out
+  })()
+
+  return (
+    <div className="relative w-full">
+      <div
+        ref={scrollRef}
+        className="text-black/70 text-sm leading-relaxed w-full overflow-auto pr-2 rounded-xl bg-white/35 border border-black/10 px-4 py-3"
+        style={fixedHeight ? { height: `${CAPTION_MAX_HEIGHT_EM}em` } : { maxHeight: `${CAPTION_MAX_HEIGHT_EM}em` }}
+      >
+        {nodes}
+      </div>
+      {showTopFade ? (
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-8 rounded-t-xl bg-gradient-to-t from-transparent to-black/15" />
+      ) : null}
+      {showBottomFade ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 rounded-b-xl bg-gradient-to-b from-transparent to-black/15" />
+      ) : null}
+    </div>
+  )
+}
 
 function FolderIcon({ bodyColor, tabColor }) {
   return (
@@ -185,6 +434,29 @@ const CASCADE_OFFSET_PX = 20 //28
 const CASCADE_RANDOM_X = 38
 const CASCADE_RANDOM_Y = 18 //22
 
+// Lightbox: one set of chrome classes for Photos / Design / Technicals (same FolderWindow).
+const LIGHTBOX_OVERLAY_CLASS =
+  'absolute inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center cursor-default p-3 sm:p-5 overflow-hidden select-none'
+
+const LIGHTBOX_NAV_ARROW_CLASS =
+  'text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2 cursor-pointer'
+
+// Close control (placed inside the right rail, above the next arrow).
+const LIGHTBOX_CLOSE_BTN_CLASS =
+  'inline-flex size-12 shrink-0 items-center justify-center sm:size-14 rounded-md text-2xl sm:text-3xl font-light leading-none select-none hover:opacity-80 transition drop-shadow cursor-pointer'
+
+// Upper-right rail: × at top, same column as `>` with `>` vertically centered under it.
+const LIGHTBOX_RIGHT_RAIL_CLASS =
+  'absolute top-0 right-0 bottom-0 z-[60] flex w-10 min-w-0 flex-col items-center pr-0.5 sm:w-14 sm:pr-1 pt-2 sm:pt-3'
+
+const AQUASYNC_GRID_HOVER = [
+  { title: 'Product Overview', desc: 'How the system works end-to-end' },
+  { title: 'Campaign', desc: 'Why hydration habits fail' },
+  { title: 'Ideation', desc: 'Exploring low-friction interaction' },
+  { title: 'Mobile UI', desc: 'Real-time intake + feedback' },
+  { title: 'Desktop UI', desc: 'Long-term habit insights' },
+]
+
 function FolderWindow({
   show,
   onClose,
@@ -215,13 +487,38 @@ function FolderWindow({
   const [thumbTilePx, setThumbTilePx] = useState(null)
   const windowRef = useRef(null)
   const thumbsGridRef = useRef(null)
+  const aquaScrollRef = useRef(null)
+  const aquaPhoneOuterRef = useRef(null)
+  const aquaPhoneBorderRef = useRef(null)
+  const aquaPhoneScreenRef = useRef(null)
 
   const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
   const isInsideSubfolder = Boolean(subfolderName)
-  const lightboxOpen = lightboxIndex != null && contentFiles?.length > 0
-  const thumbsGridColsClass = 'grid-cols-2 sm:grid-cols-4'
+  const isAquaSync = title === 'Design' && subfolderName === 'AquaSync'
+  const aquaItems = isAquaSync ? AQUASYNC_ITEMS : null
+  const aquaSelectedItem =
+    isAquaSync && aquaItems && typeof lightboxIndex === 'number' ? aquaItems[lightboxIndex] : null
+  const aquaSelectedIsDoc = isAquaSync && aquaSelectedItem?.type === 'doc'
+  const aquaSelectedPages = aquaSelectedIsDoc ? aquaSelectedItem.pages || [] : []
+  const aquaSelectedImageSrc =
+    isAquaSync && aquaSelectedItem?.type === 'image' ? aquaSelectedItem.src : null
+  const aquaSelectedIsPhoneScroll = isAquaSync && aquaSelectedItem?.type === 'phoneScrollImage'
+  const aquaSelectedPhoneFrameSrc = aquaSelectedIsPhoneScroll ? aquaSelectedItem.frameSrc : null
+  const aquaSelectedPhoneScreenSrc = aquaSelectedIsPhoneScroll ? aquaSelectedItem.screenSrc : null
+
+  const lightboxOpen = isAquaSync
+    ? lightboxIndex != null && (aquaItems?.length || 0) > 0
+    : lightboxIndex != null && (contentFiles?.length || 0) > 0
   const folderCaption =
     title === 'Design' && subfolderName ? DESIGN_FOLDER_CAPTIONS[subfolderName] : null
+  const folderCaptionLineCount = folderCaption
+    ? String(folderCaption)
+        .split('\n')
+        .map((l) => l.trim())
+        .filter(Boolean).length
+    : 0
+  const useSideBySideCaptionLayout = folderCaptionLineCount > 3
+  const thumbsGridColsClass = useSideBySideCaptionLayout ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'
 
   const closeLightbox = () => setLightboxIndex(null)
   const toggleMaximize = () => {
@@ -233,18 +530,20 @@ function FolderWindow({
   }
 
   const goPrev = () => {
-    if (!contentFiles?.length) return
+    const count = isAquaSync ? aquaItems?.length || 0 : contentFiles?.length || 0
+    if (!count) return
     setLightboxIndex((prev) => {
       const current = prev ?? 0
-      return (current - 1 + contentFiles.length) % contentFiles.length
+      return (current - 1 + count) % count
     })
   }
 
   const goNext = () => {
-    if (!contentFiles?.length) return
+    const count = isAquaSync ? aquaItems?.length || 0 : contentFiles?.length || 0
+    if (!count) return
     setLightboxIndex((prev) => {
       const current = prev ?? 0
-      return (current + 1) % contentFiles.length
+      return (current + 1) % count
     })
   }
 
@@ -326,7 +625,7 @@ function FolderWindow({
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
-  }, [show, subfolderName, contentFiles?.length, isMaximized])
+  }, [show, subfolderName, contentFiles?.length, aquaItems?.length, isMaximized, isAquaSync])
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -346,7 +645,64 @@ function FolderWindow({
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [lightboxOpen, contentFiles?.length])
+  }, [lightboxOpen, contentFiles?.length, aquaItems?.length, isAquaSync])
+
+  useEffect(() => {
+    if (!lightboxOpen) return
+    if (!isAquaSync) return
+    if (!aquaSelectedIsDoc) return
+    const el = aquaScrollRef.current
+    if (!el) return
+    requestAnimationFrame(() => {
+      el.scrollTop = 0
+    })
+  }, [lightboxOpen, isAquaSync, aquaSelectedIsDoc, lightboxIndex])
+
+  useLayoutEffect(() => {
+    if (!lightboxOpen) return
+    if (!isAquaSync) return
+    if (!aquaSelectedIsPhoneScroll) return
+
+    const PHONE_W = 9
+    const PHONE_H = 19.5
+
+    const applyFit = () => {
+      const outer = aquaPhoneOuterRef.current
+      const border = aquaPhoneBorderRef.current
+      if (!outer || !border) return
+
+      const r = outer.getBoundingClientRect()
+      const availableW = r.width
+      const availableH = r.height
+      if (availableW <= 0 || availableH <= 0) return
+
+      // Fit a portrait 9:19.5 rectangle fully inside the available box.
+      // Start from height, then clamp width; if width overflows, recompute from width.
+      let h = availableH
+      let w = h * (PHONE_W / PHONE_H)
+      if (w > availableW) {
+        w = availableW
+        h = w * (PHONE_H / PHONE_W)
+      }
+
+      border.style.width = `${Math.floor(w)}px`
+      border.style.height = `${Math.floor(h)}px`
+      border.style.maxWidth = '100%'
+      border.style.maxHeight = '100%'
+    }
+
+    const outer = aquaPhoneOuterRef.current
+    let ro
+    if (outer && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => requestAnimationFrame(applyFit))
+      ro.observe(outer)
+    }
+    requestAnimationFrame(applyFit)
+
+    return () => {
+      if (ro) ro.disconnect()
+    }
+  }, [lightboxOpen, isAquaSync, aquaSelectedIsPhoneScroll, lightboxIndex, isMaximized])
 
   const handleMinimize = () => {
     if (!windowRef.current || !folderRef?.current) return
@@ -472,21 +828,86 @@ function FolderWindow({
                 >
                   <span aria-hidden>← Back</span>
                 </button>
-                {folderCaption ? (
-                  <p className="text-black/70 text-sm leading-relaxed w-full">
-                    {folderCaption}
-                  </p>
-                ) : null}
                 <div
-                  ref={thumbsGridRef}
-                  className={`grid ${thumbsGridColsClass} gap-3 md:gap-4 w-full content-start overflow-auto`}
-                  style={
-                    thumbViewportHeightPx && thumbTilePx
-                      ? { height: `${thumbViewportHeightPx}px`, gridAutoRows: `${thumbTilePx}px` }
-                      : undefined
-                  }
+                  className={`w-full min-h-0 ${
+                    useSideBySideCaptionLayout
+                      ? 'grid grid-cols-1 md:grid-cols-2 gap-6 items-start'
+                      : 'flex flex-col gap-4'
+                  }`}
                 >
-                  {contentFiles.length > 0 ? (
+                  {folderCaption ? (
+                    <div className={useSideBySideCaptionLayout ? 'min-h-0' : undefined}>
+                      <FolderCaption caption={folderCaption} fixedHeight={useSideBySideCaptionLayout} />
+                    </div>
+                  ) : null}
+                  <div
+                    ref={thumbsGridRef}
+                    className={`grid ${thumbsGridColsClass} gap-3 md:gap-4 w-full content-start overflow-auto ${
+                      useSideBySideCaptionLayout ? 'min-h-0' : ''
+                    }`}
+                    style={
+                      useSideBySideCaptionLayout
+                        ? { height: `${CAPTION_MAX_HEIGHT_EM}em`, gridAutoRows: `${thumbTilePx}px` }
+                        : thumbViewportHeightPx && thumbTilePx
+                          ? { height: `${thumbViewportHeightPx}px`, gridAutoRows: `${thumbTilePx}px` }
+                          : undefined
+                    }
+                  >
+                  {isAquaSync ? (
+                    (aquaItems?.length || 0) > 0 ? (
+                      aquaItems.map((item, i) => {
+                        const coverSrc =
+                          item?.type === 'doc'
+                            ? item?.pages?.[0]
+                            : item?.type === 'image'
+                              ? item?.src
+                              : item?.type === 'phoneScrollImage'
+                                ? item?.coverSrc
+                                : null
+                        if (!coverSrc) return null
+                        const hoverCopy = AQUASYNC_GRID_HOVER[i]
+                        return (
+                          <button
+                            key={`${item.type}-${coverSrc}-${i}`}
+                            type="button"
+                            className="group relative w-full rounded-lg overflow-hidden bg-black/5 border border-black/10 group-hover:border-transparent cursor-pointer"
+                            onClick={() => setLightboxIndex(i)}
+                            aria-label={`Open AquaSync item ${i + 1} of ${aquaItems.length}`}
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={thumbTilePx ? { height: `${thumbTilePx}px` } : undefined}
+                          >
+                            <img
+                              src={coverSrc}
+                              alt=""
+                              className="w-full h-full object-cover select-none transition-transform duration-200 ease-out group-hover:scale-[1.06] group-hover:blur-[2px] group-hover:brightness-[0.92]"
+                              onContextMenu={(e) => e.preventDefault()}
+                              onDragStart={(e) => e.preventDefault()}
+                              draggable={false}
+                            />
+                            {hoverCopy ? (
+                              <div
+                                className="absolute -inset-px flex items-center justify-center overflow-hidden rounded-[9px] opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100"
+                              >
+                                <div
+                                  className="absolute inset-0 overflow-hidden rounded-[9px] bg-white/55 backdrop-blur-[6px]"
+                                />
+                                <div className="relative px-3 text-center">
+                                  <div className="text-black/90 font-semibold text-sm">
+                                    {hoverCopy.title}
+                                  </div>
+                                  <div className="text-black/70 text-xs mt-1">
+                                    {hoverCopy.desc}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : null}
+                          </button>
+                        )
+                      })
+                    ) : (
+                      <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
+                    )
+                  ) : contentFiles.length > 0 ? (
                     contentFiles.map((src, i) => (
                       <button
                         key={src}
@@ -510,6 +931,7 @@ function FolderWindow({
                   ) : (
                     <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
                   )}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -531,56 +953,203 @@ function FolderWindow({
             {lightboxOpen ? (
               <div
                 role="presentation"
-                className="absolute inset-0 z-50 bg-black/40 backdrop-blur-md flex items-center justify-center cursor-default p-3 sm:p-5 overflow-hidden select-none"
+                className={LIGHTBOX_OVERLAY_CLASS}
                 onMouseDown={closeLightbox}
               >
                 <div
                   role="dialog"
                   aria-modal="true"
                   aria-label="Image preview"
-                  className="relative w-full h-full max-w-[min(920px,100%)] max-h-full cursor-default"
+                  className="relative w-full h-full max-w-[min(1100px,100%)] max-h-full cursor-default"
                   onContextMenu={(e) => e.preventDefault()}
                 >
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <img
-                      src={contentFiles[lightboxIndex]}
-                      alt=""
-                      className="block object-contain rounded-md cursor-default"
-                      style={{
-                        maxHeight: '100%',
-                        maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
-                      }}
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onDragStart={(e) => e.preventDefault()}
-                      draggable={false}
-                    />
+                  {isAquaSync ? (
+                    <div className="w-full h-full flex items-stretch justify-center gap-3 sm:gap-5">
+                      {isAquaSync && (aquaItems?.length || 0) > 1 ? (
+                        <div className="flex items-center justify-center w-10 sm:w-14 shrink-0">
+                          <button
+                            type="button"
+                            onClick={goPrev}
+                            aria-label="Previous item"
+                            className={LIGHTBOX_NAV_ARROW_CLASS}
+                            style={{ color: borderColor }}
+                            onMouseDown={(e) => e.stopPropagation()}
+                          >
+                            {'<'}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="w-10 sm:w-14 shrink-0" aria-hidden />
+                      )}
 
-                    {contentFiles.length > 1 ? (
-                      <>
+                      <div className="flex-1 min-w-0 flex items-stretch justify-center">
+                        {aquaSelectedIsDoc ? (
+                          <div
+                            ref={aquaScrollRef}
+                            className="relative h-full w-full max-w-[min(780px,100%)] overflow-auto rounded-md cursor-default"
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onContextMenu={(e) => e.preventDefault()}
+                          >
+                            <div className="mx-auto w-full py-4 sm:py-6 px-3 sm:px-6 flex flex-col gap-4">
+                              {aquaSelectedPages.map((src) => (
+                                <div key={src} className="w-full">
+                                  <img
+                                    src={src}
+                                    alt=""
+                                    className="block w-full h-auto rounded-md bg-white/5"
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    onDragStart={(e) => e.preventDefault()}
+                                    draggable={false}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : aquaSelectedIsPhoneScroll ? (
+                          <div
+                            className="relative w-full h-full min-h-0 flex items-center justify-center"
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onContextMenu={(e) => e.preventDefault()}
+                          >
+                            <div
+                              ref={aquaPhoneOuterRef}
+                              className="w-full h-full min-h-0 min-w-0 max-h-full flex items-center justify-center p-1"
+                            >
+                              <div
+                                ref={aquaPhoneBorderRef}
+                                className="border-[7px] sm:border-[9px] border-black rounded-[32px] shadow-xl bg-white overflow-hidden"
+                              >
+                                <div
+                                  ref={aquaPhoneScreenRef}
+                                  className="h-full w-full overflow-y-auto overflow-x-hidden"
+                                >
+                                  {aquaSelectedPhoneScreenSrc ? (
+                                    <img
+                                      src={aquaSelectedPhoneScreenSrc}
+                                      alt=""
+                                      className="block w-full h-auto select-none"
+                                      draggable={false}
+                                      onDragStart={(e) => e.preventDefault()}
+                                      onContextMenu={(e) => e.preventDefault()}
+                                    />
+                                  ) : null}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : aquaSelectedImageSrc ? (
+                          <div className="relative w-full h-full max-w-[min(780px,100%)] flex items-center justify-center">
+                            <img
+                              src={aquaSelectedImageSrc}
+                              alt=""
+                              className="block object-contain rounded-md cursor-default"
+                              style={{
+                                maxHeight: '100%',
+                                maxWidth: '100%',
+                              }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onContextMenu={(e) => e.preventDefault()}
+                              onDragStart={(e) => e.preventDefault()}
+                              draggable={false}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <div
+                        className="flex h-full min-h-0 w-10 shrink-0 flex-col items-center pr-0.5 pt-2 sm:w-14 sm:pr-1 sm:pt-3"
+                        onMouseDown={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          type="button"
+                          onClick={closeLightbox}
+                          aria-label="Close preview"
+                          className={LIGHTBOX_CLOSE_BTN_CLASS}
+                          style={{ color: borderColor }}
+                          onMouseDown={(e) => e.stopPropagation()}
+                        >
+                          ×
+                        </button>
+                        {isAquaSync && (aquaItems?.length || 0) > 1 ? (
+                          <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={goNext}
+                              aria-label="Next item"
+                              className={LIGHTBOX_NAV_ARROW_CLASS}
+                              style={{ color: borderColor }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                            >
+                              {'>'}
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="min-h-0 flex-1" aria-hidden />
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <img
+                        src={contentFiles[lightboxIndex]}
+                        alt=""
+                        className="block object-contain rounded-md cursor-default"
+                        style={{
+                          maxHeight: '100%',
+                          maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
+                        }}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
+                        draggable={false}
+                      />
+
+                      {contentFiles.length > 1 ? (
                         <button
                           type="button"
                           onClick={goPrev}
                           aria-label="Previous image"
-                          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2 cursor-pointer"
+                          className={`absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 ${LIGHTBOX_NAV_ARROW_CLASS}`}
                           style={{ color: borderColor }}
                           onMouseDown={(e) => e.stopPropagation()}
                         >
                           {'<'}
                         </button>
+                      ) : null}
+
+                      <div
+                        className={LIGHTBOX_RIGHT_RAIL_CLASS}
+                        onMouseDown={(e) => e.stopPropagation()}
+                      >
                         <button
                           type="button"
-                          onClick={goNext}
-                          aria-label="Next image"
-                          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl font-light leading-none select-none hover:opacity-80 transition drop-shadow px-2 py-2 cursor-pointer"
+                          onClick={closeLightbox}
+                          aria-label="Close preview"
+                          className={LIGHTBOX_CLOSE_BTN_CLASS}
                           style={{ color: borderColor }}
                           onMouseDown={(e) => e.stopPropagation()}
                         >
-                          {'>'}
+                          ×
                         </button>
-                      </>
-                    ) : null}
-                  </div>
+                        {contentFiles.length > 1 ? (
+                          <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={goNext}
+                              aria-label="Next image"
+                              className={LIGHTBOX_NAV_ARROW_CLASS}
+                              style={{ color: borderColor }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                            >
+                              {'>'}
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="min-h-0 flex-1" aria-hidden />
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : null}
