@@ -283,13 +283,12 @@ OUTCOME
 A community-facing installation that balances creative vision with real-world constraints, sustaining its presence and impact over time.`,
 }
 const TECHNICALS_INNER_FOLDERS = [
-  'Find the Flower',
-  'Ngordnet',
-  'Fabrication and Prototyping',
   'Mechatronic Goniometer',
   'Kinetic Origamic',
   'Gear System',
   'Water Automata',
+  'Find the Flower',
+  'Ngordnet',
 ]
 
 const TECHNICALS_FOLDER_CAPTIONS = {
@@ -401,6 +400,65 @@ const KINETIC_ORIGAMIC_ITEMS = [
       '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-03.jpg',
       '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-04.jpg',
       '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-05.jpg',
+    ],
+  },
+]
+
+const WATER_AUTOMATA_ITEMS = [
+  {
+    type: 'image',
+    src: '/technicals/water-automata/water-automata-motion-01.gif',
+    title: 'Motion',
+    desc: 'Hand-cranked ripple simulation in motion',
+  },
+  {
+    type: 'doc',
+    coverSrc: '/technicals/water-automata/water-automata-concepts-01.jpg',
+    title: 'Concepts',
+    desc: 'Early sketches exploring form and layout',
+    pages: [
+      '/technicals/water-automata/water-automata-concepts-01.jpg',
+      '/technicals/water-automata/water-automata-concepts-02.jpg',
+      '/technicals/water-automata/water-automata-concepts-03.jpg',
+    ],
+  },
+  {
+    type: 'doc',
+    coverSrc: '/technicals/water-automata/water-automata-process-01.jpg',
+    title: 'Process',
+    desc: 'Iteration, assembly, and mechanism testing',
+    pages: [
+      '/technicals/water-automata/water-automata-process-01.jpg',
+      '/technicals/water-automata/water-automata-process-02.jpg',
+      '/technicals/water-automata/water-automata-process-03.jpg',
+      '/technicals/water-automata/water-automata-process-04.jpg',
+      '/technicals/water-automata/water-automata-process-05.jpg',
+      '/technicals/water-automata/water-automata-process-06.jpg',
+      '/technicals/water-automata/water-automata-process-07.jpg',
+    ],
+  },
+  {
+    type: 'doc',
+    coverSrc: '/technicals/water-automata/water-automata-fab-files-01.jpg',
+    title: 'Fabrication Files',
+    desc: 'CAD models and laser cut layouts',
+    pages: [
+      '/technicals/water-automata/water-automata-fab-files-01.jpg',
+      '/technicals/water-automata/water-automata-fab-files-02.jpg',
+      '/technicals/water-automata/water-automata-fab-files-03.jpg',
+      '/technicals/water-automata/water-automata-fab-files-04.jpg',
+      '/technicals/water-automata/water-automata-fab-files-05.jpg',
+      '/technicals/water-automata/water-automata-fab-files-06.jpg',
+    ],
+  },
+  {
+    type: 'doc',
+    coverSrc: '/technicals/water-automata/water-automata-final-machine-01.jpg',
+    title: 'Final Machine',
+    desc: 'Completed build and assembled system',
+    pages: [
+      '/technicals/water-automata/water-automata-final-machine-01.jpg',
+      '/technicals/water-automata/water-automata-final-machine-02.jpg',
     ],
   },
 ]
@@ -1260,7 +1318,12 @@ function FolderWindow({
           <div className="paper-bg px-5 py-3 flex items-center justify-between gap-4 border-b border-black/10 shrink-0">
             <div className="flex items-center gap-3">
               <TitleBarIcon type={iconType} />
-              <span className="text-black font-medium text-sm">{displayTitle}</span>
+              <span
+                className="text-black font-medium text-sm"
+                style={title === 'Past Notes' ? { opacity: 0.5 } : undefined}
+              >
+                {displayTitle}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1869,7 +1932,7 @@ export default function FoldersSection({
   const technicalsContentFiles =
     technicalsOpenFolder === 'Kinetic Origamic' ? KINETIC_ORIGAMIC_ITEMS
       : technicalsOpenFolder === 'Gear System' ? GEAR_SYSTEM_ITEMS
-      : technicalsOpenFolder === 'Water Automata' ? []
+      : technicalsOpenFolder === 'Water Automata' ? WATER_AUTOMATA_ITEMS
       : []
 
   useEffect(() => {
@@ -1942,6 +2005,7 @@ export default function FoldersSection({
             className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16"
           >
             {visibleFolders.map((folder) => {
+              const isPastNotes = folder.label === 'PAST NOTES'
               const onOpen =
                 folder.label === 'PHOTOS'
                   ? onOpenPhotosWindow
@@ -1949,7 +2013,10 @@ export default function FoldersSection({
                     ? onOpenDesignWindow
                     : folder.label === 'TECHNICALS'
                       ? onOpenTechnicalsWindow
-                      : () => setShowPastNotesWindow(true)
+                      : () => {
+                          setShowPastNotesWindow(true)
+                          onBringWindowToFront?.('past-notes')
+                        }
               const ref =
                 folder.label === 'PHOTOS'
                   ? photosFolderRef
@@ -1963,7 +2030,9 @@ export default function FoldersSection({
                   key={folder.label}
                   ref={ref}
                   type="button"
-                  className="group flex flex-col items-center gap-4 hover:scale-105 transition-transform cursor-pointer"
+                  className={`group flex flex-col items-center gap-4 hover:scale-105 transition-transform cursor-pointer ${
+                    isPastNotes ? 'opacity-50' : ''
+                  }`}
                   onClick={onOpen}
                 >
                   <FolderIcon bodyColor={folder.bodyColor} tabColor={folder.tabColor} />
