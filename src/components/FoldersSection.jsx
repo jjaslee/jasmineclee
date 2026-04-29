@@ -292,6 +292,45 @@ const TECHNICALS_INNER_FOLDERS = [
 ]
 
 const TECHNICALS_FOLDER_CAPTIONS = {
+  'Mechatronic Goniometer': `A wearable system that measures joint range of motion and provides real-time feedback to improve movement accuracy and consistency.
+
+DESIGN FOUNDATION
+
+Insight
+Traditional goniometers require manual alignment and second-person use, making independent measurement inconsistent and difficult.
+
+User research revealed that the main breakdown wasn’t just measurement—but inconsistent placement and difficulty interpreting results.
+
+Principles
+
+Enable independent use
+Provide subtle, real-time feedback
+Reduce setup ambiguity
+Support long-term learning
+
+APPROACH
+Conducted interviews and observations with patients and athletes
+Identified key needs around placement consistency, feedback clarity, and habit formation
+Explored wearable + feedback-driven concepts and mapped them across feasibility and impact
+Iterated across both hardware and interface, including coding a custom GUI for real-time visualization and tracking
+
+SYSTEM (SENSE → PREDICT → ACTUATE)
+
+Sense
+Dual IMU sensors capture joint movement, with calibration to reduce drift.
+
+Predict
+An ESP32 processes data and classifies movement relative to target ranges (~10° tolerance).
+
+Actuate
+Vibration motors and a speaker provide graded haptic and audio feedback. Data is transmitted via Bluetooth to a custom-coded GUI that visualizes movement, logs sessions, and tracks progress.
+
+Experience
+Users move from guessing to feeling and understanding their motion in real time.
+
+OUTCOME
+
+A hardware–software system integrating sensing, embedded processing, Bluetooth communication, and a custom-built interface to support independent, data-driven movement training.`,
   'Kinetic Origamic': `A kinetic installation combining physical design and embedded systems to explore how folded structures transform through controlled motion.
 
 DESIGN FOUNDATION
@@ -401,6 +440,32 @@ const KINETIC_ORIGAMIC_ITEMS = [
       '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-04.jpg',
       '/technicals/kinetic-origamic/kinetic-origamic-doc-01-page-05.jpg',
     ],
+  },
+]
+
+const MECHATRONIC_GONIOMETER_ITEMS = [
+  {
+    type: 'video',
+    src: '/technicals/mechatronic-goniometer/mechatronic-goniometer-interaction-01.mp4',
+    title: 'Interaction',
+    desc: 'Real-time feedback loop between user movement and interface',
+  },
+  {
+    type: 'doc',
+    coverSrc: '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-01.png',
+    title: 'Hardware Prototype',
+    desc: 'Wearable modules (IMUs, vibration motors, speaker)',
+    pages: [
+      '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-01.png',
+      '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-02.png',
+      '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-03.png',
+    ],
+  },
+  {
+    type: 'image',
+    src: '/technicals/mechatronic-goniometer/mechatronic-goniometer-system-01.png',
+    title: 'System',
+    desc: 'Sensing, feedback, and user interaction loop',
   },
 ]
 
@@ -607,10 +672,18 @@ function FolderCaption({ caption, fixedHeight = false }) {
       if (allCaps) indentActive = false
       if (subtitle) indentActive = true
 
-      const shouldBold = allCaps || subtitle || trimmed === heroBoldLine
+      const isSystemSensePredictActuate =
+        trimmed === 'SYSTEM (SENSE → PREDICT → ACTUATE)'
+      const isIndentedInsightLine =
+        trimmed ===
+        'User research revealed that the main breakdown wasn’t just measurement—but inconsistent placement and difficulty interpreting results.'
+
+      const shouldBold =
+        allCaps || subtitle || trimmed === heroBoldLine || isSystemSensePredictActuate
       const lineClass = [
         shouldBold ? 'font-semibold text-black/80' : undefined,
         indentActive && !allCaps ? SUBTITLE_INDENT_CLASS : undefined,
+        isIndentedInsightLine ? SUBTITLE_INDENT_CLASS : undefined,
       ]
         .filter(Boolean)
         .join(' ')
@@ -999,6 +1072,8 @@ function FolderWindow({
       : typeof selectedNonAquaItem === 'string'
         ? selectedNonAquaItem
         : null
+  const selectedNonAquaVideoSrc =
+    selectedNonAquaIsObj && selectedNonAquaType === 'video' ? selectedNonAquaItem.src : null
   const selectedNonAquaScrollImageSrc =
     selectedNonAquaIsObj && selectedNonAquaType === 'scrollImage' ? selectedNonAquaItem.src : null
   const selectedNonAquaDocMaxWidthClass =
@@ -1455,6 +1530,8 @@ function FolderWindow({
                         ? item
                         : item.type === 'image'
                           ? item.src
+                          : item.type === 'video'
+                            ? item.src
                           : item.type === 'doc'
                             ? item.coverSrc || item.pages?.[0]
                             : item.type === 'scrollImage'
@@ -1487,18 +1564,36 @@ function FolderWindow({
                           onContextMenu={(e) => e.preventDefault()}
                           style={thumbTilePx ? { height: `${thumbTilePx}px` } : undefined}
                         >
-                          <img
-                            src={coverSrc}
-                            alt=""
-                            className={`w-full h-full object-cover select-none transition-transform duration-200 ease-out ${
-                              showHover
-                                ? 'group-hover:scale-[1.06] group-hover:blur-[2px] group-hover:brightness-[0.92]'
-                                : 'group-hover:scale-[1.08]'
-                            }`}
-                            onContextMenu={(e) => e.preventDefault()}
-                            onDragStart={(e) => e.preventDefault()}
-                            draggable={false}
-                          />
+                          {isObj && item.type === 'video' ? (
+                            <video
+                              src={coverSrc}
+                              className={`w-full h-full object-cover select-none transition-transform duration-200 ease-out ${
+                                showHover
+                                  ? 'group-hover:scale-[1.06] group-hover:blur-[2px] group-hover:brightness-[0.92]'
+                                  : 'group-hover:scale-[1.08]'
+                              }`}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              preload="metadata"
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onContextMenu={(e) => e.preventDefault()}
+                            />
+                          ) : (
+                            <img
+                              src={coverSrc}
+                              alt=""
+                              className={`w-full h-full object-cover select-none transition-transform duration-200 ease-out ${
+                                showHover
+                                  ? 'group-hover:scale-[1.06] group-hover:blur-[2px] group-hover:brightness-[0.92]'
+                                  : 'group-hover:scale-[1.08]'
+                              }`}
+                              onContextMenu={(e) => e.preventDefault()}
+                              onDragStart={(e) => e.preventDefault()}
+                              draggable={false}
+                            />
+                          )}
                           {hoverCopy ? (
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100">
                               <div className="absolute -inset-px overflow-hidden rounded-[9px] bg-white/55 backdrop-blur-[6px]" />
@@ -1720,6 +1815,25 @@ function FolderWindow({
                             </div>
                           </div>
                         </div>
+                      ) : selectedNonAquaType === 'video' ? (
+                        <div className="flex h-full w-full items-center justify-center px-4 py-4 sm:px-8 sm:py-6">
+                          <video
+                            src={selectedNonAquaVideoSrc || undefined}
+                            className="block object-contain rounded-md cursor-default"
+                            style={{
+                              maxHeight: '100%',
+                              maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the media
+                            }}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            controls={false}
+                            preload="metadata"
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onContextMenu={(e) => e.preventDefault()}
+                          />
+                        </div>
                       ) : (
                         <div className="flex h-full w-full items-center justify-center px-4 py-4 sm:px-8 sm:py-6">
                           <img
@@ -1930,7 +2044,8 @@ export default function FoldersSection({
           : []
 
   const technicalsContentFiles =
-    technicalsOpenFolder === 'Kinetic Origamic' ? KINETIC_ORIGAMIC_ITEMS
+    technicalsOpenFolder === 'Mechatronic Goniometer' ? MECHATRONIC_GONIOMETER_ITEMS
+      : technicalsOpenFolder === 'Kinetic Origamic' ? KINETIC_ORIGAMIC_ITEMS
       : technicalsOpenFolder === 'Gear System' ? GEAR_SYSTEM_ITEMS
       : technicalsOpenFolder === 'Water Automata' ? WATER_AUTOMATA_ITEMS
       : []
