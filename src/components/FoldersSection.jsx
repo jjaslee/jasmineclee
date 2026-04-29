@@ -959,15 +959,7 @@ const LAZY_DAY_LINES_ITEMS = [
       '/design/lazy-day-lines/lazy-day-lines-illustration-style-03.png',
     ],
   },
-  {
-    type: 'doc',
-    coverSrc: '/design/lazy-day-lines/lazy-day-lines-applications-01.jpg',
-    pages: [
-      '/design/lazy-day-lines/lazy-day-lines-applications-01.jpg',
-      '/design/lazy-day-lines/lazy-day-lines-applications-02.jpg',
-      '/design/lazy-day-lines/lazy-day-lines-applications-03.jpg',
-    ],
-  },
+  { type: 'image', src: '/design/lazy-day-lines/lazy-day-lines-applications-single.png' },
 ]
 
 const CAL_HACKS_ITEMS = [
@@ -1064,16 +1056,21 @@ function FolderWindow({
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const [thumbViewportHeightPx, setThumbViewportHeightPx] = useState(null)
   const [thumbTilePx, setThumbTilePx] = useState(null)
+  const [docViewportHeightPx, setDocViewportHeightPx] = useState(null)
+  const [docPageMaxHeightPx, setDocPageMaxHeightPx] = useState(null)
   const [isMdUp, setIsMdUp] = useState(() => {
     if (typeof window === 'undefined') return true
     return window.matchMedia('(min-width: 768px)').matches
   })
   const windowRef = useRef(null)
   const thumbsGridRef = useRef(null)
+  const captionWrapRef = useRef(null)
   const aquaScrollRef = useRef(null)
   const aquaPhoneOuterRef = useRef(null)
   const aquaPhoneBorderRef = useRef(null)
   const aquaPhoneScreenRef = useRef(null)
+  const lightboxMediaRef = useRef(null)
+  const firstDocPageRef = useRef(null)
 
   const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
   const isInsideSubfolder = Boolean(subfolderName)
@@ -1112,6 +1109,10 @@ function FolderWindow({
         ? 'max-w-[min(560px,100%)]'
       : 'max-w-[min(780px,100%)]'
 
+  const DOC_VIEWPORT_SCALE = 1.0 // let viewport reach lightbox bottom for page peek
+  const DOC_PAGE_MAX_SCALE = 0.86 // pages slightly smaller than viewport (breathing room)
+  const DOC_PEEK_PX = isMdUp ? 52 : 40
+
   const lightboxOpen = isAquaSync
     ? lightboxIndex != null && (aquaItems?.length || 0) > 0
     : lightboxIndex != null && (contentFiles?.length || 0) > 0
@@ -1137,9 +1138,10 @@ function FolderWindow({
   const captionBoxHeightEm = captionMaxLines * CAPTION_LINE_HEIGHT_EM
   const thumbsGridColsClass = useSideBySideCaptionLayout ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'
   const thumbGridGapPx = isMdUp ? 16 : 12
-  const thumbGridVisibleRows = 1.5
   const thumbGridVisibleHeightPx = thumbTilePx
-    ? thumbTilePx * thumbGridVisibleRows + thumbGridGapPx
+    ? useSideBySideCaptionLayout && isMdUp
+      ? thumbViewportHeightPx
+      : thumbTilePx * 1.5 + thumbGridGapPx
     : null
 
   const closeLightbox = () => setLightboxIndex(null)
@@ -1223,6 +1225,7 @@ function FolderWindow({
     const measure = () => {
       const gridEl = thumbsGridRef.current
       if (!gridEl) return
+      const captionEl = captionWrapRef.current
       const buttons = Array.from(gridEl.querySelectorAll('button'))
       const firstThumb = buttons[0]
       if (!firstThumb) return
@@ -1234,11 +1237,25 @@ function FolderWindow({
       const tilePx = Math.max(1, Math.round((gridW - colGap * (cols - 1)) / cols))
       setThumbTilePx((prev) => (prev === tilePx ? prev : tilePx))
 
-      const targetRows = 1.5
-      const fullRows = Math.floor(targetRows)
-      const fractionalRow = targetRows - fullRows
-      const target = Math.round(tilePx * targetRows + rowGap * Math.max(0, fullRows - 1 + (fractionalRow > 0 ? 1 : 0)))
-      setThumbViewportHeightPx((prev) => (prev === target ? prev : target))
+      if (useSideBySideCaptionLayout && isMdUp && captionEl) {
+        const captionH = Math.max(0, captionEl.getBoundingClientRect().height)
+        const rowsFloat = Math.max(1, (captionH + rowGap) / (tilePx + rowGap))
+        const fullRows = Math.floor(rowsFloat)
+        const frac = rowsFloat - fullRows
+        const baseH = fullRows * tilePx + Math.max(0, fullRows - 1) * rowGap
+        const partialH = frac > 0 ? frac * tilePx + rowGap : 0
+        const target = Math.round(baseH + partialH)
+        setThumbViewportHeightPx((prev) => (prev === target ? prev : target))
+      } else {
+        const targetRows = 1.5
+        const fullRows = Math.floor(targetRows)
+        const fractionalRow = targetRows - fullRows
+        const target = Math.round(
+          tilePx * targetRows +
+            rowGap * Math.max(0, fullRows - 1 + (fractionalRow > 0 ? 1 : 0)),
+        )
+        setThumbViewportHeightPx((prev) => (prev === target ? prev : target))
+      }
 
       const gridRect = gridEl.getBoundingClientRect()
       const sample = buttons.slice(0, 6).map((b) => {
@@ -1280,6 +1297,50 @@ function FolderWindow({
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [lightboxOpen, contentFiles?.length, aquaItems?.length, isAquaSync])
+
+  const isDocLightboxOpen = lightboxOpen && (isAquaSync ? aquaSelectedIsDoc : selectedNonAquaType === 'doc')
+
+  const computeDocLayout = () => {
+    if (!isDocLightboxOpen) return
+    const mediaEl = lightboxMediaRef.current
+    const firstEl = firstDocPageRef.current
+    if (!mediaEl || !firstEl) return
+
+    const mediaRect = mediaEl.getBoundingClientRect()
+    const availableH = Math.max(0, mediaRect.height)
+    if (!availableH) return
+
+    const pageMaxH = Math.floor(availableH * DOC_PAGE_MAX_SCALE)
+    setDocPageMaxHeightPx((prev) => (prev === pageMaxH ? prev : pageMaxH))
+
+    const firstRect = firstEl.getBoundingClientRect()
+    const firstH = Math.max(0, firstRect.height)
+    if (!firstH) return
+
+    const maxViewportH = Math.floor(availableH * DOC_VIEWPORT_SCALE)
+    const desired = Math.min(firstH + DOC_PEEK_PX, maxViewportH)
+    const nextViewport = Math.max(firstH, Math.floor(desired))
+    setDocViewportHeightPx((prev) => (prev === nextViewport ? prev : nextViewport))
+  }
+
+  useLayoutEffect(() => {
+    if (!isDocLightboxOpen) {
+      setDocViewportHeightPx(null)
+      setDocPageMaxHeightPx(null)
+      return
+    }
+    requestAnimationFrame(() => computeDocLayout())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDocLightboxOpen, lightboxIndex, isMaximized, isMdUp])
+
+  useEffect(() => {
+    if (!isDocLightboxOpen) return
+    const onResize = () => requestAnimationFrame(() => computeDocLayout())
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDocLightboxOpen, lightboxIndex, isMaximized, isMdUp])
+
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -1505,7 +1566,7 @@ function FolderWindow({
                   }`}
                 >
                   {folderCaption ? (
-                    <div className={captionShouldScroll ? 'min-h-0' : undefined}>
+                    <div ref={captionWrapRef} className={captionShouldScroll ? 'min-h-0' : undefined}>
                       <FolderCaption
                         caption={folderCaption}
                         fixedHeight={captionShouldScroll}
@@ -1729,25 +1790,34 @@ function FolderWindow({
 
                       <div className="flex-1 min-w-0 flex items-stretch justify-center">
                         {aquaSelectedIsDoc ? (
-                          <div
-                            ref={aquaScrollRef}
-                            className="relative h-full w-full max-w-[min(780px,100%)] overflow-auto rounded-md cursor-default"
-                            onMouseDown={(e) => e.stopPropagation()}
-                            onContextMenu={(e) => e.preventDefault()}
-                          >
-                            <div className="mx-auto w-full py-4 sm:py-6 px-3 sm:px-6 flex flex-col gap-4">
-                              {aquaSelectedPages.map((src) => (
-                                <div key={src} className="w-full">
-                                  <img
-                                    src={src}
-                                    alt=""
-                                    className="block w-full h-auto rounded-md bg-white/5"
-                                    onContextMenu={(e) => e.preventDefault()}
-                                    onDragStart={(e) => e.preventDefault()}
-                                    draggable={false}
-                                  />
-                                </div>
-                              ))}
+                          <div ref={lightboxMediaRef} className="w-full h-full flex items-start justify-center">
+                            <div
+                              ref={aquaScrollRef}
+                              className="relative w-full max-w-[min(780px,100%)] overflow-auto rounded-md cursor-default"
+                              style={{ height: docViewportHeightPx ? `${docViewportHeightPx}px` : '100%' }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onContextMenu={(e) => e.preventDefault()}
+                            >
+                              <div className="mx-auto w-full py-4 sm:py-6 px-3 sm:px-6 flex flex-col gap-4">
+                                {aquaSelectedPages.map((src, idx) => (
+                                  <div
+                                    key={src}
+                                    ref={idx === 0 ? firstDocPageRef : null}
+                                    className="w-full flex justify-center"
+                                  >
+                                    <img
+                                      src={src}
+                                      alt=""
+                                      className="block max-w-full w-auto h-auto rounded-md bg-white/5"
+                                      style={docPageMaxHeightPx ? { maxHeight: `${docPageMaxHeightPx}px` } : undefined}
+                                      onLoad={() => requestAnimationFrame(() => computeDocLayout())}
+                                      onContextMenu={(e) => e.preventDefault()}
+                                      onDragStart={(e) => e.preventDefault()}
+                                      draggable={false}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         ) : aquaSelectedIsPhoneScroll ? (
@@ -1836,26 +1906,35 @@ function FolderWindow({
                   ) : (
                     <div className="relative w-full h-full flex items-center justify-center">
                       {selectedNonAquaType === 'doc' ? (
-                        <div
-                          ref={aquaScrollRef}
-                          className={`relative h-full w-full ${selectedNonAquaDocMaxWidthClass} overflow-auto rounded-md cursor-default`}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          onContextMenu={(e) => e.preventDefault()}
-                          onDragStart={(e) => e.preventDefault()}
-                        >
-                          <div className="mx-auto w-full py-4 sm:py-6 px-3 sm:px-6 flex flex-col gap-4">
-                            {selectedNonAquaDocPages.map((src) => (
-                              <div key={src} className="w-full">
-                                <img
-                                  src={src}
-                                  alt=""
-                                  className="block w-full h-auto rounded-md bg-white/5"
-                                  onContextMenu={(e) => e.preventDefault()}
-                                  onDragStart={(e) => e.preventDefault()}
-                                  draggable={false}
-                                />
-                              </div>
-                            ))}
+                        <div ref={lightboxMediaRef} className="w-full h-full flex items-start justify-center">
+                          <div
+                            ref={aquaScrollRef}
+                            className={`relative w-full ${selectedNonAquaDocMaxWidthClass} overflow-auto rounded-md cursor-default`}
+                            style={{ height: docViewportHeightPx ? `${docViewportHeightPx}px` : '100%' }}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onContextMenu={(e) => e.preventDefault()}
+                            onDragStart={(e) => e.preventDefault()}
+                          >
+                            <div className="mx-auto w-full py-4 sm:py-6 px-3 sm:px-6 flex flex-col gap-4">
+                              {selectedNonAquaDocPages.map((src, idx) => (
+                                <div
+                                  key={src}
+                                  ref={idx === 0 ? firstDocPageRef : null}
+                                  className="w-full flex justify-center"
+                                >
+                                  <img
+                                    src={src}
+                                    alt=""
+                                    className="block max-w-full w-auto h-auto rounded-md bg-white/5"
+                                    style={docPageMaxHeightPx ? { maxHeight: `${docPageMaxHeightPx}px` } : undefined}
+                                    onLoad={() => requestAnimationFrame(() => computeDocLayout())}
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    onDragStart={(e) => e.preventDefault()}
+                                    draggable={false}
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       ) : selectedNonAquaType === 'scrollImage' ? (
