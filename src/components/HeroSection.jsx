@@ -170,6 +170,23 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
     setActiveIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)
   }
 
+  const handleArrowNav = (direction) => {
+    // Front side: arrows flip to the writing side (no index change)
+    if (!showBack) {
+      didSwipeRef.current = false
+      setShowBack(true)
+      return
+    }
+
+    // Writing side: arrows navigate and return to the front
+    didSwipeRef.current = false
+    setActiveIndex((prev) => {
+      const delta = direction === 'prev' ? -1 : 1
+      return (prev + delta + heroImages.length) % heroImages.length
+    })
+    setShowBack(false)
+  }
+
   const handlePointerDown = (e) => {
     // Only track touch / pen interactions for swipe gestures
     if (e.pointerType === 'mouse') return
@@ -235,7 +252,7 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
 
         <div className="relative mb-8 flex flex-col items-center">
           <div
-            className="flip-card relative w-full"
+            className="flip-card relative w-full group"
             style={{ maxWidth: 740, aspectRatio: '800 / 540' }}
             onClick={handleCardClick}
             onPointerDown={handlePointerDown}
@@ -253,7 +270,7 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
               }}
               onClick={(e) => {
                 e.stopPropagation()
-                goPrev()
+                handleArrowNav('prev')
               }}
             >
               ‹
@@ -269,7 +286,7 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
               }}
               onClick={(e) => {
                 e.stopPropagation()
-                goNext()
+                handleArrowNav('next')
               }}
             >
               ›
@@ -289,7 +306,7 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
                     <img
                       src={heroImages[activeIndex]}
                       alt="Portfolio showcase"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out will-change-transform group-hover:scale-[1.04] group-hover:brightness-[1.04] motion-reduce:transition-none motion-reduce:transform-none"
                     />
                   </div>
                 </div>
