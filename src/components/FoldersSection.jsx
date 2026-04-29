@@ -52,7 +52,12 @@ const DESIGN_FOLDER_SLUGS = {
 }
 
 const DESIGN_FOLDER_FILES = {
-  'Digital Drawing': ['magazine-cover.png', 'forest-elder.png', 'shattering.png'],
+  'Digital Drawing': [
+    'digital-drawing-lia-cover-v2.png',
+    'digital-drawing-lia-cover.png',
+    'forest-elder.png',
+    'shattering.png',
+  ],
   Astron: [
     'astron-01.png',
     'astron-02.png',
@@ -132,6 +137,8 @@ const AQUASYNC_ITEMS = [
 const DESIGN_FOLDER_CAPTIONS = {
   Astron:
     'An astronomy magazine that presents the eight planets through an approachable, illustrative style, using hand-drawn elements and annotated layouts to make complex information more engaging and accessible.',
+  'Digital Drawing':
+    'Exploring illustration and graphic design through character-driven compositions, experimenting with typography, color, and layout to shape distinct visual narratives across editorial and poster formats',
   AquaSync:
     `AquaSync is a universal hydration tracking system that turns any cup into a connected experience. By combining passive sensing with a companion interface, it makes water intake visible, effortless, and consistent over time.
     
@@ -581,11 +588,11 @@ const GEAR_SYSTEM_ITEMS = [
 
 const MINIMIZE_DURATION_MS = 350
 
-const CAPTION_MAX_LINES = 23
+const CAPTION_MAX_LINES = 12
 const CAPTION_LINE_HEIGHT_EM = 1.625 // tailwind `leading-relaxed`
 const CAPTION_MAX_HEIGHT_EM = CAPTION_MAX_LINES * CAPTION_LINE_HEIGHT_EM
 
-function FolderCaption({ caption, fixedHeight = false }) {
+function FolderCaption({ caption, fixedHeight = false, maxLines = CAPTION_MAX_LINES, unbounded = false }) {
   const scrollRef = useRef(null)
   const [showBottomFade, setShowBottomFade] = useState(false)
   const [showTopFade, setShowTopFade] = useState(false)
@@ -629,6 +636,7 @@ function FolderCaption({ caption, fixedHeight = false }) {
   }, [])
 
   const lines = String(caption || '').split('\n')
+  const maxHeightEm = maxLines * CAPTION_LINE_HEIGHT_EM
   const subtitleRe = /^[A-Z][A-Za-z]*(?:\s[A-Z][A-Za-z]*)*$/
   const bulletedSections = new Set(['Principles', 'Approach', 'APPROACH'])
   const SUBTITLE_INDENT_CLASS = 'pl-4'
@@ -744,15 +752,23 @@ function FolderCaption({ caption, fixedHeight = false }) {
     <div className="relative w-full">
       <div
         ref={scrollRef}
-        className="text-black/70 text-sm leading-relaxed w-full overflow-auto pr-2 rounded-xl bg-white/35 border border-black/10 px-4 py-3"
-        style={fixedHeight ? { height: `${CAPTION_MAX_HEIGHT_EM}em` } : { maxHeight: `${CAPTION_MAX_HEIGHT_EM}em` }}
+        className={`text-black/70 text-sm leading-relaxed w-full rounded-xl bg-white/35 border border-black/10 px-4 py-3 ${
+          unbounded ? 'overflow-visible' : 'overflow-auto pr-2'
+        }`}
+        style={
+          unbounded
+            ? undefined
+            : fixedHeight
+              ? { height: `${maxHeightEm}em` }
+              : { maxHeight: `${maxHeightEm}em` }
+        }
       >
         {nodes}
       </div>
-      {showTopFade ? (
+      {!unbounded && showTopFade ? (
         <div className="pointer-events-none absolute inset-x-0 top-0 h-8 rounded-t-xl bg-gradient-to-t from-transparent to-black/15" />
       ) : null}
-      {showBottomFade ? (
+      {!unbounded && showBottomFade ? (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 rounded-b-xl bg-gradient-to-b from-transparent to-black/15" />
       ) : null}
     </div>
@@ -827,6 +843,15 @@ function SmallFolderIcon({ bodyColor = '#C96AED', tabColor = '#A825D9' }) {
 }
 
 function TitleBarIcon({ type }) {
+  if (type === 'notes') {
+    return (
+      <div className="w-5 h-4 bg-black rounded-[1px] flex flex-col justify-center gap-[2px] px-[3px]">
+        <span className="block h-[1px] w-full bg-white" />
+        <span className="block h-[1px] w-full bg-white" />
+        <span className="block h-[1px] w-3/5 bg-white" />
+      </div>
+    )
+  }
   if (type === 'camera') {
     return (
       <div className="relative w-6 h-3 bg-black">
@@ -1039,6 +1064,10 @@ function FolderWindow({
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const [thumbViewportHeightPx, setThumbViewportHeightPx] = useState(null)
   const [thumbTilePx, setThumbTilePx] = useState(null)
+  const [isMdUp, setIsMdUp] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return window.matchMedia('(min-width: 768px)').matches
+  })
   const windowRef = useRef(null)
   const thumbsGridRef = useRef(null)
   const aquaScrollRef = useRef(null)
@@ -1099,7 +1128,19 @@ function FolderWindow({
         .filter(Boolean).length
     : 0
   const useSideBySideCaptionLayout = folderCaptionLineCount > 3
+  const isStackedCaptionLayout = useSideBySideCaptionLayout && !isMdUp
+  const shortCaptionMaxLines = Math.max(4, Math.min(8, folderCaptionLineCount + 2))
+  const captionMaxLines = isStackedCaptionLayout ? 12 : useSideBySideCaptionLayout ? 20 : shortCaptionMaxLines
+  const isCaptionActuallySideBySide = useSideBySideCaptionLayout && isMdUp
+  const captionShouldScroll = isCaptionActuallySideBySide || isStackedCaptionLayout
+  const captionIsUnbounded = !captionShouldScroll
+  const captionBoxHeightEm = captionMaxLines * CAPTION_LINE_HEIGHT_EM
   const thumbsGridColsClass = useSideBySideCaptionLayout ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'
+  const thumbGridGapPx = isMdUp ? 16 : 12
+  const thumbGridVisibleRows = 1.5
+  const thumbGridVisibleHeightPx = thumbTilePx
+    ? thumbTilePx * thumbGridVisibleRows + thumbGridGapPx
+    : null
 
   const closeLightbox = () => setLightboxIndex(null)
   const toggleMaximize = () => {
@@ -1193,7 +1234,10 @@ function FolderWindow({
       const tilePx = Math.max(1, Math.round((gridW - colGap * (cols - 1)) / cols))
       setThumbTilePx((prev) => (prev === tilePx ? prev : tilePx))
 
-      const target = Math.round(tilePx * 1.5 + rowGap)
+      const targetRows = isStackedCaptionLayout ? 1.5 : 2.5
+      const fullRows = Math.floor(targetRows)
+      const fractionalRow = targetRows - fullRows
+      const target = Math.round(tilePx * targetRows + rowGap * Math.max(0, fullRows - 1 + (fractionalRow > 0 ? 1 : 0)))
       setThumbViewportHeightPx((prev) => (prev === target ? prev : target))
 
       const gridRect = gridEl.getBoundingClientRect()
@@ -1206,7 +1250,16 @@ function FolderWindow({
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
-  }, [show, subfolderName, contentFiles?.length, aquaItems?.length, isMaximized, isAquaSync])
+  }, [show, subfolderName, contentFiles?.length, aquaItems?.length, isMaximized, isAquaSync, isStackedCaptionLayout])
+
+  useEffect(() => {
+    const onResize = () => {
+      setIsMdUp(window.matchMedia('(min-width: 768px)').matches)
+    }
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -1349,7 +1402,7 @@ function FolderWindow({
     >
         <div
           className={`mx-auto mt-16 transition-all duration-300 ease-out ${
-            isMaximized ? 'w-[min(90vw,1100px)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
+            isMaximized ? 'w-[min(78vw,920px)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
           }`}
         >
           <div
@@ -1427,8 +1480,8 @@ function FolderWindow({
             } ${
               isMaximized
                 ? isInsideSubfolder
-                  ? 'flex-1 h-[min(80vh,740px)]'
-                  : 'flex-1 h-[min(68vh,620px)]'
+                  ? 'flex-1 h-[min(66vh,560px)]'
+                  : 'flex-1 h-[min(56vh,500px)]'
                 : isInsideSubfolder
                   ? 'flex-1 h-[min(72vh,660px)]'
                   : 'flex-1 h-[min(56vh,520px)]'
@@ -1452,8 +1505,13 @@ function FolderWindow({
                   }`}
                 >
                   {folderCaption ? (
-                    <div className={useSideBySideCaptionLayout ? 'min-h-0' : undefined}>
-                      <FolderCaption caption={folderCaption} fixedHeight={useSideBySideCaptionLayout} />
+                    <div className={captionShouldScroll ? 'min-h-0' : undefined}>
+                      <FolderCaption
+                        caption={folderCaption}
+                        fixedHeight={captionShouldScroll}
+                        maxLines={captionMaxLines}
+                        unbounded={captionIsUnbounded}
+                      />
                     </div>
                   ) : null}
                   <div
@@ -1462,8 +1520,15 @@ function FolderWindow({
                       useSideBySideCaptionLayout ? 'min-h-0' : ''
                     }`}
                     style={
-                      useSideBySideCaptionLayout
-                        ? { height: `${CAPTION_MAX_HEIGHT_EM}em`, gridAutoRows: `${thumbTilePx}px` }
+                      folderCaption
+                        ? thumbTilePx
+                          ? {
+                              height: thumbGridVisibleHeightPx
+                                ? `${thumbGridVisibleHeightPx}px`
+                                : `${captionBoxHeightEm}em`,
+                              gridAutoRows: `${thumbTilePx}px`,
+                            }
+                          : { height: `${captionBoxHeightEm}em` }
                         : thumbViewportHeightPx && thumbTilePx
                           ? { height: `${thumbViewportHeightPx}px`, gridAutoRows: `${thumbTilePx}px` }
                           : undefined
@@ -1718,14 +1783,14 @@ function FolderWindow({
                             </div>
                           </div>
                         ) : aquaSelectedImageSrc ? (
-                          <div className="relative w-full h-full max-w-[min(780px,100%)] flex items-center justify-center px-4 py-4 sm:px-8 sm:py-6">
+                          <div className="relative w-full h-full max-w-[min(720px,100%)] flex items-center justify-center px-6 py-6 sm:px-10 sm:py-8">
                             <img
                               src={aquaSelectedImageSrc}
                               alt=""
                               className="block object-contain rounded-md cursor-default"
                               style={{
-                                maxHeight: '100%',
-                                maxWidth: '100%',
+                                maxHeight: '88%',
+                                maxWidth: '88%',
                               }}
                               onMouseDown={(e) => e.stopPropagation()}
                               onContextMenu={(e) => e.preventDefault()}
@@ -1835,14 +1900,14 @@ function FolderWindow({
                           />
                         </div>
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center px-4 py-4 sm:px-8 sm:py-6">
+                        <div className="flex h-full w-full items-center justify-center px-6 py-6 sm:px-10 sm:py-8">
                           <img
                             src={selectedNonAquaImageSrc}
                             alt=""
                             className="block object-contain rounded-md cursor-default"
                             style={{
-                              maxHeight: '100%',
-                              maxWidth: 'calc(100% - 98px)', // leave room so arrows never overlap the image
+                              maxHeight: '88%',
+                              maxWidth: 'calc(88% - 98px)', // keep arrow clearance and add breathing room
                             }}
                             onMouseDown={(e) => e.stopPropagation()}
                             onContextMenu={(e) => e.preventDefault()}
@@ -2238,7 +2303,7 @@ export default function FoldersSection({
           onClose={() => setShowPastNotesWindow(false)}
           folderRef={pastNotesFolderRef}
           title="Past Notes"
-          iconType="pen"
+          iconType="notes"
           borderColor="#FF8A00"
           bodyColor="#FF8A00"
           tabColor="#E66500"
