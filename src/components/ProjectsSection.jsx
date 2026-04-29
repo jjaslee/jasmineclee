@@ -159,7 +159,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
               className="absolute -left-6 sm:-left-12 md:-left-20 lg:-left-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
               style={{
                 color: '#F62F60',
-                opacity: 0.58,
+                opacity: 1,
                 textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
               }}
               onClick={goToPrev}
@@ -172,7 +172,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
               className="absolute -right-6 sm:-right-12 md:-right-20 lg:-right-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
               style={{
                 color: '#F62F60',
-                opacity: 0.58,
+                opacity: 0.8,
                 textShadow: '0 0 12px rgba(0, 0, 0, 0.55)',
               }}
               onClick={goToNext}
