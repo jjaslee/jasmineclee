@@ -123,7 +123,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
   return (
     <section id="about" className="relative z-30 -mt-12 pt-2">
       {/* Sticky tab bar for ABOUT ME – high z so it overlaps Projects tab when scrolling */}
-      <div className="sticky top-14 z-[70]">
+      <div className="sticky z-[70]" style={{ top: 'var(--app-header-height, 56px)' }}>
         <div className="relative h-8 chrome-bg-60 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"

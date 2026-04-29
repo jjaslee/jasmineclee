@@ -108,7 +108,7 @@ export default function ContactSection({ lang = 'EN' }) {
   return (
     <section id="contact" className="relative -mt-8">
       {/* Sticky tab bar for CONTACT with translucent backing outside the tab */}
-      <div className="sticky top-14 z-[70]">
+      <div className="sticky z-[70]" style={{ top: 'var(--app-header-height, 56px)' }}>
         <div className="relative h-8 chrome-bg-60 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"

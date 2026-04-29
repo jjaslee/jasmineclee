@@ -19,10 +19,10 @@ export default function Header({
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-[100] chrome-bg-90 backdrop-blur-sm border-b"
-      style={{ borderBottomColor: active.border }}
+      className="fixed top-0 left-0 right-0 z-[100] chrome-bg-90 backdrop-blur-sm"
+      style={{ boxShadow: `inset 0 -1px 0 0 ${active.border}` }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-3 relative flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-[60px] relative flex items-center justify-between">
         {/* Left: name + color boxes */}
         <div className="flex items-center gap-5">
           <a

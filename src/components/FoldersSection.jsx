@@ -2140,7 +2140,7 @@ export default function FoldersSection({
   return (
     <section id="work" className="relative z-20">
       {/* Sticky tab bar for PROJECTS - higher z so windows slide below it */}
-      <div className="sticky top-14 z-50">
+      <div className="sticky z-50" style={{ top: 'var(--app-header-height, 56px)' }}>
         <div className="relative h-8 chrome-bg-90 backdrop-blur-sm">
           <div
             className="absolute inset-0 flex items-center"
