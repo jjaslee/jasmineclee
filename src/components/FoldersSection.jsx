@@ -12,7 +12,7 @@ const PAST_NOTES_FOLDER = {
   tabColor: '#E66500',
 }
 
-const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Warmth', 'Peace']
+const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Warmth']
 
 // Display name → path slug in public/photos; each slug folder holds image filenames
 const PHOTOS_FOLDER_SLUGS = {
@@ -20,7 +20,6 @@ const PHOTOS_FOLDER_SLUGS = {
   Seclusion: 'seclusion',
   Solitude: 'solitude',
   Warmth: 'warmth',
-  Peace: 'peace',
 }
 
 const PHOTOS_FOLDER_FILES = {
@@ -28,7 +27,6 @@ const PHOTOS_FOLDER_FILES = {
   Seclusion: ['IMG_9424.jpg', 'IMG_3916.jpg', 'IMG_3917.jpg', 'IMG_3908.jpg'],
   Solitude: ['IMG_9437.jpg', 'IMG_9443.jpg', 'IMG_9083.jpg', 'IMG_9095.jpg', 'IMG_9446.jpg', 'IMG_9451.jpg', 'IMG_9439.jpg', 'IMG_8930.jpg'],
   Warmth: ['IMG_4013.jpg','IMG_4164.jpg', 'IMG_4171.jpg', 'IMG_4173.jpg', 'IMG_4180.jpg'],
-  Peace: [],
 }
 const DESIGN_INNER_FOLDERS = [
   'Cal Hacks',

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 export default function ProjectsSection({ lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [deckMaxWidthPx, setDeckMaxWidthPx] = useState(null)
   const aboutBodyFontClass = lang === 'ZH' ? 'font-zh-handwritten' : 'font-nanum'
   const erbsRef = useRef(null)
 
@@ -104,6 +105,37 @@ export default function ProjectsSection({ lang = 'EN' }) {
     return () => mq.removeEventListener('change', update)
   }, [])
 
+  useEffect(() => {
+    const ASPECT = 800 / 540
+    const baseMaxW = isSmallScreen ? 520 : 720
+    const vwFactor = isSmallScreen ? 0.78 : 0.9
+    const minW = isSmallScreen ? 280 : 360
+
+    const readHeaderPx = () => {
+      const raw = window
+        .getComputedStyle(document.documentElement)
+        .getPropertyValue('--app-header-height')
+        .trim()
+      const v = parseFloat(raw)
+      return Number.isFinite(v) ? v : 56
+    }
+
+    const compute = () => {
+      const headerPx = readHeaderPx()
+      const stickyTabPx = 32
+      const sectionPadPx = isSmallScreen ? 160 : 190
+      const availableH = Math.max(240, window.innerHeight - headerPx - stickyTabPx - sectionPadPx)
+      const maxWByH = Math.floor(availableH * ASPECT)
+      const maxWByVW = Math.floor(window.innerWidth * vwFactor)
+      const next = Math.max(minW, Math.min(baseMaxW, maxWByVW, maxWByH))
+      setDeckMaxWidthPx((prev) => (prev === next ? prev : next))
+    }
+
+    compute()
+    window.addEventListener('resize', compute)
+    return () => window.removeEventListener('resize', compute)
+  }, [isSmallScreen])
+
   // More spread on larger screens; auto-tighten on small screens.
   const staggerPx = isSmallScreen ? 8 : 30
   const slotStyles = [
@@ -145,11 +177,10 @@ export default function ProjectsSection({ lang = 'EN' }) {
         <div className="max-w-4xl mx-auto px-6">
           {/* Deck container: postcard aspect, scales with viewport */}
           <div
-            className={`relative mx-auto w-full ${
-              isSmallScreen ? 'max-w-[min(520px,78vw)]' : 'max-w-[min(720px,90vw)]'
-            }`}
+            className="relative mx-auto w-full"
             style={{
               aspectRatio: '800 / 540',
+              maxWidth: deckMaxWidthPx ? `${deckMaxWidthPx}px` : undefined,
             }}
           >
             {/* Subtle navigation arrows (outside entire stack) */}
