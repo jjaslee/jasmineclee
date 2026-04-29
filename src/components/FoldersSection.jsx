@@ -1234,7 +1234,7 @@ function FolderWindow({
       const tilePx = Math.max(1, Math.round((gridW - colGap * (cols - 1)) / cols))
       setThumbTilePx((prev) => (prev === tilePx ? prev : tilePx))
 
-      const targetRows = isStackedCaptionLayout ? 1.5 : 2.5
+      const targetRows = 1.5
       const fullRows = Math.floor(targetRows)
       const fractionalRow = targetRows - fullRows
       const target = Math.round(tilePx * targetRows + rowGap * Math.max(0, fullRows - 1 + (fractionalRow > 0 ? 1 : 0)))
@@ -2182,7 +2182,9 @@ export default function FoldersSection({
         <div className="max-w-4xl mx-auto px-6">
           <div
             ref={foldersRowRef}
-            className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16"
+            className={`grid grid-cols-1 sm:grid-cols-[max-content_max-content] ${
+              showPastNotesFolder ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+            } justify-center justify-items-center gap-8 sm:gap-x-24 lg:gap-16`}
           >
             {visibleFolders.map((folder) => {
               const isPastNotes = folder.label === 'PAST NOTES'
