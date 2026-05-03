@@ -4,6 +4,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [deckMaxWidthPx, setDeckMaxWidthPx] = useState(null)
+  const [aboutBottomPadPx, setAboutBottomPadPx] = useState(80)
   const aboutBodyFontClass = lang === 'ZH' ? 'font-zh-handwritten' : 'font-nanum'
   const erbsRef = useRef(null)
 
@@ -129,6 +130,10 @@ export default function ProjectsSection({ lang = 'EN' }) {
       const maxWByVW = Math.floor(window.innerWidth * vwFactor)
       const next = Math.max(minW, Math.min(baseMaxW, maxWByVW, maxWByH))
       setDeckMaxWidthPx((prev) => (prev === next ? prev : next))
+
+      const deckH = next / ASPECT
+      const pad = Math.round(Math.max(36, Math.min(96, deckH * 0.15)))
+      setAboutBottomPadPx((prev) => (prev === pad ? prev : pad))
     }
 
     compute()
@@ -173,7 +178,10 @@ export default function ProjectsSection({ lang = 'EN' }) {
       </div>
 
       {/* Section content below the sticky tab */}
-      <div className="relative z-20 section-bg min-h-screen pt-16 pb-20">
+      <div
+        className="relative z-20 section-bg min-h-screen pt-16"
+        style={{ paddingBottom: `${aboutBottomPadPx}px` }}
+      >
         <div className="max-w-4xl mx-auto px-6">
           {/* Deck container: postcard aspect, scales with viewport */}
           <div
