@@ -257,7 +257,9 @@ Implemented a personal journal system for saving and revisiting entries
 
 OUTCOME
 
-A scalable system that bridges data, interface, and real-world action-allowing users to discover, organize, and directly acquire items that align with their aesthetic.`,
+A scalable system that bridges data, interface, and real-world action-allowing users to discover, organize, and directly acquire items that align with their aesthetic.
+
+https://jjaslee.github.io/THE-STUDIO-INDEX/index.html#archive-start`,
   'Fluttering Kindness': `A public mural transforming an everyday utility space into a welcoming visual experience through storytelling and color.
 
 DESIGN FOUNDATION
@@ -288,7 +290,7 @@ OUTCOME
 A community-facing installation that balances creative vision with real-world constraints, sustaining its presence and impact over time.`,
 }
 const TECHNICALS_INNER_FOLDERS = [
-  'Mechatronic Goniometer',
+  'Goniometrix',
   'Kinetic Origamic',
   'Gear System',
   'Water Automata',
@@ -297,7 +299,7 @@ const TECHNICALS_INNER_FOLDERS = [
 ]
 
 const TECHNICALS_FOLDER_CAPTIONS = {
-  'Mechatronic Goniometer': `A wearable system that measures joint range of motion and provides real-time feedback to improve movement accuracy and consistency.
+  Goniometrix: `A wearable system that measures joint range of motion and provides real-time feedback to improve movement accuracy and consistency.
 
 DESIGN FOUNDATION
 
@@ -448,7 +450,7 @@ const KINETIC_ORIGAMIC_ITEMS = [
   },
 ]
 
-const MECHATRONIC_GONIOMETER_ITEMS = [
+const GONIOMETRIX_ITEMS = [
   {
     type: 'video',
     src: '/technicals/mechatronic-goniometer/mechatronic-goniometer-interaction-01.mp4',
@@ -2186,7 +2188,7 @@ export default function FoldersSection({
           : []
 
   const technicalsContentFiles =
-    technicalsOpenFolder === 'Mechatronic Goniometer' ? MECHATRONIC_GONIOMETER_ITEMS
+    technicalsOpenFolder === 'Goniometrix' ? GONIOMETRIX_ITEMS
       : technicalsOpenFolder === 'Kinetic Origamic' ? KINETIC_ORIGAMIC_ITEMS
       : technicalsOpenFolder === 'Gear System' ? GEAR_SYSTEM_ITEMS
       : technicalsOpenFolder === 'Water Automata' ? WATER_AUTOMATA_ITEMS
