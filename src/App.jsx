@@ -11,11 +11,11 @@ function App() {
   const [heroColor, setHeroColor] = useState('purple')
   const [theme, setTheme] = useState('dark')
   const [lang, setLang] = useState('EN')
-  const [showPhotosWindow, setShowPhotosWindow] = useState(true)
+  const [showPhotosWindow, setShowPhotosWindow] = useState(false)
   const [showDesignWindow, setShowDesignWindow] = useState(false)
-  const [showTechnicalsWindow, setShowTechnicalsWindow] = useState(false)
-  const [openWindowStack, setOpenWindowStack] = useState(['photos'])
-  const [cascadeOrder, setCascadeOrder] = useState(['photos'])
+  const [showTechnicalsWindow, setShowTechnicalsWindow] = useState(true)
+  const [openWindowStack, setOpenWindowStack] = useState(['technicals'])
+  const [cascadeOrder, setCascadeOrder] = useState(['technicals'])
   const layoutLogCountRef = useRef(0)
   const anyFolderWindowOpen =
     showPhotosWindow || showDesignWindow || showTechnicalsWindow

@@ -76,7 +76,7 @@ const DESIGN_FOLDER_FILES = {
   ],
   'Cal Hacks': [],
   'Lazy Day Lines': ['lazy-day-lines-color-palette.png', 'lazy-day-lines-logo-exploration.png'],
-  'The Studio Index': [],
+  'The Studio Index': ['the-studio-index-archive-light.png', 'the-studio-index-data-structure-dark.png'],
   'Fluttering Kindness': [],
 }
 
@@ -458,15 +458,30 @@ const GONIOMETRIX_ITEMS = [
     desc: 'Real-time feedback loop between user movement and interface',
   },
   {
+    type: 'image',
+    src: '/technicals/mechatronic-goniometer/goniometrix-poster.png',
+    title: 'Poster',
+    desc: 'Detailed overview of methodology and design journey',
+    pdfHref: '/technicals/mechatronic-goniometer/goniometrix-poster.pdf',
+  },
+  {
     type: 'doc',
-    coverSrc: '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-01.png',
+    coverSrc: '/technicals/mechatronic-goniometer/goniometrix-hardware-photo-01.png',
     title: 'Hardware Prototype',
     desc: 'Wearable modules (IMUs, vibration motors, speaker)',
     pages: [
+      '/technicals/mechatronic-goniometer/goniometrix-hardware-photo-01.png',
+      '/technicals/mechatronic-goniometer/goniometrix-hardware-photo-02.png',
       '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-01.png',
       '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-02.png',
-      '/technicals/mechatronic-goniometer/mechatronic-goniometer-hardware-prototype-03.png',
     ],
+  },
+  {
+    type: 'image',
+    src: '/technicals/mechatronic-goniometer/goniometrix-roadmap.png',
+    title: 'Roadmap',
+    desc: 'Connecting research insights, concept development, and prototyping',
+    pdfHref: '/technicals/mechatronic-goniometer/goniometrix-roadmap.pdf',
   },
   {
     type: 'image',
@@ -1056,6 +1071,7 @@ function FolderWindow({
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const [thumbViewportHeightPx, setThumbViewportHeightPx] = useState(null)
   const [thumbTilePx, setThumbTilePx] = useState(null)
+  const [showThumbsGridBottomFade, setShowThumbsGridBottomFade] = useState(false)
   const [docViewportHeightPx, setDocViewportHeightPx] = useState(null)
   const [docPageMaxHeightPx, setDocPageMaxHeightPx] = useState(null)
   const [isMdUp, setIsMdUp] = useState(() => {
@@ -1098,6 +1114,8 @@ function FolderWindow({
       : typeof selectedNonAquaItem === 'string'
         ? selectedNonAquaItem
         : null
+  const selectedNonAquaPdfHref =
+    selectedNonAquaIsObj && selectedNonAquaType === 'image' ? selectedNonAquaItem.pdfHref : null
   const selectedNonAquaVideoSrc =
     selectedNonAquaIsObj && selectedNonAquaType === 'video' ? selectedNonAquaItem.src : null
   const selectedNonAquaScrollImageSrc =
@@ -1143,6 +1161,15 @@ function FolderWindow({
       ? thumbViewportHeightPx
       : thumbTilePx * 1.5 + thumbGridGapPx
     : null
+
+  const computeThumbsGridFade = () => {
+    const el = thumbsGridRef.current
+    if (!el) return
+    const overflowing = el.scrollHeight > el.clientHeight + 1
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1
+    const next = overflowing && !atBottom
+    setShowThumbsGridBottomFade((prev) => (prev === next ? prev : next))
+  }
 
   const closeLightbox = () => setLightboxIndex(null)
   const toggleMaximize = () => {
@@ -1262,12 +1289,64 @@ function FolderWindow({
         const r = b.getBoundingClientRect()
         return { top: Math.round(r.top - gridRect.top), left: Math.round(r.left - gridRect.left) }
       })
+
+      requestAnimationFrame(() => computeThumbsGridFade())
     }
 
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
   }, [show, subfolderName, contentFiles?.length, aquaItems?.length, isMaximized, isAquaSync, isStackedCaptionLayout])
+
+  useEffect(() => {
+    if (!show || !subfolderName) {
+      setShowThumbsGridBottomFade(false)
+      return undefined
+    }
+
+    let cancelled = false
+    let detach = () => {}
+
+    const raf = requestAnimationFrame(() => {
+      if (cancelled) return
+      const el = thumbsGridRef.current
+      if (!el) return
+
+      const update = () => computeThumbsGridFade()
+      update()
+      el.addEventListener('scroll', update, { passive: true })
+      window.addEventListener('resize', update)
+
+      let ro
+      if (typeof ResizeObserver !== 'undefined') {
+        ro = new ResizeObserver(() => update())
+        ro.observe(el)
+      }
+
+      detach = () => {
+        el.removeEventListener('scroll', update)
+        window.removeEventListener('resize', update)
+        if (ro) ro.disconnect()
+      }
+    })
+
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(raf)
+      detach()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    show,
+    subfolderName,
+    contentFiles?.length,
+    aquaItems?.length,
+    thumbViewportHeightPx,
+    thumbTilePx,
+    isMdUp,
+    useSideBySideCaptionLayout,
+    isStackedCaptionLayout,
+  ])
 
   useEffect(() => {
     const onResize = () => {
@@ -1576,10 +1655,7 @@ function FolderWindow({
                     </div>
                   ) : null}
                   <div
-                    ref={thumbsGridRef}
-                    className={`grid ${thumbsGridColsClass} gap-3 md:gap-4 w-full content-start overflow-auto ${
-                      useSideBySideCaptionLayout ? 'min-h-0' : ''
-                    }`}
+                    className={`relative w-full ${useSideBySideCaptionLayout ? 'min-h-0' : ''}`}
                     style={
                       folderCaption
                         ? thumbTilePx
@@ -1587,14 +1663,18 @@ function FolderWindow({
                               height: thumbGridVisibleHeightPx
                                 ? `${thumbGridVisibleHeightPx}px`
                                 : `${captionBoxHeightEm}em`,
-                              gridAutoRows: `${thumbTilePx}px`,
                             }
                           : { height: `${captionBoxHeightEm}em` }
                         : thumbViewportHeightPx && thumbTilePx
-                          ? { height: `${thumbViewportHeightPx}px`, gridAutoRows: `${thumbTilePx}px` }
+                          ? { height: `${thumbViewportHeightPx}px` }
                           : undefined
                     }
                   >
+                    <div
+                      ref={thumbsGridRef}
+                      className={`grid h-full min-h-0 ${thumbsGridColsClass} gap-3 md:gap-4 w-full content-start overflow-auto`}
+                      style={thumbTilePx ? { gridAutoRows: `${thumbTilePx}px` } : undefined}
+                    >
                   {isAquaSync ? (
                     (aquaItems?.length || 0) > 0 ? (
                       aquaItems.map((item, i) => {
@@ -1737,6 +1817,10 @@ function FolderWindow({
                   ) : (
                     <p className="text-black/50 text-sm col-span-full">No photos in this folder yet.</p>
                   )}
+                    </div>
+                    {showThumbsGridBottomFade ? (
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 rounded-b-xl bg-gradient-to-b from-transparent to-black/15" />
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -1979,14 +2063,30 @@ function FolderWindow({
                           />
                         </div>
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center px-6 py-6 sm:px-10 sm:py-8">
+                        <div
+                          className={`relative flex h-full w-full items-center justify-center ${
+                            selectedNonAquaPdfHref ? 'px-2 py-2 sm:px-4 sm:py-4' : 'px-6 py-6 sm:px-10 sm:py-8'
+                          }`}
+                        >
+                          {selectedNonAquaPdfHref ? (
+                            <a
+                              href={selectedNonAquaPdfHref}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-semibold text-black/80 backdrop-blur hover:bg-white/95"
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              View as PDF
+                            </a>
+                          ) : null}
                           <img
                             src={selectedNonAquaImageSrc}
                             alt=""
                             className="block object-contain rounded-md cursor-default"
                             style={{
-                              maxHeight: '88%',
-                              maxWidth: 'calc(88% - 98px)', // keep arrow clearance and add breathing room
+                              maxHeight: selectedNonAquaPdfHref ? '96%' : '88%',
+                              maxWidth: selectedNonAquaPdfHref ? 'calc(96% - 98px)' : 'calc(88% - 98px)',
                             }}
                             onMouseDown={(e) => e.stopPropagation()}
                             onContextMenu={(e) => e.preventDefault()}
@@ -2054,18 +2154,18 @@ function FolderWindow({
 }
 
 export default function FoldersSection({
-  showPhotosWindow = true,
+  showPhotosWindow = false,
   onClosePhotosWindow,
   onOpenPhotosWindow,
   showDesignWindow = false,
   onCloseDesignWindow,
   onOpenDesignWindow,
-  showTechnicalsWindow = false,
+  showTechnicalsWindow = true,
   onCloseTechnicalsWindow,
   onOpenTechnicalsWindow,
   anyFolderWindowOpen = true,
-  openWindowStack = [],
-  cascadeOrder = [],
+  openWindowStack = ['technicals'],
+  cascadeOrder = ['technicals'],
   onBringWindowToFront,
 }) {
   const photosFolderRef = useRef(null)
