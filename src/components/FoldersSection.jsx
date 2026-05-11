@@ -298,6 +298,56 @@ const TECHNICALS_INNER_FOLDERS = [
   'Ngordnet',
 ]
 
+function slugifyFolderLabel(label) {
+  return String(label || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+/** `#project/{photos|design|technicals}[/{subfolder-slug}]` */
+function parseProjectHash(hash) {
+  const raw = String(hash || '').replace(/^#/, '').trim()
+  if (!raw) return null
+  const parts = raw.split('/').filter(Boolean)
+  if (parts[0] !== 'project') return null
+  const root = parts[1]
+  const subSlug = parts[2] ?? null
+  if (root !== 'photos' && root !== 'design' && root !== 'technicals') return null
+  return { root, subSlug }
+}
+
+function photosSlugToFolderName(slug) {
+  if (!slug) return null
+  const hit = Object.entries(PHOTOS_FOLDER_SLUGS).find(([, s]) => s === slug)
+  if (hit) return hit[0]
+  return PHOTOS_INNER_FOLDERS.find((name) => slugifyFolderLabel(name) === slug) ?? null
+}
+
+function designSlugToFolderName(slug) {
+  if (!slug) return null
+  const hit = Object.entries(DESIGN_FOLDER_SLUGS).find(([, s]) => s === slug)
+  if (hit) return hit[0]
+  return DESIGN_INNER_FOLDERS.find((name) => slugifyFolderLabel(name) === slug) ?? null
+}
+
+function technicalsSlugToFolderName(slug) {
+  if (!slug) return null
+  return TECHNICALS_INNER_FOLDERS.find((name) => slugifyFolderLabel(name) === slug) ?? null
+}
+
+function folderDisplayNameToUrlSlug(area, displayName) {
+  if (!displayName) return null
+  if (area === 'photos') return PHOTOS_FOLDER_SLUGS[displayName] ?? slugifyFolderLabel(displayName)
+  if (area === 'design') return DESIGN_FOLDER_SLUGS[displayName] ?? slugifyFolderLabel(displayName)
+  return slugifyFolderLabel(displayName)
+}
+
+function scrollProjectsSectionIntoView() {
+  document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 const TECHNICALS_FOLDER_CAPTIONS = {
   Goniometrix: `A wearable system that measures joint range of motion and provides real-time feedback to improve movement accuracy and consistency.
 
@@ -306,7 +356,7 @@ DESIGN FOUNDATION
 Insight
 Traditional goniometers require manual alignment and second-person use, making independent measurement inconsistent and difficult.
 
-User research revealed that the main breakdown wasn’t just measurement—but inconsistent placement and difficulty interpreting results.
+User research revealed that the main breakdown was inconsistent placement and difficulty interpreting results, not just measurement.
 
 Principles
 
@@ -315,11 +365,11 @@ Provide subtle, real-time feedback
 Reduce setup ambiguity
 Support long-term learning
 
-APPROACH
-Conducted interviews and observations with patients and athletes
-Identified key needs around placement consistency, feedback clarity, and habit formation
-Explored wearable + feedback-driven concepts and mapped them across feasibility and impact
-Iterated across both hardware and interface, including coding a custom GUI for real-time visualization and tracking
+DESIGN PROCESS
+Identify — We began by framing the problem: traditional goniometers are difficult to use independently because they require manual alignment, interpretation, and often a second person.
+Understand — Through interviews and observations with patients and athletes, we identified key needs around placement consistency, feedback clarity, and long-term habit formation.
+Conceptualize — We explored wearable and feedback-driven concepts, then mapped them across feasibility, impact, and alignment with user needs to narrow toward a dual-IMU wearable system.
+Realize — We built a working hardware-software prototype with dual IMU sensing, ESP32 processing, haptic/audio feedback, and a custom GUI for real-time visualization and tracking.
 
 SYSTEM (SENSE → PREDICT → ACTUATE)
 
@@ -337,7 +387,16 @@ Users move from guessing to feeling and understanding their motion in real time.
 
 OUTCOME
 
-A hardware–software system integrating sensing, embedded processing, Bluetooth communication, and a custom-built interface to support independent, data-driven movement training.`,
+A hardware–software system integrating sensing, embedded processing, Bluetooth communication, and a custom-built interface to support independent, data-driven movement training.
+
+REFLECTION
+This project showed me that the biggest challenge was not only measuring joint angle, but making the feedback understandable during independent use. User research shifted our focus from simple measurement toward real-time guidance, haptics, and visual progress tracking. If I continued the project, I would improve IMU calibration, expand to other ROM motions (e.g. abduction / adduction), reduce the wearable size, and test whether users reach target ROM more consistently with feedback enabled.
+
+MY ROLE
+I contributed to user research synthesis, concept development, GUI design/implementation, and the final visual presentation.
+
+GUI LINK
+https://kamronsoltani.github.io/goniometer/`,
   'Kinetic Origamic': `A kinetic installation combining physical design and embedded systems to explore how folded structures transform through controlled motion.
 
 DESIGN FOUNDATION
@@ -653,7 +712,7 @@ function FolderCaption({ caption, fixedHeight = false, maxLines = CAPTION_MAX_LI
   const lines = String(caption || '').split('\n')
   const maxHeightEm = maxLines * CAPTION_LINE_HEIGHT_EM
   const subtitleRe = /^[A-Z][A-Za-z]*(?:\s[A-Z][A-Za-z]*)*$/
-  const bulletedSections = new Set(['Principles', 'Approach', 'APPROACH'])
+  const bulletedSections = new Set(['Principles', 'Approach', 'APPROACH', 'DESIGN PROCESS'])
   const SUBTITLE_INDENT_CLASS = 'pl-4'
   const heroBoldLine =
     'AquaSync is a universal hydration tracking system that turns any cup into a connected experience. By combining passive sensing with a companion interface, it makes water intake visible, effortless, and consistent over time.'
@@ -2306,6 +2365,121 @@ export default function FoldersSection({
     if (!showTechnicalsWindow) setTechnicalsOpenFolder(null)
   }, [showTechnicalsWindow])
 
+  useLayoutEffect(() => {
+    const parsed = parseProjectHash(window.location.hash)
+    if (!parsed) return
+
+    onClosePhotosWindow()
+    onCloseDesignWindow()
+    onCloseTechnicalsWindow()
+
+    if (parsed.root === 'photos') {
+      onOpenPhotosWindow()
+      setPhotosOpenFolder(parsed.subSlug ? photosSlugToFolderName(parsed.subSlug) : null)
+      setDesignOpenFolder(null)
+      setTechnicalsOpenFolder(null)
+    } else if (parsed.root === 'design') {
+      onOpenDesignWindow()
+      setPhotosOpenFolder(null)
+      setTechnicalsOpenFolder(null)
+      setDesignOpenFolder(parsed.subSlug ? designSlugToFolderName(parsed.subSlug) : null)
+    } else if (parsed.root === 'technicals') {
+      onOpenTechnicalsWindow()
+      setPhotosOpenFolder(null)
+      setDesignOpenFolder(null)
+      setTechnicalsOpenFolder(parsed.subSlug ? technicalsSlugToFolderName(parsed.subSlug) : null)
+    }
+
+    scrollProjectsSectionIntoView()
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- apply initial URL once on mount
+  }, [])
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const parsed = parseProjectHash(window.location.hash)
+      if (!parsed) return
+
+      onClosePhotosWindow()
+      onCloseDesignWindow()
+      onCloseTechnicalsWindow()
+
+      if (parsed.root === 'photos') {
+        onOpenPhotosWindow()
+        setPhotosOpenFolder(parsed.subSlug ? photosSlugToFolderName(parsed.subSlug) : null)
+        setDesignOpenFolder(null)
+        setTechnicalsOpenFolder(null)
+      } else if (parsed.root === 'design') {
+        onOpenDesignWindow()
+        setPhotosOpenFolder(null)
+        setTechnicalsOpenFolder(null)
+        setDesignOpenFolder(parsed.subSlug ? designSlugToFolderName(parsed.subSlug) : null)
+      } else if (parsed.root === 'technicals') {
+        onOpenTechnicalsWindow()
+        setPhotosOpenFolder(null)
+        setDesignOpenFolder(null)
+        setTechnicalsOpenFolder(parsed.subSlug ? technicalsSlugToFolderName(parsed.subSlug) : null)
+      }
+
+      scrollProjectsSectionIntoView()
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [
+    onClosePhotosWindow,
+    onCloseDesignWindow,
+    onCloseTechnicalsWindow,
+    onOpenPhotosWindow,
+    onOpenDesignWindow,
+    onOpenTechnicalsWindow,
+  ])
+
+  useEffect(() => {
+    let desiredHash = ''
+    const front =
+      openWindowStack.length > 0 ? openWindowStack[openWindowStack.length - 1] : null
+    const rawHash = window.location.hash
+
+    if (!front || front === 'past-notes') {
+      if (rawHash.startsWith('#project')) {
+        window.history.replaceState(
+          null,
+          '',
+          `${window.location.pathname}${window.location.search}`
+        )
+      }
+      return
+    }
+
+    if (front === 'photos' && showPhotosWindow) {
+      const slug = photosOpenFolder ? folderDisplayNameToUrlSlug('photos', photosOpenFolder) : null
+      desiredHash = slug ? `#project/photos/${slug}` : '#project/photos'
+    } else if (front === 'design' && showDesignWindow) {
+      const slug = designOpenFolder ? folderDisplayNameToUrlSlug('design', designOpenFolder) : null
+      desiredHash = slug ? `#project/design/${slug}` : '#project/design'
+    } else if (front === 'technicals' && showTechnicalsWindow) {
+      const slug = technicalsOpenFolder
+        ? folderDisplayNameToUrlSlug('technicals', technicalsOpenFolder)
+        : null
+      desiredHash = slug ? `#project/technicals/${slug}` : '#project/technicals'
+    } else {
+      return
+    }
+
+    const base = `${window.location.pathname}${window.location.search}`
+    const target = `${base}${desiredHash}`
+    const current = `${base}${rawHash}`
+    if (target !== current) window.history.replaceState(null, '', target)
+  }, [
+    openWindowStack,
+    showPhotosWindow,
+    photosOpenFolder,
+    showDesignWindow,
+    designOpenFolder,
+    showTechnicalsWindow,
+    technicalsOpenFolder,
+  ])
+
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key !== 'Shift' || e.repeat) return
@@ -2317,7 +2491,7 @@ export default function FoldersSection({
   }, [])
 
   return (
-    <section id="work" className="relative z-20">
+    <section id="projects" className="relative z-20">
       {/* Sticky tab bar for PROJECTS - higher z so windows slide below it */}
       <div className="sticky z-50" style={{ top: 'var(--app-header-height, 56px)' }}>
         <div className="relative h-8 chrome-bg-90 backdrop-blur-sm">

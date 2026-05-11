@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Header from './components/Header'
 import HeroSection from './components/HeroSection'
 import FoldersSection from './components/FoldersSection'
@@ -36,7 +36,7 @@ function App() {
     }
 
     const getStickySample = () => {
-      const ids = ['#work', '#about', '#contact']
+      const ids = ['#projects', '#about', '#contact']
       return ids
         .map((id) => {
           const section = document.querySelector(id)
@@ -97,45 +97,45 @@ function App() {
     }
   }, [])
 
-  const bringToFront = (id) => {
+  const bringToFront = useCallback((id) => {
     setOpenWindowStack((prev) => {
       const next = [...prev.filter((w) => w !== id), id]
       return next
     })
-  }
-  const ensureInCascade = (id) => {
+  }, [])
+  const ensureInCascade = useCallback((id) => {
     setCascadeOrder((prev) => (prev.includes(id) ? prev : [...prev, id]))
-  }
-  const openPhotos = () => {
+  }, [])
+  const openPhotos = useCallback(() => {
     setShowPhotosWindow(true)
     ensureInCascade('photos')
     bringToFront('photos')
-  }
-  const openDesign = () => {
+  }, [bringToFront, ensureInCascade])
+  const openDesign = useCallback(() => {
     setShowDesignWindow(true)
     ensureInCascade('design')
     bringToFront('design')
-  }
-  const openTechnicals = () => {
+  }, [bringToFront, ensureInCascade])
+  const openTechnicals = useCallback(() => {
     setShowTechnicalsWindow(true)
     ensureInCascade('technicals')
     bringToFront('technicals')
-  }
-  const closePhotos = () => {
+  }, [bringToFront, ensureInCascade])
+  const closePhotos = useCallback(() => {
     setShowPhotosWindow(false)
     setOpenWindowStack((prev) => prev.filter((w) => w !== 'photos'))
     setCascadeOrder((prev) => prev.filter((w) => w !== 'photos'))
-  }
-  const closeDesign = () => {
+  }, [])
+  const closeDesign = useCallback(() => {
     setShowDesignWindow(false)
     setOpenWindowStack((prev) => prev.filter((w) => w !== 'design'))
     setCascadeOrder((prev) => prev.filter((w) => w !== 'design'))
-  }
-  const closeTechnicals = () => {
+  }, [])
+  const closeTechnicals = useCallback(() => {
     setShowTechnicalsWindow(false)
     setOpenWindowStack((prev) => prev.filter((w) => w !== 'technicals'))
     setCascadeOrder((prev) => prev.filter((w) => w !== 'technicals'))
-  }
+  }, [])
   const accentColorMap = {
     purple: '#6A22FF',
     red: '#F62F60',

@@ -54,7 +54,7 @@ export default function Header({
           className="absolute left-1/2 -translate-x-1/2 flex gap-4 font-poppins chrome-muted tracking-[0.12em] max-[430px]:flex-col max-[430px]:gap-1 max-[430px]:items-center"
           style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
         >
-          <a href="#work" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+          <a href="#projects" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
             <span>Projects</span>
             <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
           </a>
