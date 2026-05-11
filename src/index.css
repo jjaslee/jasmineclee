@@ -50,6 +50,14 @@ html[data-theme="light"] {
   #root {
     min-height: 100vh;
   }
+
+  /* Fixed header + in-page anchors / programmatic scrollIntoView */
+  #home,
+  #projects,
+  #about,
+  #contact {
+    scroll-margin-top: calc(var(--app-header-height, 56px) + 12px);
+  }
 }
 
 .section-bg {

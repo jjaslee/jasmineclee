@@ -344,8 +344,25 @@ function folderDisplayNameToUrlSlug(area, displayName) {
   return slugifyFolderLabel(displayName)
 }
 
-function scrollProjectsSectionIntoView() {
-  document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+/** Map `#projects`, `#projects/…`, `#about`, etc. to real section ids (deep routes share `#projects`). */
+export function scrollPageToHash(hash) {
+  if (typeof window === 'undefined') return
+  const raw = String(hash ?? '').replace(/^#/, '').trim()
+  if (!raw) return
+
+  const root = raw.split('/')[0]
+  let id = null
+  if (root === 'projects') id = 'projects'
+  else if (root === 'home' || root === 'about' || root === 'contact') id = root
+
+  if (!id) return
+
+  const el = document.getElementById(id)
+  if (!el) return
+
+  const run = () => el.scrollIntoView({ behavior: 'auto', block: 'start' })
+  run()
+  requestAnimationFrame(() => requestAnimationFrame(run))
 }
 
 /** Header/footer in-page jumps; keep these URLs instead of forcing default `#projects/technicals`. */
@@ -2393,7 +2410,7 @@ export default function FoldersSection({
       setTechnicalsOpenFolder(parsed.subSlug ? technicalsSlugToFolderName(parsed.subSlug) : null)
     }
 
-    scrollProjectsSectionIntoView()
+    scrollPageToHash(window.location.hash)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- apply initial URL once on mount
   }, [])
 
@@ -2423,7 +2440,7 @@ export default function FoldersSection({
         setTechnicalsOpenFolder(parsed.subSlug ? technicalsSlugToFolderName(parsed.subSlug) : null)
       }
 
-      scrollProjectsSectionIntoView()
+      scrollPageToHash(window.location.hash)
     }
 
     window.addEventListener('hashchange', handleHashChange)
@@ -2492,7 +2509,10 @@ export default function FoldersSection({
     const base = `${window.location.pathname}${window.location.search}`
     const target = `${base}${desiredHash}`
     const current = `${base}${rawHash}`
-    if (target !== current) window.history.replaceState(null, '', target)
+    if (target !== current) {
+      window.history.replaceState(null, '', target)
+      scrollPageToHash(desiredHash)
+    }
   }, [
     openWindowStack,
     showPhotosWindow,
