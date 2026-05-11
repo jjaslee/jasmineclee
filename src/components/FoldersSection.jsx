@@ -2253,6 +2253,9 @@ export default function FoldersSection({
   const pastNotesFolderRef = useRef(null)
   const foldersRowRef = useRef(null)
   const projectsBottomSentinelRef = useRef(null)
+  const lastSyncedLocationHashRef = useRef(
+    typeof window !== 'undefined' ? window.location.hash : ''
+  )
   const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
   const [designOpenFolder, setDesignOpenFolder] = useState(null)
   const [technicalsOpenFolder, setTechnicalsOpenFolder] = useState(null)
@@ -2416,8 +2419,13 @@ export default function FoldersSection({
 
   useEffect(() => {
     const handleHashChange = () => {
-      const parsed = parseProjectHash(window.location.hash)
-      if (!parsed) return
+      const prev = lastSyncedLocationHashRef.current
+      const next = window.location.hash
+      const parsed = parseProjectHash(next)
+      if (!parsed) {
+        lastSyncedLocationHashRef.current = next
+        return
+      }
 
       onClosePhotosWindow()
       onCloseDesignWindow()
@@ -2440,7 +2448,14 @@ export default function FoldersSection({
         setTechnicalsOpenFolder(parsed.subSlug ? technicalsSlugToFolderName(parsed.subSlug) : null)
       }
 
-      scrollPageToHash(window.location.hash)
+      const bothDeepProjectRoutes =
+        typeof prev === 'string' &&
+        prev.startsWith('#projects/') &&
+        next.startsWith('#projects/')
+      if (!bothDeepProjectRoutes) {
+        scrollPageToHash(next)
+      }
+      lastSyncedLocationHashRef.current = next
     }
 
     window.addEventListener('hashchange', handleHashChange)
@@ -2467,6 +2482,7 @@ export default function FoldersSection({
           '',
           `${window.location.pathname}${window.location.search}`
         )
+        lastSyncedLocationHashRef.current = ''
       }
       return
     }
@@ -2511,7 +2527,7 @@ export default function FoldersSection({
     const current = `${base}${rawHash}`
     if (target !== current) {
       window.history.replaceState(null, '', target)
-      scrollPageToHash(desiredHash)
+      lastSyncedLocationHashRef.current = desiredHash
     }
   }, [
     openWindowStack,

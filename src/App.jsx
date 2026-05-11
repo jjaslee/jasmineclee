@@ -33,12 +33,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const onHashChange = () => scrollPageToHash(window.location.hash)
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
-
-  useEffect(() => {
     const getNavLineCount = () => {
       const links = Array.from(document.querySelectorAll('header nav a'))
       const tops = new Set(
