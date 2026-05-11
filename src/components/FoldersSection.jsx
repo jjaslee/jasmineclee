@@ -348,6 +348,9 @@ function scrollProjectsSectionIntoView() {
   document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
+/** Header/footer in-page jumps; keep these URLs instead of forcing default `#projects/technicals`. */
+const SECTION_NAV_HASHES = new Set(['#home', '#projects', '#about', '#contact'])
+
 const TECHNICALS_FOLDER_CAPTIONS = {
   Goniometrix: `A wearable system that measures joint range of motion and provides real-time feedback to improve movement accuracy and consistency.
 
@@ -2463,6 +2466,26 @@ export default function FoldersSection({
         : null
       desiredHash = slug ? `#projects/technicals/${slug}` : '#projects/technicals'
     } else {
+      return
+    }
+
+    const atProjectFolderRoot =
+      photosOpenFolder == null &&
+      designOpenFolder == null &&
+      technicalsOpenFolder == null
+    const isDefaultIdleTechnicalsFront =
+      openWindowStack.length === 1 &&
+      openWindowStack[0] === 'technicals' &&
+      showTechnicalsWindow &&
+      !showPhotosWindow &&
+      !showDesignWindow
+
+    if (
+      SECTION_NAV_HASHES.has(rawHash) &&
+      atProjectFolderRoot &&
+      isDefaultIdleTechnicalsFront &&
+      desiredHash === '#projects/technicals'
+    ) {
       return
     }
 
