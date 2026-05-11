@@ -306,12 +306,12 @@ function slugifyFolderLabel(label) {
     .replace(/^-+|-+$/g, '')
 }
 
-/** `#project/{photos|design|technicals}[/{subfolder-slug}]` */
+/** `#projects/{photos|design|technicals}[/{subfolder-slug}]` — bare `#projects` is the section anchor only */
 function parseProjectHash(hash) {
   const raw = String(hash || '').replace(/^#/, '').trim()
   if (!raw) return null
   const parts = raw.split('/').filter(Boolean)
-  if (parts[0] !== 'project') return null
+  if (parts[0] !== 'projects') return null
   const root = parts[1]
   const subSlug = parts[2] ?? null
   if (root !== 'photos' && root !== 'design' && root !== 'technicals') return null
@@ -2441,7 +2441,7 @@ export default function FoldersSection({
     const rawHash = window.location.hash
 
     if (!front || front === 'past-notes') {
-      if (rawHash.startsWith('#project')) {
+      if (rawHash.startsWith('#projects/')) {
         window.history.replaceState(
           null,
           '',
@@ -2453,15 +2453,15 @@ export default function FoldersSection({
 
     if (front === 'photos' && showPhotosWindow) {
       const slug = photosOpenFolder ? folderDisplayNameToUrlSlug('photos', photosOpenFolder) : null
-      desiredHash = slug ? `#project/photos/${slug}` : '#project/photos'
+      desiredHash = slug ? `#projects/photos/${slug}` : '#projects/photos'
     } else if (front === 'design' && showDesignWindow) {
       const slug = designOpenFolder ? folderDisplayNameToUrlSlug('design', designOpenFolder) : null
-      desiredHash = slug ? `#project/design/${slug}` : '#project/design'
+      desiredHash = slug ? `#projects/design/${slug}` : '#projects/design'
     } else if (front === 'technicals' && showTechnicalsWindow) {
       const slug = technicalsOpenFolder
         ? folderDisplayNameToUrlSlug('technicals', technicalsOpenFolder)
         : null
-      desiredHash = slug ? `#project/technicals/${slug}` : '#project/technicals'
+      desiredHash = slug ? `#projects/technicals/${slug}` : '#projects/technicals'
     } else {
       return
     }
