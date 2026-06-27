@@ -12,21 +12,59 @@ const PAST_NOTES_FOLDER = {
   tabColor: '#E66500',
 }
 
-const PHOTOS_INNER_FOLDERS = ['Animals', 'Seclusion', 'Solitude', 'Warmth']
+const PHOTOS_INNER_FOLDERS = ['Ember', 'Passing', 'Tidal', 'Canopy']
+
+const PHOTOGRAPHY_SITE_URL = 'https://jascielle-photography.vercel.app/'
 
 // Display name → path slug in public/photos; each slug folder holds image filenames
 const PHOTOS_FOLDER_SLUGS = {
-  Animals: 'animals',
-  Seclusion: 'seclusion',
-  Solitude: 'solitude',
-  Warmth: 'warmth',
+  Ember: 'ember',
+  Passing: 'passing',
+  Tidal: 'tidal',
+  Canopy: 'canopy',
 }
 
 const PHOTOS_FOLDER_FILES = {
-  Animals: ['IMG_8861.jpg', 'IMG_4109.jpg', 'IMG_4020.jpg', 'IMG_4139.jpg', 'IMG_4086.jpg', 'IMG_4021.jpg'],
-  Seclusion: ['IMG_9424.jpg', 'IMG_3916.jpg', 'IMG_3917.jpg', 'IMG_3908.jpg'],
-  Solitude: ['IMG_9437.jpg', 'IMG_9443.jpg', 'IMG_9083.jpg', 'IMG_9095.jpg', 'IMG_9446.jpg', 'IMG_9451.jpg', 'IMG_9439.jpg', 'IMG_8930.jpg'],
-  Warmth: ['IMG_4013.jpg','IMG_4164.jpg', 'IMG_4171.jpg', 'IMG_4173.jpg', 'IMG_4180.jpg'],
+  Ember: [
+    'IMG_3251.jpg',
+    '4S7A2211.jpg',
+    'IMG_3134.jpg',
+    'IMG_1782.jpg',
+    'IMG_0935.jpg',
+    'IMG_0408.jpg',
+    'IMG_9388.jpg',
+    'IMG_9197.jpg',
+  ],
+  Passing: [
+    'IMG_4171.jpg',
+    'IMG_4164.jpg',
+    'IMG_4013.jpg',
+    'IMG_0346.jpg',
+    'IMG_0857.jpg',
+    'IMG_9446.jpg',
+    'IMG_9083.jpg',
+    'IMG_9443.jpg',
+  ],
+  Tidal: [
+    'IMG_9347.jpg',
+    'IMG_9000.jpg',
+    'IMG_9338.jpg',
+    'IMG_8949.jpg',
+    'IMG_9244.jpg',
+    'IMG_3827.jpg',
+    'IMG_1072.jpg',
+    'IMG_1423.jpg',
+  ],
+  Canopy: [
+    'IMG_9424.jpg',
+    'IMG_2396.jpg',
+    'IMG_1925.jpg',
+    'IMG_3908.jpg',
+    'IMG_8912.jpg',
+    'IMG_3916.jpg',
+    'IMG_4493.jpg',
+    'IMG_3917.jpg',
+  ],
 }
 const DESIGN_INNER_FOLDERS = [
   'Cal Hacks',
@@ -1142,6 +1180,7 @@ function FolderWindow({
   onBack,
   onMaximizeChange,
   onMetricsChange,
+  cta = null,
 }) {
   const [isMinimizing, setIsMinimizing] = useState(false)
   const [minimizeOrigin, setMinimizeOrigin] = useState(null)
@@ -1169,6 +1208,24 @@ function FolderWindow({
 
   const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
   const isInsideSubfolder = Boolean(subfolderName)
+
+  const ctaLink = cta ? (
+    <a
+      href={cta.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex shrink-0 items-center gap-1 rounded-full border border-black/15 bg-white/70 px-3 py-1 text-[11px] font-medium tracking-wide text-black/75 transition hover:border-black/25 hover:bg-white hover:text-black"
+    >
+      {cta.label}
+      <span aria-hidden className="text-black/45">
+        ↗
+      </span>
+    </a>
+  ) : null
+  const ctaFooter = ctaLink ? (
+    <div className="flex w-full shrink-0 justify-center pt-4">{ctaLink}</div>
+  ) : null
+
   const isAquaSync = title === 'Design' && subfolderName === 'AquaSync'
   const aquaItems = isAquaSync ? AQUASYNC_ITEMS : null
   const aquaSelectedItem =
@@ -1695,7 +1752,7 @@ function FolderWindow({
           </div>
           <div
             className={`relative paper-bg-muted px-8 pb-8 pt-5 flex ${
-              isInsideSubfolder ? 'items-start' : 'items-center'
+              cta ? 'w-full min-h-0 flex-col' : isInsideSubfolder ? 'items-start' : 'items-center'
             } ${
               isMaximized
                 ? isInsideSubfolder
@@ -1707,17 +1764,17 @@ function FolderWindow({
             }`}
           >
             {isInsideSubfolder ? (
-              <div className="w-full flex flex-col gap-3 min-h-0">
+              <div className={`w-full flex min-h-0 flex-col gap-3 ${cta ? 'h-full' : ''}`}>
                 <button
                   type="button"
                   onClick={onBack}
-                  className="self-start flex items-center gap-2 text-black/70 hover:text-black text-sm font-medium"
+                  className="flex shrink-0 items-center gap-2 self-start text-black/70 hover:text-black text-sm font-medium"
                   aria-label="Back to folders"
                 >
                   <span aria-hidden>← Back</span>
                 </button>
                 <div
-                  className={`w-full min-h-0 ${
+                  className={`w-full min-h-0 ${cta ? 'flex-1' : ''} ${
                     useSideBySideCaptionLayout
                       ? 'grid grid-cols-1 md:grid-cols-2 gap-6 items-start'
                       : 'flex flex-col gap-4'
@@ -1902,6 +1959,26 @@ function FolderWindow({
                     ) : null}
                   </div>
                 </div>
+                {ctaFooter}
+              </div>
+            ) : cta ? (
+              <div className="flex h-full min-h-0 w-full flex-col">
+                <div className="flex min-h-0 flex-1 items-center justify-center w-full">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
+                    {innerFolderNames.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        className="flex flex-col items-center gap-2 hover:opacity-80 transition-opacity"
+                        onClick={() => onOpenSubfolder?.(name)}
+                      >
+                        <SmallFolderIcon bodyColor={bodyColor} tabColor={tabColor} />
+                        <span className="text-black text-xs font-medium text-center">{name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {ctaFooter}
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
@@ -2663,6 +2740,7 @@ export default function FoldersSection({
           contentFiles={photosContentFiles}
           onOpenSubfolder={setPhotosOpenFolder}
           onBack={() => setPhotosOpenFolder(null)}
+          cta={{ href: PHOTOGRAPHY_SITE_URL, label: 'Jascielle Photography' }}
         />
         <FolderWindow
           show={showDesignWindow}
