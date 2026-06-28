@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Header from './components/Header'
 import HeroSection from './components/HeroSection'
-import FoldersSection, { scrollPageToHash } from './components/FoldersSection'
+import FoldersSection, { scrollPageToPath } from './components/FoldersSection'
 import ProjectsSection from './components/ProjectsSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
@@ -24,9 +24,9 @@ function App() {
     document.documentElement.dataset.theme = theme
   }, [theme])
 
-  // Browser won't scroll to `#about` / `#contact` / `#projects/…` on cold load: those nodes mount after first paint.
+  // Browser won't scroll to `/about` / `/contact` / `/projects/…` on cold load: those nodes mount after first paint.
   useEffect(() => {
-    const run = () => scrollPageToHash(window.location.hash)
+    const run = () => scrollPageToPath(window.location.pathname)
     run()
     const t = window.setTimeout(run, 0)
     return () => window.clearTimeout(t)

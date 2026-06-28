@@ -26,7 +26,7 @@ export default function Header({
         {/* Left: name + color boxes */}
         <div className="flex items-center gap-5">
           <a
-            href="#home"
+            href="/"
             className="chrome-text tracking-wide font-bangers hover:opacity-90 transition-opacity"
             style={{ fontSize: 'clamp(1.1rem, 1rem + 0.8vw, 1.5rem)' }}
           >
@@ -51,18 +51,18 @@ export default function Header({
 
         {/* Center: nav links (truly centered) */}
         <nav
-          className="absolute left-1/2 -translate-x-1/2 flex gap-4 font-poppins chrome-muted tracking-[0.12em] max-[430px]:flex-col max-[430px]:gap-1 max-[430px]:items-center"
+          className="absolute left-1/2 -translate-x-1/2 flex gap-2 font-poppins chrome-muted tracking-[0.12em] max-[430px]:flex-col max-[430px]:gap-0 max-[430px]:items-center max-[430px]:leading-none"
           style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
         >
-          <a href="#projects" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+          <a href="/projects" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
             <span>Projects</span>
             <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
           </a>
-          <a href="#about" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+          <a href="/about" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
             <span>About</span>
             <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
           </a>
-          <a href="#contact" className="relative uppercase pb-0.5 hover:chrome-text transition-colors group">
+          <a href="/contact" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
             <span>Contact</span>
             <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
           </a>

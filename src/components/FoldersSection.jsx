@@ -72,7 +72,6 @@ const DESIGN_INNER_FOLDERS = [
   'Astron',
   'Lazy Day Lines',
   'Digital Drawing',
-  'CSSA',
   'The Studio Index',
   'Fluttering Kindness',
 ]
@@ -297,7 +296,7 @@ OUTCOME
 
 A scalable system that bridges data, interface, and real-world action-allowing users to discover, organize, and directly acquire items that align with their aesthetic.
 
-https://jjaslee.github.io/THE-STUDIO-INDEX/index.html#archive-start`,
+https://the-studio-index.vercel.app/`,
   'Fluttering Kindness': `A public mural transforming an everyday utility space into a welcoming visual experience through storytelling and color.
 
 DESIGN FOUNDATION
@@ -332,8 +331,6 @@ const TECHNICALS_INNER_FOLDERS = [
   'Kinetic Origamic',
   'Gear System',
   'Water Automata',
-  'Find the Flower',
-  'Ngordnet',
 ]
 
 function slugifyFolderLabel(label) {
@@ -344,16 +341,28 @@ function slugifyFolderLabel(label) {
     .replace(/^-+|-+$/g, '')
 }
 
-/** `#projects/{photos|design|technicals}[/{subfolder-slug}]` — bare `#projects` is the section anchor only */
-function parseProjectHash(hash) {
-  const raw = String(hash || '').replace(/^#/, '').trim()
-  if (!raw) return null
-  const parts = raw.split('/').filter(Boolean)
+/** `/projects/{photos|design|technicals}[/{subfolder-slug}]` — bare `/projects` is the section anchor only */
+function normalizePath(pathname) {
+  const path = String(pathname || '/').split('?')[0]
+  if (!path || path === '/') return '/'
+  return path.replace(/\/+$/, '') || '/'
+}
+
+function parseProjectPath(pathname) {
+  const parts = normalizePath(pathname).split('/').filter(Boolean)
   if (parts[0] !== 'projects') return null
   const root = parts[1]
   const subSlug = parts[2] ?? null
   if (root !== 'photos' && root !== 'design' && root !== 'technicals') return null
   return { root, subSlug }
+}
+
+function migrateLegacyHashUrl() {
+  if (typeof window === 'undefined') return
+  const { hash } = window.location
+  if (!hash || hash === '#') return
+  const legacyPath = `/${hash.slice(1)}`
+  window.history.replaceState(null, '', legacyPath)
 }
 
 function photosSlugToFolderName(slug) {
@@ -382,16 +391,19 @@ function folderDisplayNameToUrlSlug(area, displayName) {
   return slugifyFolderLabel(displayName)
 }
 
-/** Map `#projects`, `#projects/…`, `#about`, etc. to real section ids (deep routes share `#projects`). */
-export function scrollPageToHash(hash) {
+/** Map `/projects`, `/projects/…`, `/about`, etc. to real section ids (deep routes share `/projects`). */
+export function scrollPageToPath(pathname) {
   if (typeof window === 'undefined') return
-  const raw = String(hash ?? '').replace(/^#/, '').trim()
-  if (!raw) return
+  const parts = normalizePath(pathname).split('/').filter(Boolean)
+  if (!parts.length) {
+    const home = document.getElementById('home')
+    if (home) home.scrollIntoView({ behavior: 'auto', block: 'start' })
+    return
+  }
 
-  const root = raw.split('/')[0]
   let id = null
-  if (root === 'projects') id = 'projects'
-  else if (root === 'home' || root === 'about' || root === 'contact') id = root
+  if (parts[0] === 'projects') id = 'projects'
+  else if (parts[0] === 'home' || parts[0] === 'about' || parts[0] === 'contact') id = parts[0]
 
   if (!id) return
 
@@ -403,8 +415,14 @@ export function scrollPageToHash(hash) {
   requestAnimationFrame(() => requestAnimationFrame(run))
 }
 
-/** Header/footer in-page jumps; keep these URLs instead of forcing default `#projects/technicals`. */
-const SECTION_NAV_HASHES = new Set(['#home', '#projects', '#about', '#contact'])
+/** @deprecated Use scrollPageToPath */
+export function scrollPageToHash(hash) {
+  if (!hash) return scrollPageToPath('/')
+  scrollPageToPath(`/${String(hash).replace(/^#/, '')}`)
+}
+
+/** Header/footer in-page jumps; keep these URLs instead of forcing default `/projects/technicals`. */
+const SECTION_NAV_PATHS = new Set(['/', '/home', '/projects', '/about', '/contact'])
 
 const TECHNICALS_FOLDER_CAPTIONS = {
   Goniometrix: `A wearable system that measures joint range of motion and provides real-time feedback to improve movement accuracy and consistency.
@@ -775,6 +793,7 @@ function FolderCaption({ caption, fixedHeight = false, maxLines = CAPTION_MAX_LI
   const heroBoldLine =
     'AquaSync is a universal hydration tracking system that turns any cup into a connected experience. By combining passive sensing with a companion interface, it makes water intake visible, effortless, and consistent over time.'
   const isUrlLine = (t) => /^https?:\/\/\S+$/i.test(t.trim())
+  const stripUrlHash = (url) => url.trim().split('#')[0]
 
   const isAllCapsLine = (t) => {
     const s = t.trim()
@@ -832,12 +851,12 @@ function FolderCaption({ caption, fixedHeight = false, maxLines = CAPTION_MAX_LI
         <div key={`ln-${i}`} className={lineClass || undefined}>
           {isUrlLine(trimmed) ? (
             <a
-              href={trimmed}
+              href={stripUrlHash(trimmed)}
               target="_blank"
               rel="noreferrer"
               className="underline underline-offset-2 hover:opacity-80"
             >
-              {trimmed}
+              {stripUrlHash(trimmed)}
             </a>
           ) : (
             trimmed
@@ -2330,8 +2349,8 @@ export default function FoldersSection({
   const pastNotesFolderRef = useRef(null)
   const foldersRowRef = useRef(null)
   const projectsBottomSentinelRef = useRef(null)
-  const lastSyncedLocationHashRef = useRef(
-    typeof window !== 'undefined' ? window.location.hash : ''
+  const lastSyncedLocationPathRef = useRef(
+    typeof window !== 'undefined' ? normalizePath(window.location.pathname) : '/'
   )
   const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
   const [designOpenFolder, setDesignOpenFolder] = useState(null)
@@ -2466,7 +2485,9 @@ export default function FoldersSection({
   }, [showTechnicalsWindow])
 
   useLayoutEffect(() => {
-    const parsed = parseProjectHash(window.location.hash)
+    migrateLegacyHashUrl()
+
+    const parsed = parseProjectPath(window.location.pathname)
     if (!parsed) return
 
     onClosePhotosWindow()
@@ -2490,17 +2511,19 @@ export default function FoldersSection({
       setTechnicalsOpenFolder(parsed.subSlug ? technicalsSlugToFolderName(parsed.subSlug) : null)
     }
 
-    scrollPageToHash(window.location.hash)
+    scrollPageToPath(window.location.pathname)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- apply initial URL once on mount
   }, [])
 
   useEffect(() => {
-    const handleHashChange = () => {
-      const prev = lastSyncedLocationHashRef.current
-      const next = window.location.hash
-      const parsed = parseProjectHash(next)
+    const handlePopState = () => {
+      migrateLegacyHashUrl()
+
+      const prev = lastSyncedLocationPathRef.current
+      const next = normalizePath(window.location.pathname)
+      const parsed = parseProjectPath(next)
       if (!parsed) {
-        lastSyncedLocationHashRef.current = next
+        lastSyncedLocationPathRef.current = next
         return
       }
 
@@ -2527,16 +2550,16 @@ export default function FoldersSection({
 
       const bothDeepProjectRoutes =
         typeof prev === 'string' &&
-        prev.startsWith('#projects/') &&
-        next.startsWith('#projects/')
+        prev.startsWith('/projects/') &&
+        next.startsWith('/projects/')
       if (!bothDeepProjectRoutes) {
-        scrollPageToHash(next)
+        scrollPageToPath(next)
       }
-      lastSyncedLocationHashRef.current = next
+      lastSyncedLocationPathRef.current = next
     }
 
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
   }, [
     onClosePhotosWindow,
     onCloseDesignWindow,
@@ -2547,34 +2570,30 @@ export default function FoldersSection({
   ])
 
   useEffect(() => {
-    let desiredHash = ''
+    let desiredPath = ''
     const front =
       openWindowStack.length > 0 ? openWindowStack[openWindowStack.length - 1] : null
-    const rawHash = window.location.hash
+    const rawPath = normalizePath(window.location.pathname)
 
     if (!front || front === 'past-notes') {
-      if (rawHash.startsWith('#projects/')) {
-        window.history.replaceState(
-          null,
-          '',
-          `${window.location.pathname}${window.location.search}`
-        )
-        lastSyncedLocationHashRef.current = ''
+      if (rawPath.startsWith('/projects/')) {
+        window.history.replaceState(null, '', '/')
+        lastSyncedLocationPathRef.current = '/'
       }
       return
     }
 
     if (front === 'photos' && showPhotosWindow) {
       const slug = photosOpenFolder ? folderDisplayNameToUrlSlug('photos', photosOpenFolder) : null
-      desiredHash = slug ? `#projects/photos/${slug}` : '#projects/photos'
+      desiredPath = slug ? `/projects/photos/${slug}` : '/projects/photos'
     } else if (front === 'design' && showDesignWindow) {
       const slug = designOpenFolder ? folderDisplayNameToUrlSlug('design', designOpenFolder) : null
-      desiredHash = slug ? `#projects/design/${slug}` : '#projects/design'
+      desiredPath = slug ? `/projects/design/${slug}` : '/projects/design'
     } else if (front === 'technicals' && showTechnicalsWindow) {
       const slug = technicalsOpenFolder
         ? folderDisplayNameToUrlSlug('technicals', technicalsOpenFolder)
         : null
-      desiredHash = slug ? `#projects/technicals/${slug}` : '#projects/technicals'
+      desiredPath = slug ? `/projects/technicals/${slug}` : '/projects/technicals'
     } else {
       return
     }
@@ -2591,20 +2610,17 @@ export default function FoldersSection({
       !showDesignWindow
 
     if (
-      SECTION_NAV_HASHES.has(rawHash) &&
+      SECTION_NAV_PATHS.has(rawPath) &&
       atProjectFolderRoot &&
       isDefaultIdleTechnicalsFront &&
-      desiredHash === '#projects/technicals'
+      desiredPath === '/projects/technicals'
     ) {
       return
     }
 
-    const base = `${window.location.pathname}${window.location.search}`
-    const target = `${base}${desiredHash}`
-    const current = `${base}${rawHash}`
-    if (target !== current) {
-      window.history.replaceState(null, '', target)
-      lastSyncedLocationHashRef.current = desiredHash
+    if (desiredPath !== rawPath) {
+      window.history.replaceState(null, '', desiredPath)
+      lastSyncedLocationPathRef.current = desiredPath
     }
   }, [
     openWindowStack,

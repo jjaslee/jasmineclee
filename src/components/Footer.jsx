@@ -29,7 +29,7 @@ export default function Footer({ accentColor = '#6A22FF', lang = 'EN' }) {
         <p className={`${primaryTextClass} font-nanum text-lg mb-3`}>
           {lang === 'ZH' ? '多謝你到訪！' : 'THANKS FOR STOPPING BY!'}
         </p>
-        <a href="#home" className={`${primaryTextClass} text-sm font-light inline-block footer-back-to-top group`}>
+        <a href="/" className={`${primaryTextClass} text-sm font-light inline-block footer-back-to-top group`}>
           back to top
           <span className="footer-back-to-top-line" />
         </a>
