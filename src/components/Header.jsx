@@ -51,7 +51,7 @@ export default function Header({
 
         {/* Center: nav links (truly centered) */}
         <nav
-          className="absolute left-1/2 -translate-x-1/2 flex gap-2 font-poppins chrome-muted tracking-[0.12em] max-[430px]:flex-col max-[430px]:gap-0 max-[430px]:items-center max-[430px]:leading-none"
+          className="absolute left-1/2 -translate-x-1/2 flex gap-4 font-poppins chrome-muted tracking-[0.12em] sm:gap-6 max-[430px]:flex-col max-[430px]:gap-0 max-[430px]:items-center max-[430px]:leading-none"
           style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
         >
           <a href="/projects" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
