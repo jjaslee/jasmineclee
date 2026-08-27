@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import SectionTab from './ui/SectionTab'
 
 export default function ProjectsSection({ lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -146,23 +147,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
 
   return (
     <section id="about" className="relative z-30 -mt-12 pt-2">
-      {/* Sticky tab bar for ABOUT ME – high z so it overlaps Projects tab when scrolling */}
-      <div className="sticky z-[70]" style={{ top: 'var(--app-header-height, 56px)' }}>
-        <div className="relative h-8 chrome-bg-60 backdrop-blur-sm">
-          <div
-            className="absolute inset-0 flex items-center"
-            style={{
-              backgroundColor: '#F62F60',
-              clipPath: 'polygon(0 0, 33% 0, 36% 64%, 100% 64%, 100% 100%, 0 100%)',
-            }}
-            aria-hidden
-          >
-            <div className="pl-[10%] flex items-center h-full">
-              <span className="font-bangers text-white tracking-widest text-sm">ABOUT ME</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SectionTab label="ABOUT ME" backgroundColor="#F62F60" textColor="white" />
 
       {/* Section content below the sticky tab */}
       <div

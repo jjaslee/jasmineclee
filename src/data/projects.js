@@ -703,6 +703,7 @@ const RAW_PROJECTS = [
     legacyCategory: 'design',
     summary: DESIGN_FOLDER_CAPTIONS['Cal Hacks'],
     media: withHoverCopy(CAL_HACKS_ITEMS, CAL_HACKS_GRID_HOVER),
+    mediaViewer: { documentMaxWidthClass: 'max-w-[min(560px,100%)]' },
     order: 0,
   },
   {
@@ -739,6 +740,7 @@ const RAW_PROJECTS = [
     legacyCategory: 'design',
     summary: DESIGN_FOLDER_CAPTIONS['Lazy Day Lines'],
     media: withHoverCopy(LAZY_DAY_LINES_ITEMS, LAZY_DAY_LINES_GRID_HOVER),
+    mediaViewer: { documentMaxWidthClass: 'max-w-[min(620px,100%)]' },
     order: 3,
   },
   {

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import SectionTab from './ui/SectionTab'
 
 const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT
 const CONTACT_EMAIL = 'jas.lee@berkeley.edu'
@@ -107,23 +108,7 @@ export default function ContactSection({ lang = 'EN' }) {
 
   return (
     <section id="contact" className="relative -mt-8">
-      {/* Sticky tab bar for CONTACT with translucent backing outside the tab */}
-      <div className="sticky z-[70]" style={{ top: 'var(--app-header-height, 56px)' }}>
-        <div className="relative h-8 chrome-bg-60 backdrop-blur-sm">
-          <div
-            className="absolute inset-0 flex items-center"
-            style={{
-              backgroundColor: '#8DFD19',
-              clipPath: 'polygon(0 0, 33% 0, 36% 64%, 100% 64%, 100% 100%, 0 100%)',
-            }}
-            aria-hidden
-          >
-            <div className="pl-[10%] flex items-center h-full">
-              <span className="font-bangers text-black tracking-widest text-sm">CONTACT</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SectionTab label="CONTACT" backgroundColor="#8DFD19" textColor="black" />
 
       {/* Section content below the sticky tab */}
       <div className="section-bg min-h-screen pt-16 pb-20">
@@ -404,4 +389,3 @@ export default function ContactSection({ lang = 'EN' }) {
     </section>
   )
 }
-
