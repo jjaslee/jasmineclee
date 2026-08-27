@@ -59,6 +59,8 @@ export default function Window({
   minimizeOrigin = null,
   isInsideSubfolder = false,
   hasFooter = false,
+  variant = 'default',
+  layoutMode = 'stacked',
   onBringToFront,
   onMinimize,
   onMaximize,
@@ -71,6 +73,8 @@ export default function Window({
   const baseOffset = slot * CASCADE_OFFSET_PX
   const offsetX = baseOffset + randomOffset.x
   const offsetY = baseOffset + randomOffset.y
+  const isPreview = variant === 'preview'
+  const isFlowLayout = layoutMode === 'flow'
 
   const handleWrapperClick = (event) => {
     const target = event.target
@@ -82,12 +86,23 @@ export default function Window({
   return (
     <div
       role="presentation"
-      className="pointer-events-none absolute top-0 left-0 right-0 transition-all duration-300 ease-out cursor-default"
-      style={{ zIndex: 30 + layer, transform: `translate(${offsetX}px, ${offsetY}px)` }}
+      className={`pointer-events-none transition-all duration-300 ease-out cursor-default ${
+        isFlowLayout ? 'relative' : 'absolute top-0 left-0 right-0'
+      }`}
+      style={{
+        zIndex: 30 + layer,
+        transform: isFlowLayout ? undefined : `translate(${offsetX}px, ${offsetY}px)`,
+      }}
     >
       <div
-        className={`mx-auto mt-16 transition-all duration-300 ease-out ${
-          isMaximized ? 'w-[min(78vw,920px)] max-w-none px-4' : 'w-[min(80vw,1400px)] max-w-none px-6'
+        className={`mx-auto transition-all duration-300 ease-out ${
+          isPreview
+            ? isMaximized
+              ? 'mt-8 w-[calc(100%-1rem)] sm:w-[min(94vw,1200px)]'
+              : 'mt-8 w-[calc(100%-2rem)] sm:w-[min(88vw,1080px)]'
+            : isMaximized
+              ? 'mt-16 w-[min(78vw,920px)] max-w-none px-4'
+              : 'mt-16 w-[min(80vw,1400px)] max-w-none px-6'
         }`}
       >
         <div
@@ -153,17 +168,25 @@ export default function Window({
               </div>
             </div>
             <div
-              className={`relative paper-bg-muted px-8 pb-8 pt-5 flex ${
-                hasFooter ? 'w-full min-h-0 flex-col' : isInsideSubfolder ? 'items-start' : 'items-center'
-              } ${
-                isMaximized
-                  ? isInsideSubfolder
-                    ? 'flex-1 h-[min(66vh,560px)]'
-                    : 'flex-1 h-[min(56vh,500px)]'
-                  : isInsideSubfolder
-                    ? 'flex-1 h-[min(72vh,660px)]'
-                    : 'flex-1 h-[min(56vh,520px)]'
-              }`}
+              className={
+                isPreview
+                  ? 'relative paper-bg-muted p-4 sm:p-6 md:p-8 flex min-h-0'
+                  : `relative paper-bg-muted px-8 pb-8 pt-5 flex ${
+                      hasFooter
+                        ? 'w-full min-h-0 flex-col'
+                        : isInsideSubfolder
+                          ? 'items-start'
+                          : 'items-center'
+                    } ${
+                      isMaximized
+                        ? isInsideSubfolder
+                          ? 'flex-1 h-[min(66vh,560px)]'
+                          : 'flex-1 h-[min(56vh,500px)]'
+                        : isInsideSubfolder
+                          ? 'flex-1 h-[min(72vh,660px)]'
+                          : 'flex-1 h-[min(56vh,520px)]'
+                    }`
+              }
             >
               {children}
             </div>

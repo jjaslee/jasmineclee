@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import SectionTab from './ui/SectionTab'
 
 export default function ProjectsSection({ lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -146,10 +145,10 @@ export default function ProjectsSection({ lang = 'EN' }) {
   }
 
   return (
-    <section id="about" className="relative z-30 -mt-12 pt-2">
-      <SectionTab label="ABOUT ME" backgroundColor="#F62F60" textColor="white" />
-
-      {/* Section content below the sticky tab */}
+    <section id="about" aria-labelledby="about-heading" className="relative z-30">
+      <h2 id="about-heading" className="sr-only">
+        About Me
+      </h2>
       <div
         className="relative z-20 section-bg min-h-screen pt-16"
         style={{ paddingBottom: `${aboutBottomPadPx}px` }}
@@ -167,7 +166,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
             <button
               type="button"
               aria-label="Previous About Me card"
-              className="absolute -left-6 sm:-left-12 md:-left-20 lg:-left-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
+              className="absolute -left-6 sm:-left-12 md:-left-1 lg:-left-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
               style={{
                 color: '#F62F60',
                 opacity: 1,
@@ -180,7 +179,7 @@ export default function ProjectsSection({ lang = 'EN' }) {
             <button
               type="button"
               aria-label="Next About Me card"
-              className="absolute -right-6 sm:-right-12 md:-right-20 lg:-right-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
+              className="absolute -right-6 sm:-right-12 md:-right-1 lg:-right-28 top-1/2 -translate-y-1/2 z-20 select-none px-2 py-2 text-4xl md:text-5xl font-light leading-none transition-opacity hover:opacity-90"
               style={{
                 color: '#F62F60',
                 opacity: 0.8,

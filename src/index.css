@@ -3,6 +3,24 @@
 @tailwind utilities;
 
 :root {
+  --font-display: 'Recoleta', 'Playfair Display', ui-serif, Georgia, serif;
+  --font-ui: 'Barlow Semi Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --text-display: clamp(3.35rem, 5.5vw, 5.8rem);
+  --text-heading: 2rem;
+  --text-subheading: 1.5rem;
+  --text-body: 1.1875rem;
+  --text-ui: 1rem;
+  --text-meta: 0.75rem;
+  --text-wordmark: clamp(1.1rem, 1.025rem + 0.55vw, 1.5rem);
+  --page-max-width: 80rem;
+  --page-inline: 1.5rem;
+  --header-identity-width: clamp(14.125rem, calc(12.25rem + 3vw), 14.875rem);
+  --header-accent-start: calc(var(--header-identity-width) - 3.9375rem);
+  --leading-display: 0.92;
+  --leading-heading: 1.05;
+  --leading-body: 1.45;
+  --leading-ui: 1.2;
+  --leading-meta: 1.2;
   --app-bg: #000;
   --app-text: #e5e7eb;
   --section-bg: #181919;
@@ -38,14 +56,16 @@ html[data-theme="light"] {
   html {
     scroll-behavior: smooth;
     background: #000;
+    overflow-x: clip;
   }
   body {
     margin: 0;
     background: var(--app-bg) !important;
     color: var(--app-text);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-ui);
     -webkit-font-smoothing: antialiased;
     cursor: url("/paper-airplane-cursor.svg") 4 6, auto;
+    overflow-x: clip;
   }
   #root {
     min-height: 100vh;
@@ -53,10 +73,17 @@ html[data-theme="light"] {
 
   /* Fixed header + in-page anchors / programmatic scrollIntoView */
   #home,
-  #projects,
-  #about,
   #contact {
     scroll-margin-top: calc(var(--app-header-height, 56px) + 12px);
+  }
+
+  #work,
+  #about,
+  #archive {
+    scroll-margin-top: calc(
+      var(--app-header-height, 56px) + var(--hero-tab-height, 2.25rem) +
+        var(--hero-tab-rail-height, 0.3125rem)
+    );
   }
 }
 
@@ -109,6 +136,129 @@ html[data-theme="light"] {
   background-color: rgb(var(--chrome-rgb));
 }
 
+/* Hero reserves the fixed-header and tab-assembly regions around its centered copy. */
+.homepage-major-shell {
+  --hero-tab-height: 2.25rem;
+  --hero-tab-slant: 1.375rem;
+  --hero-tab-rail-height: 0.3125rem;
+  --hero-tab-overlap: 0.5rem;
+  --hero-tab-total-height: calc(var(--hero-tab-height) + var(--hero-tab-rail-height));
+}
+
+.hero-shell {
+  padding-top: var(--app-header-height, 60px);
+  padding-bottom: var(--hero-tab-total-height);
+}
+
+.major-section-tabs {
+  position: sticky;
+  top: var(--app-header-height, 60px);
+  z-index: 90;
+  margin-top: calc(-1 * var(--hero-tab-total-height));
+  scroll-margin-top: var(--app-header-height, 60px);
+}
+
+.hero-folder-tabs__list {
+  position: relative;
+  display: flex;
+  height: var(--hero-tab-height);
+  isolation: isolate;
+}
+
+.hero-folder-tab {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  height: var(--hero-tab-height);
+  padding-inline: calc(var(--hero-tab-slant) + 0.25rem);
+  font-family: var(--font-ui);
+  font-size: var(--text-ui);
+  font-weight: 500;
+  line-height: var(--leading-ui);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: filter 160ms ease-out;
+}
+
+.hero-folder-tab + .hero-folder-tab {
+  margin-left: calc(-1 * var(--hero-tab-overlap));
+}
+
+.hero-folder-tab.is-active {
+  z-index: 3;
+  font-weight: 600;
+}
+
+.hero-folder-tab:hover,
+.hero-folder-tab:focus-visible {
+  z-index: 4;
+  filter: brightness(1.08);
+}
+
+.hero-folder-tab:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
+
+.hero-folder-tab__label {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-folder-tab__label--short {
+  display: none;
+}
+
+.hero-folder-tabs__rail {
+  width: 100%;
+  height: var(--hero-tab-rail-height);
+  transition: background-color 160ms ease-out;
+}
+
+@media (max-width: 639px) {
+  .homepage-major-shell {
+    --hero-tab-height: 2.125rem;
+    --hero-tab-slant: 1rem;
+    --hero-tab-rail-height: 0.1875rem;
+    --hero-tab-overlap: 0.1875rem;
+  }
+
+  .hero-folder-tab {
+    padding-inline: calc(var(--hero-tab-slant) - 0.25rem);
+  }
+
+  .hero-folder-tab__label--full {
+    display: none;
+  }
+
+  .hero-folder-tab__label--short {
+    display: block;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .homepage-major-shell {
+    --hero-tab-height: 2.1875rem;
+    --hero-tab-slant: 1.25rem;
+    --hero-tab-rail-height: 0.25rem;
+    --hero-tab-overlap: 0.4375rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-folder-tab,
+  .hero-folder-tabs__rail {
+    transition: none;
+  }
+}
+
 /* Modal + toast (Contact form) */
 .contact-modal-overlay {
   position: absolute;
@@ -137,14 +287,14 @@ html[data-theme="light"] .contact-modal-overlay {
 
 .modal-title {
   margin: 0 0 6px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
 
 .modal-body {
   margin: 0 0 14px;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-ui);
   opacity: 0.88;
   font-size: 0.95rem;
 }
@@ -158,7 +308,7 @@ html[data-theme="light"] .contact-modal-overlay {
 .modal-btn {
   border-radius: 8px;
   padding: 9px 14px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.9rem;
   border: 1px solid rgba(var(--chrome-invert-rgb), 0.18);
   background: rgba(var(--chrome-invert-rgb), 0.08);
@@ -191,7 +341,7 @@ html[data-theme="light"] .contact-modal-overlay {
   z-index: 10000;
   padding: 10px 14px;
   border-radius: 10px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.9rem;
   letter-spacing: 0.02em;
   backdrop-filter: blur(10px);
@@ -214,7 +364,7 @@ html[data-theme="light"] .contact-modal-overlay {
   background: rgba(106, 34, 255, 0.88);
   border-color: rgba(255, 255, 255, 0.18);
   color: #fff;
-  font-family: 'Bangers', system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-size: 1rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -255,12 +405,58 @@ textarea,
 }
 
 @layer utilities {
+  .type-display {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: var(--leading-display);
+  }
+  .type-heading {
+    font-family: var(--font-display);
+    font-size: var(--text-heading);
+    font-weight: 600;
+    line-height: var(--leading-heading);
+  }
+  .type-subheading {
+    font-family: var(--font-ui);
+    font-size: var(--text-subheading);
+    font-weight: 500;
+    line-height: var(--leading-heading);
+  }
+  .type-body {
+    font-family: var(--font-ui);
+    font-size: var(--text-body);
+    font-weight: 400;
+    line-height: var(--leading-body);
+  }
+  .type-ui {
+    font-family: var(--font-ui);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    line-height: var(--leading-ui);
+  }
+  .type-meta {
+    font-family: var(--font-ui);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    line-height: var(--leading-meta);
+  }
+  .type-wordmark {
+    font-family: var(--font-display);
+    font-size: var(--text-wordmark);
+    font-weight: 600;
+    line-height: var(--leading-ui);
+  }
+  .font-display {
+    font-family: var(--font-display);
+  }
   .font-bangers {
-    font-family: 'Playfair Display', ui-serif, Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 700;
   }
+  .font-ui,
   .font-poppins {
-    font-family: 'Poppins', system-ui, sans-serif;
+    font-family: var(--font-ui);
   }
   .font-nanum {
     font-family: 'Nanum Brush Script', system-ui, cursive;
@@ -275,14 +471,6 @@ textarea,
     opacity: 0.9;
   }
 
-  /* Responsive postcard text sizing – higher min so it doesn’t shrink as much on small screens */
-  .postcard-text {
-    font-size: clamp(1.2rem, 1.9vw, 1.3rem);
-  }
-
-  .postcard-body {
-    overflow: hidden;
-  }
 }
 
 /* Flip animation for color selector squares */
@@ -301,34 +489,6 @@ textarea,
   100% {
     transform: rotateX(0deg);
   }
-}
-
-/* Flip card for hero postcard */
-.flip-card {
-  perspective: 1600px;
-  cursor: pointer;
-}
-
-.flip-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.95s cubic-bezier(0.2, 0.9, 0.2, 1);
-}
-
-.flip-card-inner.is-flipped {
-  transform: rotateY(180deg);
-}
-
-.flip-card-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-}
-
-.flip-card-back {
-  transform: rotateY(180deg);
 }
 
 /* Footer "back to top" – underline stretches on hover */

@@ -6,6 +6,12 @@ const colorOptions = [
   { id: 'green', className: 'bg-lime-400', style: null, border: '#a3e635' },
 ]
 
+const navItems = [
+  { id: 'work', label: 'Work', href: '/#work' },
+  { id: 'about', label: 'About', href: '/#about' },
+  { id: 'archive', label: 'Archive', href: '/#archive' },
+]
+
 export default function Header({
   heroColor,
   onHeroColorChange,
@@ -13,111 +19,129 @@ export default function Header({
   onLangChange,
   theme = 'dark',
   onThemeChange,
+  activeSection = 'work',
+  onSectionNavigate,
+  resumeHref = null,
 }) {
-  const active = colorOptions.find((c) => c.id === heroColor) ?? colorOptions[0]
+  const active = colorOptions.find((color) => color.id === heroColor) ?? colorOptions[0]
   const [spinTurns, setSpinTurns] = useState(0)
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-[100] chrome-bg-90 backdrop-blur-sm"
+      className="fixed inset-x-0 top-0 z-[100] chrome-bg-90 backdrop-blur-sm"
       style={{ boxShadow: `inset 0 -1px 0 0 ${active.border}` }}
     >
-      <div className="max-w-7xl mx-auto px-6 h-[60px] relative flex items-center justify-between">
-        {/* Left: name + color boxes */}
-        <div className="flex items-center gap-5">
+      <div className="relative mx-auto grid min-h-[60px] max-w-[var(--page-max-width)] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-2 px-4 py-2 sm:px-[var(--page-inline)] md:grid-cols-[auto_1fr_auto] md:gap-x-6">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-5">
           <a
             href="/"
-            className="chrome-text tracking-wide font-bangers hover:opacity-90 transition-opacity"
-            style={{ fontSize: 'clamp(1.1rem, 1rem + 0.8vw, 1.5rem)' }}
+            className="type-wordmark chrome-text whitespace-nowrap tracking-[0.08em] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
-            JCL
+            Jasmine Lee
           </a>
-          <div className="flex gap-1">
-            {colorOptions.map((opt) => {
-              const isActive = heroColor === opt.id
+          <div className="flex shrink-0 gap-0.5" aria-label="Accent color">
+            {colorOptions.map((option) => {
+              const isActive = heroColor === option.id
               return (
                 <button
-                  key={opt.id}
+                  key={option.id}
                   type="button"
-                  onClick={() => onHeroColorChange && onHeroColorChange(opt.id)}
-                  className={`w-4 h-4 ${opt.className} ${isActive ? 'border border-white flip-square' : ''}`}
-                  style={opt.style || undefined}
-                  aria-label={`Set hero color to ${opt.id}`}
-                />
+                  onClick={() => onHeroColorChange?.(option.id)}
+                  className="flex h-6 w-6 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1 focus-visible:ring-offset-transparent"
+                  aria-label={`Set accent color to ${option.id}`}
+                  aria-pressed={isActive}
+                >
+                  <span
+                    className={`h-4 w-4 rounded-full ${option.className} ${
+                      isActive ? 'flip-square ring-1 ring-white' : ''
+                    }`}
+                    style={option.style || undefined}
+                    aria-hidden
+                  />
+                </button>
               )
             })}
           </div>
         </div>
 
-        {/* Center: nav links (truly centered) */}
         <nav
-          className="absolute left-1/2 -translate-x-1/2 flex gap-4 font-poppins chrome-muted tracking-[0.12em] sm:gap-6 max-[430px]:flex-col max-[430px]:gap-0 max-[430px]:items-center max-[430px]:leading-none"
-          style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
+          aria-label="Primary navigation"
+          className="type-ui col-span-2 row-start-2 flex items-center justify-center gap-5 tracking-[0.14em] chrome-muted sm:gap-8 md:absolute md:left-1/2 md:top-1/2 md:col-span-1 md:row-start-1 md:-translate-x-1/2 md:-translate-y-1/2"
         >
-          <a href="/projects" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
-            <span>Projects</span>
-            <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-          </a>
-          <a href="/about" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
-            <span>About</span>
-            <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-          </a>
-          <a href="/contact" className="relative uppercase pb-0.5 max-[430px]:pb-0 hover:chrome-text transition-colors group">
-            <span>Contact</span>
-            <span className="pointer-events-none absolute left-0 -bottom-0.5 h-[1px] w-0 bg-current transition-all duration-300 ease-out group-hover:w-full" />
-          </a>
+          {navItems.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={(event) => onSectionNavigate?.(event, item.id)}
+              aria-current={activeSection === item.id ? 'location' : undefined}
+              className="group relative pb-0.5 uppercase transition-colors hover:chrome-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >
+              <span>{item.label}</span>
+              <span className="pointer-events-none absolute -bottom-0.5 left-0 h-px w-0 bg-current transition-[width] duration-300 ease-out group-hover:w-full group-focus-visible:w-full motion-reduce:transition-none" />
+            </a>
+          ))}
+          {resumeHref ? (
+            <a
+              href={resumeHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative pb-0.5 uppercase transition-colors hover:chrome-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            >
+              <span>Resume ↗</span>
+              <span className="pointer-events-none absolute -bottom-0.5 left-0 h-px w-0 bg-current transition-[width] duration-300 ease-out group-hover:w-full group-focus-visible:w-full motion-reduce:transition-none" />
+            </a>
+          ) : null}
         </nav>
 
-        {/* Right: language + toggle */}
-        <div className="flex items-center gap-4 font-poppins chrome-muted">
+        <div className="col-start-2 row-start-1 flex items-center justify-end gap-2 chrome-muted sm:gap-4 md:col-start-3">
           <button
             type="button"
             onClick={() => {
               onLangChange?.(lang === 'EN' ? 'ZH' : 'EN')
-              setSpinTurns((prev) => prev + 1)
+              setSpinTurns((previous) => previous + 1)
             }}
-            onMouseEnter={() => setSpinTurns((prev) => prev + 1)}
-            className="flex items-center gap-1 group"
-            style={{ fontSize: 'clamp(0.68rem, 0.64rem + 0.22vw, 0.875rem)' }}
+            onMouseEnter={() => setSpinTurns((previous) => previous + 1)}
+            className="type-meta group flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            aria-label={lang === 'EN' ? 'Switch language to Chinese' : 'Switch language to English'}
           >
             <span
-              className={`transition-transform duration-200 ease-out group-hover:-translate-x-1 ${
+              className={`transition-transform duration-200 ease-out group-hover:-translate-x-1 motion-reduce:transition-none ${
                 lang === 'EN' ? 'chrome-text' : 'opacity-60'
               }`}
             >
               EN
             </span>
             <span
-              className="inline-block origin-center transition-transform duration-500 ease-out"
+              className="inline-block origin-center transition-transform duration-500 ease-out motion-reduce:transition-none"
               style={{ transform: `rotate(${spinTurns * 360}deg)` }}
+              aria-hidden
             >
               |
             </span>
-            <span className={lang === 'ZH' ? 'chrome-text' : 'opacity-60'}>
-              中文
-            </span>
+            <span className={lang === 'ZH' ? 'chrome-text' : 'opacity-60'}>中文</span>
           </button>
-          {/* Two-circle theme toggle (independent from language) */}
+
           <button
             type="button"
             onClick={() => onThemeChange?.(theme === 'dark' ? 'light' : 'dark')}
-            className="relative w-9 h-5 flex items-center justify-center"
+            className="relative flex h-6 w-9 items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
           >
-            {/* Left circle (outline) */}
             <span
-              className="absolute w-4 h-4 rounded-full border chrome-outline chrome-solid-bg transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              className="chrome-outline chrome-solid-bg absolute h-4 w-4 rounded-full border transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none"
               style={{
                 transform: theme === 'dark' ? 'translateX(-6px)' : 'translateX(6px)',
                 zIndex: theme === 'dark' ? 0 : 1,
               }}
+              aria-hidden
             />
-            {/* Right circle (filled) */}
             <span
-              className="absolute w-4 h-4 rounded-full chrome-invert-bg transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              className="chrome-invert-bg absolute h-4 w-4 rounded-full transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none"
               style={{
                 transform: theme === 'dark' ? 'translateX(6px)' : 'translateX(-6px)',
                 zIndex: theme === 'dark' ? 1 : 0,
               }}
+              aria-hidden
             />
           </button>
         </div>

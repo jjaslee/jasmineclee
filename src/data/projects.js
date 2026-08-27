@@ -205,9 +205,7 @@ Implemented a personal journal system for saving and revisiting entries
 
 OUTCOME
 
-A scalable system that bridges data, interface, and real-world action-allowing users to discover, organize, and directly acquire items that align with their aesthetic.
-
-https://the-studio-index.vercel.app/`,
+A scalable system that bridges data, interface, and real-world action-allowing users to discover, organize, and directly acquire items that align with their aesthetic.`,
   'Fluttering Kindness': `A public mural transforming an everyday utility space into a welcoming visual experience through storytelling and color.
 
 DESIGN FOUNDATION
@@ -697,12 +695,47 @@ function mediaThumbnail(media) {
 
 const RAW_PROJECTS = [
   {
+    id: 'known-issue',
+    slug: 'known-issue',
+    title: 'Known Issue',
+    summary:
+      'A name-indexed apparel system built around search, catalog structure, and missing-name behavior.',
+    media: [],
+    caseStudyRoute: '/work/known-issue',
+    featured: true,
+    featuredOrder: 1,
+    featuredDiscipline: 'PRODUCT SYSTEM · COMMERCE · IA',
+    featuredSummary:
+      'A name-indexed apparel system built around search, catalog structure, and missing-name behavior.',
+    featuredColors: { body: '#C35DE7', tab: '#A425D4', border: '#C766E8' },
+    featuredIconType: 'notes',
+  },
+  {
+    id: 'jascielle-photography',
+    slug: 'jascielle-photography',
+    title: 'Jascielle Photography',
+    summary:
+      'An editorial photography portfolio refined around responsive galleries, booking flows, and interaction details.',
+    media: [],
+    caseStudyRoute: '/work/jascielle',
+    externalUrl: PHOTOGRAPHY_SITE_URL,
+    externalLabel: 'View live site',
+    featured: true,
+    featuredOrder: 2,
+    featuredDiscipline: 'INTERACTION DESIGN · RESPONSIVE UX · WEB',
+    featuredSummary:
+      'An editorial photography portfolio refined around responsive galleries, booking flows, and interaction details.',
+    featuredColors: { body: '#50B5E7', tab: '#1689BE', border: '#4CB8E9' },
+    featuredIconType: 'camera',
+  },
+  {
     id: 'cal-hacks',
     slug: 'cal-hacks',
     title: 'Cal Hacks',
     legacyCategory: 'design',
     summary: DESIGN_FOLDER_CAPTIONS['Cal Hacks'],
     media: withHoverCopy(CAL_HACKS_ITEMS, CAL_HACKS_GRID_HOVER),
+    caseStudyRoute: '/work/cal-hacks',
     mediaViewer: { documentMaxWidthClass: 'max-w-[min(560px,100%)]' },
     order: 0,
   },
@@ -768,6 +801,16 @@ const RAW_PROJECTS = [
       'the-studio-index-journal-light.png',
       'the-studio-index-about-dark.png',
     ]),
+    caseStudyRoute: '/work/the-studio-index',
+    disabledExternalUrls: ['https://the-studio-index.vercel.app/'],
+    featured: true,
+    featuredOrder: 4,
+    featuredDiscipline: 'INFORMATION ARCHITECTURE · CONTENT SYSTEMS',
+    featuredSummary:
+      'An editorial archive organized around structured metadata, discovery, and reusable publishing workflows.',
+    featuredThumbnail: '/design/the-studio-index/the-studio-index-archive-light.png',
+    featuredColors: { body: '#F6B900', tab: '#C69212', border: '#F4BA08' },
+    featuredIconType: 'notes',
     order: 5,
   },
   {
@@ -786,6 +829,18 @@ const RAW_PROJECTS = [
     legacyCategory: 'technicals',
     summary: TECHNICALS_FOLDER_CAPTIONS.Goniometrix,
     media: GONIOMETRIX_ITEMS,
+    caseStudyRoute: '/work/goniometrix',
+    featured: true,
+    featuredOrder: 3,
+    featuredTitle: 'GonioMetrix',
+    featuredDiscipline: 'HUMAN FACTORS · WEARABLE · PHYSICAL INTERACTION',
+    featuredSummary:
+      'A wearable range-of-motion tool using visual, haptic, and auditory feedback.',
+    featuredThumbnail:
+      '/technicals/mechatronic-goniometer/goniometrix-hardware-photo-01.png',
+    featuredThumbnailAlt: 'GonioMetrix wearable hardware prototype',
+    featuredColors: { body: '#BAF000', tab: '#91B50C', border: '#B9EE09' },
+    featuredIconType: 'monitor',
     order: 0,
   },
   {
@@ -834,6 +889,10 @@ export const PROJECTS = RAW_PROJECTS.map((project) => ({
   thumbnail: mediaThumbnail(project.media),
 }))
 
+export const FEATURED_PROJECTS = PROJECTS.filter((project) => project.featured).sort(
+  (a, b) => a.featuredOrder - b.featuredOrder,
+)
+
 export const JASCIELLE_PHOTOGRAPHY_URL = PHOTOGRAPHY_SITE_URL
 
 export function getProjectsByLegacyCategory(category) {
@@ -858,4 +917,9 @@ export function getProjectByLegacyCategoryAndTitle(category, title) {
       (project) => project.legacyCategory === category && project.title === title,
     ) || null
   )
+}
+
+export function getProjectByCaseStudyRoute(pathname) {
+  if (!pathname) return null
+  return PROJECTS.find((project) => project.caseStudyRoute === pathname) || null
 }

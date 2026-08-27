@@ -19,7 +19,7 @@ export default {
         'brand-green': '#8DFD19',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-ui)', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'neon': '0 0 20px rgba(57, 255, 20, 0.3)',

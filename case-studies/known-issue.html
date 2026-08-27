@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Known Issue product-system case study by Jasmine Lee.">
+  <link rel="icon" href="/favicon.svg">
+  <link rel="stylesheet" href="./case-study.css">
+  <title>Known Issue — Jasmine Lee</title>
+</head>
+<body>
+  <a class="skip-link" href="#case-content">Skip to case study</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <div class="brand-group">
+        <a class="brand" href="/">Jasmine Lee</a>
+        <div class="accent-picker" aria-label="Accent color">
+          <button class="accent-button" data-accent="purple" aria-label="Set accent color to purple" aria-pressed="true"><span class="accent-button__swatch" style="--swatch:#6A22FF" aria-hidden="true"></span></button>
+          <button class="accent-button" data-accent="red" aria-label="Set accent color to red" aria-pressed="false"><span class="accent-button__swatch" style="--swatch:#ec4899" aria-hidden="true"></span></button>
+          <button class="accent-button" data-accent="green" aria-label="Set accent color to green" aria-pressed="false"><span class="accent-button__swatch" style="--swatch:#a3e635" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <a href="/#work">Work</a><a href="/#about">About</a><a href="/#archive">Archive</a>
+      </nav>
+      <div class="header-tools">
+        <button class="language-toggle" type="button" data-language-toggle><span data-lang="EN" class="is-active">EN</span> | <span data-lang="ZH">中文</span></button>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="case-shell">
+    <nav class="case-toc" aria-label="Known Issue sections">
+      <ol class="toc-list">
+        <li><a class="toc-link" data-toc-link href="#overview"><span>01</span><span>Overview</span></a></li>
+        <li><a class="toc-link" data-toc-link href="#product-model"><span>02</span><span>Product model</span></a><ul class="toc-sublist"><li><a href="#subject">Subject</a></li><li><a href="#record">Record</a></li><li><a href="#variant">Variant</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#search"><span>03</span><span>Search</span></a><ul class="toc-sublist"><li><a href="#matching-rules">Matching rules</a></li><li><a href="#aliases">Aliases</a></li><li><a href="#multiple-records">Multiple records</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#missing-names"><span>04</span><span>Missing names</span></a><ul class="toc-sublist"><li><a href="#zero-records">0 Records Found</a></li><li><a href="#request-indexing">Request Indexing</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#commerce"><span>05</span><span>Commerce</span></a><ul class="toc-sublist"><li><a href="#product-hierarchy">Product hierarchy</a></li><li><a href="#sizing">Sizing</a></li><li><a href="#shipping">Shipping / returns</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#implementation"><span>06</span><span>Implementation</span></a><ul class="toc-sublist"><li><a href="#shopify">Shopify model</a></li><li><a href="#metafields">Metafields</a></li><li><a href="#ai-implementation">AI-assisted implementation</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#edge-cases"><span>07</span><span>Edge cases + iteration</span></a></li>
+        <li><a class="toc-link" data-toc-link href="#where-it-landed"><span>08</span><span>Where it landed</span></a></li>
+        <li><a class="toc-link" data-toc-link href="#validate-next"><span>09</span><span>What I’d validate next</span></a></li>
+      </ol>
+    </nav>
+
+    <main class="case-main" id="case-content">
+      <p class="case-kicker">Product system · ecommerce</p>
+      <h1 class="case-title">Known Issue</h1>
+      <details class="mobile-toc"><summary><span data-mobile-label>01 Overview</span></summary><nav aria-label="Case study sections"><a data-toc-link href="#overview">01 Overview</a><a data-toc-link href="#product-model">02 Product model</a><a data-toc-link href="#search">03 Search</a><a data-toc-link href="#missing-names">04 Missing names</a><a data-toc-link href="#commerce">05 Commerce</a><a data-toc-link href="#implementation">06 Implementation</a><a data-toc-link href="#edge-cases">07 Edge cases + iteration</a><a data-toc-link href="#where-it-landed">08 Where it landed</a><a data-toc-link href="#validate-next">09 What I’d validate next</a></nav></details>
+
+      <section class="case-section" id="overview">
+        <h2 class="section-title">01 Overview</h2>
+        <p class="section-lede">Known Issue is a name-based apparel and ecommerce concept built around predetermined records for first names rather than custom text.</p>
+        <p>Instead of allowing customers to personalize garments, Known Issue releases selected names as designed records. A single name can have multiple designs or garment types associated with it.</p>
+        <p>The main design challenge was defining the product system around the apparel: what counts as a record, how people search, how multiple products are grouped, and what happens when a name does not exist.</p>
+        <div class="artifact-full artifact-placeholder"><span>Project framing / system overview — visual pending</span></div>
+      </section>
+
+      <section class="case-section" id="product-model">
+        <h2 class="section-title">02 Product model</h2>
+        <p class="section-lede">Discovery is organized around a name; commerce is organized around the individual records attached to that subject.</p>
+        <div class="subsections"><div class="subsection" id="subject"><h3>Subject</h3><p>The first name a person searches for.</p></div><div class="subsection" id="record"><h3>Record</h3><p>A designed release associated with that name.</p></div><div class="subsection" id="variant"><h3>Variant</h3><p>The purchasable size or option within a record.</p></div></div>
+        <div class="artifact-grid"><div class="artifact-small artifact-placeholder"><span>Subject → record diagram</span></div><div class="artifact-large artifact-placeholder"><span>Record and variant model</span></div></div>
+      </section>
+
+      <section class="case-section" id="search">
+        <h2 class="section-title">03 Search</h2>
+        <p class="section-lede">Search has to feel simple to the visitor while respecting a curated, finite record set.</p>
+        <div class="subsections"><div class="subsection" id="matching-rules"><h3>Matching rules</h3><p>Normalize case and spacing without implying arbitrary customization.</p></div><div class="subsection" id="aliases"><h3>Aliases</h3><p>Related spellings can guide discovery while keeping each indexed name explicit.</p></div><div class="subsection" id="multiple-records"><h3>Multiple records</h3><p>One result can open into several distinct designed releases.</p></div></div>
+        <div class="artifact-full artifact-placeholder"><span>Search states and result grouping — visual pending</span></div>
+      </section>
+
+      <section class="case-section" id="missing-names">
+        <h2 class="section-title">04 Missing names</h2>
+        <p class="section-lede">A missing name is a product state, not just an empty search result.</p>
+        <div class="subsections"><div class="subsection" id="zero-records"><h3>0 Records Found</h3><p>The interface clearly distinguishes “not indexed” from a broken search.</p></div><div class="subsection" id="request-indexing"><h3>Request Indexing</h3><p>A request records interest without turning the product into made-to-order customization.</p></div></div>
+        <div class="artifact-pair"><div class="artifact-placeholder"><span>Zero-result state</span></div><div class="artifact-placeholder"><span>Request indexing flow</span></div></div>
+      </section>
+
+      <section class="case-section" id="commerce">
+        <h2 class="section-title">05 Commerce</h2>
+        <p class="section-lede">The editorial archive metaphor still has to resolve into familiar product decisions at checkout.</p>
+        <div class="subsections"><div class="subsection" id="product-hierarchy"><h3>Product hierarchy</h3><p>Name, record, garment, and purchasable variant stay legible.</p></div><div class="subsection" id="sizing"><h3>Sizing</h3><p>Size belongs to the product variant, not to the indexed name.</p></div><div class="subsection" id="shipping"><h3>Shipping / returns</h3><p>Operational information remains conventional and easy to find.</p></div></div>
+      </section>
+
+      <section class="case-section" id="implementation">
+        <h2 class="section-title">06 Implementation</h2>
+        <p class="section-lede">The interface model maps to Shopify without forcing the archive language into an incompatible backend structure.</p>
+        <div class="subsections"><div class="subsection" id="shopify"><h3>Shopify model</h3><p>Records map to products and their purchase options map to variants.</p></div><div class="subsection" id="metafields"><h3>Metafields</h3><p>Structured name and release metadata can support grouping and retrieval.</p></div><div class="subsection" id="ai-implementation"><h3>AI-assisted implementation</h3><p>Implementation assistance supports production work; system decisions remain deliberate and reviewable.</p></div></div>
+        <div class="artifact-full artifact-placeholder"><span>Shopify data mapping — visual pending</span></div>
+      </section>
+
+      <section class="case-section" id="edge-cases"><h2 class="section-title">07 Edge cases + iteration</h2><p class="section-lede">The model needs to account for spelling variants, duplicate subjects, record availability, sold-out variants, and names with many releases.</p><p>These are the points where archive language and commerce language can diverge, so the interface should make state changes explicit.</p></section>
+      <section class="case-section" id="where-it-landed"><h2 class="section-title">08 Where it landed</h2><p class="section-lede">The concept landed on a subject-first discovery model with record-level commerce.</p><p>That separation lets the brand feel like an index while preserving a conventional path from a selected design to a purchasable variant.</p></section>
+      <section class="case-section" id="validate-next"><h2 class="section-title">09 What I’d validate next</h2><p class="section-lede">The next questions are whether people understand “record” without explanation, whether alias behavior feels predictable, and whether requesting a name is distinct enough from customization.</p></section>
+    </main>
+  </div>
+  <script type="module" src="./case-study.js"></script>
+</body>
+</html>

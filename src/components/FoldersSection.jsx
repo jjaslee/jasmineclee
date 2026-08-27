@@ -3,7 +3,6 @@ import AquaSyncMediaPresentation from './project/AquaSyncMediaPresentation'
 import MediaViewer, { MediaThumbnail } from './project/MediaViewer'
 import ProjectCaption, { CAPTION_LINE_HEIGHT_EM } from './project/ProjectCaption'
 import Folder from './ui/Folder'
-import SectionTab from './ui/SectionTab'
 import Window from './ui/Window'
 import {
   JASCIELLE_PHOTOGRAPHY_URL,
@@ -505,6 +504,8 @@ export default function FoldersSection({
   cascadeOrder = ['technicals'],
   onBringWindowToFront,
 }) {
+  const initialProjectPath =
+    typeof window !== 'undefined' ? parseProjectPath(window.location.pathname) : null
   const photosFolderRef = useRef(null)
   const designFolderRef = useRef(null)
   const technicalsFolderRef = useRef(null)
@@ -514,9 +515,21 @@ export default function FoldersSection({
   const lastSyncedLocationPathRef = useRef(
     typeof window !== 'undefined' ? normalizePath(window.location.pathname) : '/'
   )
-  const [photosOpenFolder, setPhotosOpenFolder] = useState(null)
-  const [designOpenFolder, setDesignOpenFolder] = useState(null)
-  const [technicalsOpenFolder, setTechnicalsOpenFolder] = useState(null)
+  const [photosOpenFolder, setPhotosOpenFolder] = useState(() =>
+    initialProjectPath?.root === 'photos'
+      ? getProjectByLegacyCategoryAndSlug('photos', initialProjectPath.subSlug)?.title || null
+      : null,
+  )
+  const [designOpenFolder, setDesignOpenFolder] = useState(() =>
+    initialProjectPath?.root === 'design'
+      ? getProjectByLegacyCategoryAndSlug('design', initialProjectPath.subSlug)?.title || null
+      : null,
+  )
+  const [technicalsOpenFolder, setTechnicalsOpenFolder] = useState(() =>
+    initialProjectPath?.root === 'technicals'
+      ? getProjectByLegacyCategoryAndSlug('technicals', initialProjectPath.subSlug)?.title || null
+      : null,
+  )
   const [showPastNotesFolder, setShowPastNotesFolder] = useState(false)
   const [showPastNotesWindow, setShowPastNotesWindow] = useState(false)
   const [maximizedByWindowId, setMaximizedByWindowId] = useState({})
@@ -617,15 +630,15 @@ export default function FoldersSection({
   const designContentFiles = designOpenProject?.media || []
   const technicalsContentFiles = technicalsOpenProject?.media || []
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!showPhotosWindow) setPhotosOpenFolder(null)
   }, [showPhotosWindow])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!showDesignWindow) setDesignOpenFolder(null)
   }, [showDesignWindow])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!showTechnicalsWindow) setTechnicalsOpenFolder(null)
   }, [showTechnicalsWindow])
 
@@ -795,15 +808,10 @@ export default function FoldersSection({
   }, [])
 
   return (
-    <section id="projects" className="relative z-20">
-      <SectionTab
-        label="PROJECTS"
-        backgroundColor="#6A22FF"
-        textColor="white"
-        backingClassName="chrome-bg-90"
-        zIndexClassName="z-50"
-      />
-
+    <section id="work" aria-labelledby="work-heading" className="relative z-20">
+      <h2 id="work-heading" className="sr-only">
+        Selected Work
+      </h2>
       {/* Grid section content below the sticky tab (purple grid) - min-height transitions so About Me slides */}
       <div
         ref={projectsWrapRef}

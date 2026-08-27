@@ -22,6 +22,15 @@ export function parseProjectPath(pathname) {
   return { root, subSlug }
 }
 
+export function parseWorkPath(pathname) {
+  const parts = normalizePath(pathname).split('/').filter(Boolean)
+  if (parts[0] !== 'work') return null
+  return {
+    slug: parts[1] ?? null,
+    isExact: parts.length === 2,
+  }
+}
+
 export function legacyProjectPathFromHash(hash) {
   const rawHash = String(hash || '')
   if (!rawHash || rawHash === '#') return null
@@ -53,7 +62,7 @@ export function scrollPageToPath(pathname) {
   }
 
   let id = null
-  if (parts[0] === 'projects') id = 'projects'
+  if (parts[0] === 'projects') id = 'work'
   else if (parts[0] === 'home' || parts[0] === 'about' || parts[0] === 'contact') id = parts[0]
 
   if (!id) return
