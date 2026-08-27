@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function ProjectsSection({ lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -6,7 +6,6 @@ export default function ProjectsSection({ lang = 'EN' }) {
   const [deckMaxWidthPx, setDeckMaxWidthPx] = useState(null)
   const [aboutBottomPadPx, setAboutBottomPadPx] = useState(80)
   const aboutBodyFontClass = lang === 'ZH' ? 'font-zh-handwritten' : 'font-nanum'
-  const erbsRef = useRef(null)
 
   const ABOUT_CARDS = useMemo(() => {
     if (lang === 'ZH') {
@@ -76,9 +75,8 @@ export default function ProjectsSection({ lang = 'EN' }) {
     return value.map((part, idx) => {
       if (typeof part === 'string') return part
       if (part?.type === 'latin') {
-        const ref = part.key === 'erbs' ? erbsRef : null
         return (
-          <span key={`${part.key}-${idx}`} ref={ref} className="font-nanum">
+          <span key={`${part.key}-${idx}`} className="font-nanum">
             {part.text}
           </span>
         )
@@ -86,17 +84,6 @@ export default function ProjectsSection({ lang = 'EN' }) {
       return String(part ?? '')
     })
   }
-
-  useEffect(() => {
-    if (lang !== 'ZH') return
-    if (activeIndex !== 2) return
-    const el = erbsRef.current
-    if (!el) return
-    const s = window.getComputedStyle(el)
-    // #region agent log
-    fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'E1',location:'ProjectsSection.jsx:erbs',message:'erbs_font',data:{fontFamily:s.fontFamily,fontWeight:s.fontWeight,text:el.textContent},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-  }, [lang, activeIndex])
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 640px)')

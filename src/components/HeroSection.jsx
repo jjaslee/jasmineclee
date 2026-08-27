@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 
 const heroImages = [
   '/hero-purple.png',
@@ -75,14 +75,6 @@ const postcardContentZh = [
 export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [showBack, setShowBack] = useState(false)
-  const dateRef = useRef(null)
-  const firstLineRef = useRef(null)
-  const addressBlockRef = useRef(null)
-  const longBeachRef = useRef(null)
-  const neliRef = useRef(null)
-  const calvinRef = useRef(null)
-  const ucbRef = useRef(null)
-  const fontLogRafRef = useRef(null)
   const pointerStartXRef = useRef(null)
   const pointerStartYRef = useRef(null)
   const didSwipeRef = useRef(false)
@@ -101,18 +93,8 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
     return value.map((part, idx) => {
       if (typeof part === 'string') return part
       if (part?.type === 'latin') {
-        const ref =
-          part.key === 'longBeach'
-            ? longBeachRef
-            : part.key === 'neli'
-              ? neliRef
-              : part.key === 'calvin'
-                ? calvinRef
-                : part.key === 'ucb'
-                  ? ucbRef
-                : null
         return (
-          <span key={`${part.key}-${idx}`} ref={ref} className={englishInlineClass}>
+          <span key={`${part.key}-${idx}`} className={englishInlineClass}>
             {part.text}
           </span>
         )
@@ -120,47 +102,6 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
       return String(part ?? '')
     })
   }
-
-  useEffect(() => {
-    // Only log when the back is visible (writing side)
-    if (!showBack) return
-    if (lang !== 'ZH') return
-
-    const log = () => {
-      fontLogRafRef.current = null
-      const dateEl = dateRef.current
-      const lineEl = firstLineRef.current
-      const addrEl = addressBlockRef.current
-      if (!dateEl || !lineEl || !addrEl) return
-
-      const dateStyle = window.getComputedStyle(dateEl)
-      const lineStyle = window.getComputedStyle(lineEl)
-      const addrStyle = window.getComputedStyle(addrEl)
-      const lbEl = longBeachRef.current
-      const nEl = neliRef.current
-      const cEl = calvinRef.current
-      const uEl = ucbRef.current
-      const lbStyle = lbEl ? window.getComputedStyle(lbEl) : null
-      const nStyle = nEl ? window.getComputedStyle(nEl) : null
-      const cStyle = cEl ? window.getComputedStyle(cEl) : null
-      const uStyle = uEl ? window.getComputedStyle(uEl) : null
-
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'F1',location:'HeroSection.jsx:font',message:'hero_postcard_fonts',data:{lang,activeIndex,showBack,date:{fontFamily:dateStyle.fontFamily,fontWeight:dateStyle.fontWeight,text:dateEl.textContent?.slice(0,32)},line:{fontFamily:lineStyle.fontFamily,fontWeight:lineStyle.fontWeight,text:lineEl.textContent?.slice(0,48)},address:{fontFamily:addrStyle.fontFamily,fontWeight:addrStyle.fontWeight,text:addrEl.textContent?.slice(0,48)}},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
-
-      // #region agent log
-      fetch('http://127.0.0.1:7753/ingest/b67305a2-8703-4d0c-9907-e6f5fc96d49c',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'8d4cf9'},body:JSON.stringify({sessionId:'8d4cf9',runId:'pre-fix',hypothesisId:'F2',location:'HeroSection.jsx:fontLatin',message:'hero_postcard_latin_fonts',data:{lang,activeIndex,showBack,longBeach:lbStyle?{fontFamily:lbStyle.fontFamily,fontWeight:lbStyle.fontWeight,text:lbEl.textContent}:null,neli:nStyle?{fontFamily:nStyle.fontFamily,fontWeight:nStyle.fontWeight,text:nEl.textContent}:null,calvin:cStyle?{fontFamily:cStyle.fontFamily,fontWeight:cStyle.fontWeight,text:cEl.textContent}:null,ucb:uStyle?{fontFamily:uStyle.fontFamily,fontWeight:uStyle.fontWeight,text:uEl.textContent}:null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
-    }
-
-    if (fontLogRafRef.current) return
-    fontLogRafRef.current = requestAnimationFrame(log)
-
-    return () => {
-      if (fontLogRafRef.current) cancelAnimationFrame(fontLogRafRef.current)
-    }
-  }, [lang, activeIndex, showBack])
 
   const goNext = () => {
     setActiveIndex((prev) => (prev + 1) % heroImages.length)
@@ -380,11 +321,11 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
                       <div className="px-6 pb-6 flex flex-col gap-1 items-start overflow-hidden">
                         <div className="w-full max-h-[7.5rem] md:max-h-none overflow-y-auto md:overflow-visible pr-1">
                           <p className={`${dateFontClass} postcard-text text-left leading-snug`} style={{ color: postcardTextColor }}>
-                            <span ref={dateRef}>{postcardContent[activeIndex].date}</span>
+                            <span>{postcardContent[activeIndex].date}</span>
                           </p>
                           {postcardContent[activeIndex].lines.map((line, i) => (
                             <p key={i} className={`${postcardFontClass} postcard-text text-left leading-snug`} style={{ color: postcardTextColor }}>
-                              {i === 0 ? <span ref={firstLineRef}>{renderMixed(line)}</span> : renderMixed(line)}
+                              {i === 0 ? <span>{renderMixed(line)}</span> : renderMixed(line)}
                             </p>
                           ))}
                         </div>
@@ -393,7 +334,7 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
                       {/* Bottom-right: address */}
                       <div className="px-6 pb-6 flex flex-col justify-start">
                         <div className={`${postcardFontClass} postcard-text text-left space-y-1 leading-snug`} style={{ color: postcardTextColor }}>
-                          <div ref={addressBlockRef}>
+                          <div>
                             <p>
                               {renderMixed(postcardContent[activeIndex].name)}
                             </p>
