@@ -5,6 +5,7 @@ export const CAPTION_LINE_HEIGHT_EM = 1.625
 export default function ProjectCaption({
   caption,
   fixedHeight = false,
+  fillHeight = false,
   maxLines = 12,
   unbounded = false,
   boldFirstLine = false,
@@ -152,16 +153,20 @@ export default function ProjectCaption({
   })()
 
   return (
-    <div className="relative w-full">
+    <div className={`relative w-full ${fillHeight ? 'min-h-0 flex-1' : ''}`}>
       <div
         ref={scrollRef}
         className={`text-black/70 text-sm leading-relaxed w-full rounded-xl bg-white/35 border border-black/10 px-4 py-3 ${
+          fillHeight ? 'h-full' : ''
+        } ${
           unbounded ? 'overflow-visible' : 'overflow-auto pr-2'
         }`}
         style={
           unbounded
             ? undefined
-            : fixedHeight
+            : fillHeight
+              ? { height: '100%' }
+              : fixedHeight
               ? { height: `${maxHeightEm}em` }
               : { maxHeight: `${maxHeightEm}em` }
         }

@@ -47,7 +47,16 @@ setAccent(storage.get('portfolio-accent', 'purple'))
 setTheme(storage.get('portfolio-theme', 'dark'))
 setLanguage(storage.get('portfolio-language', 'EN'))
 
-accentButtons.forEach((button) => button.addEventListener('click', () => setAccent(button.dataset.accent)))
+accentButtons.forEach((button) => button.addEventListener('click', () => {
+  const swatch = button.querySelector('.accent-button__swatch')
+  if (swatch && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    swatch.classList.remove('flip-square')
+    void swatch.offsetWidth
+    swatch.classList.add('flip-square')
+    swatch.addEventListener('animationend', () => swatch.classList.remove('flip-square'), { once: true })
+  }
+  setAccent(button.dataset.accent)
+}))
 themeButton?.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'))
 languageButton?.addEventListener('click', () => setLanguage(document.documentElement.lang === 'en' ? 'ZH' : 'EN'))
 

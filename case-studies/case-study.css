@@ -149,6 +149,17 @@ button, summary { font: inherit; }
   background: var(--swatch);
 }
 
+.accent-button__swatch.flip-square {
+  transform-origin: center;
+  animation: flipForward 0.35s ease-out;
+}
+
+@keyframes flipForward {
+  0% { transform: rotateX(0deg); }
+  50% { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
 .accent-button[aria-pressed='true'] .accent-button__swatch { box-shadow: 0 0 0 1px var(--text); }
 
 .language-toggle,
@@ -481,4 +492,5 @@ button, summary { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+  .accent-button__swatch.flip-square { animation: none; }
 }

@@ -4,12 +4,13 @@ import HeroSection from './components/HeroSection'
 import MajorSectionTabs from './components/MajorSectionTabs'
 import FoldersSection from './components/FoldersSection'
 import SelectedWorkSection from './components/SelectedWorkSection'
-import ProjectsSection from './components/ProjectsSection'
+import AboutSection from './components/AboutSection'
 import ArchiveSection from './components/ArchiveSection'
-import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import CursorTrail from './components/CursorTrail'
-import CaseStudyPage from './components/case-study/CaseStudyPage'
+import CaseStudyPage, {
+  CaseStudyComingSoon,
+} from './components/case-study/CaseStudyPage'
 import { getProjectByCaseStudyRoute } from './data/projects'
 import {
   normalizePath,
@@ -21,6 +22,23 @@ import {
 
 const initialLegacyProjectRoot = parseProjectPath(window.location.pathname)?.root || 'technicals'
 const homepageSections = new Set(['work', 'about', 'archive'])
+const siteAccentIds = new Set(['purple', 'red', 'green'])
+const siteAccentStorageKey = 'jasmine-portfolio-site-accent'
+const siteAccentColorMap = {
+  purple: '#6A22FF',
+  red: '#F62F60',
+  green: '#8DFD19',
+}
+
+function initialSiteAccent() {
+  try {
+    const storedAccent = window.sessionStorage.getItem(siteAccentStorageKey)
+    if (siteAccentIds.has(storedAccent)) return storedAccent
+  } catch {
+    // Storage can be unavailable in privacy-restricted browsing contexts.
+  }
+  return 'purple'
+}
 
 function homepageSectionFromHash(hash = window.location.hash) {
   const section = String(hash || '').replace(/^#/, '')
@@ -34,7 +52,7 @@ function App() {
     ? getProjectByCaseStudyRoute(pathname)
     : null
   const isWorkRoute = Boolean(workPath)
-  const [heroColor, setHeroColor] = useState('purple')
+  const [siteAccent, setSiteAccent] = useState(initialSiteAccent)
   const [theme, setTheme] = useState('dark')
   const [lang, setLang] = useState('EN')
   const [showPhotosWindow, setShowPhotosWindow] = useState(
@@ -60,6 +78,14 @@ function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(siteAccentStorageKey, siteAccent)
+    } catch {
+      // Accent selection still works for the current page without storage.
+    }
+  }, [siteAccent])
 
   useEffect(() => {
     document.documentElement.lang = lang === 'ZH' ? 'zh-Hans' : 'en'
@@ -200,20 +226,16 @@ function App() {
     },
     [showLegacyProjects],
   )
-  const accentColorMap = {
-    purple: '#6A22FF',
-    red: '#F62F60',
-    green: '#8DFD19',
-  }
-  const footerColor = accentColorMap[heroColor] ?? accentColorMap.purple
+  const siteAccentColor =
+    siteAccentColorMap[siteAccent] ?? siteAccentColorMap.purple
 
   if (isWorkRoute) {
     return (
       <div style={{ minHeight: '100vh' }}>
         <CursorTrail />
         <Header
-          heroColor={heroColor}
-          onHeroColorChange={setHeroColor}
+          siteAccent={siteAccent}
+          onSiteAccentChange={setSiteAccent}
           lang={lang}
           onLangChange={setLang}
           theme={theme}
@@ -221,7 +243,15 @@ function App() {
           activeSection="work"
         />
         {caseStudyProject ? (
-          <CaseStudyPage project={caseStudyProject} accentColor={footerColor} />
+          caseStudyProject.caseStudyStatus === 'coming-soon' ||
+          caseStudyProject.id === 'cal-hacks' ? (
+            <CaseStudyComingSoon
+              project={caseStudyProject}
+              accentColor={siteAccentColor}
+            />
+          ) : (
+            <CaseStudyPage project={caseStudyProject} />
+          )
         ) : (
           <main
             className="flex min-h-screen items-center justify-center px-4 text-center"
@@ -249,8 +279,8 @@ function App() {
     <div style={{ minHeight: '100vh' }}>
       <CursorTrail />
       <Header
-        heroColor={heroColor}
-        onHeroColorChange={setHeroColor}
+        siteAccent={siteAccent}
+        onSiteAccentChange={setSiteAccent}
         lang={lang}
         onLangChange={setLang}
         theme={theme}
@@ -260,53 +290,59 @@ function App() {
       />
       <main>
         <div className="homepage-major-shell relative">
-          <HeroSection heroColor={heroColor} lang={lang} />
+          <HeroSection heroColor={siteAccent} lang={lang} />
           <MajorSectionTabs
             activeSection={activeHomepageSection}
             onNavigate={showLegacyProjects ? undefined : navigateHomepageSection}
           />
 
-          {showLegacyProjects ? (
-            <FoldersSection
-              showPhotosWindow={showPhotosWindow}
-              onClosePhotosWindow={closePhotos}
-              onOpenPhotosWindow={openPhotos}
-              showDesignWindow={showDesignWindow}
-              onCloseDesignWindow={closeDesign}
-              onOpenDesignWindow={openDesign}
-              showTechnicalsWindow={showTechnicalsWindow}
-              onCloseTechnicalsWindow={closeTechnicals}
-              onOpenTechnicalsWindow={openTechnicals}
-              anyFolderWindowOpen={anyFolderWindowOpen}
-              openWindowStack={openWindowStack}
-              cascadeOrder={cascadeOrder}
-              onBringWindowToFront={bringToFront}
-            />
-          ) : (
-            <div className="homepage-major-panels">
-              <div
-                hidden={activeHomepageSection !== 'work'}
-                aria-hidden={activeHomepageSection !== 'work' ? 'true' : undefined}
-              >
-                <SelectedWorkSection />
-              </div>
-              <div
-                hidden={activeHomepageSection !== 'about'}
-                aria-hidden={activeHomepageSection !== 'about' ? 'true' : undefined}
-              >
-                <ProjectsSection lang={lang} />
-              </div>
-              <div
-                hidden={activeHomepageSection !== 'archive'}
-                aria-hidden={activeHomepageSection !== 'archive' ? 'true' : undefined}
-              >
-                <ArchiveSection />
-              </div>
+          <div
+            className="homepage-footer-reveal-stage"
+            data-active-section={activeHomepageSection}
+          >
+            <div className="homepage-footer-reveal-workspace">
+              {showLegacyProjects ? (
+                <FoldersSection
+                  showPhotosWindow={showPhotosWindow}
+                  onClosePhotosWindow={closePhotos}
+                  onOpenPhotosWindow={openPhotos}
+                  showDesignWindow={showDesignWindow}
+                  onCloseDesignWindow={closeDesign}
+                  onOpenDesignWindow={openDesign}
+                  showTechnicalsWindow={showTechnicalsWindow}
+                  onCloseTechnicalsWindow={closeTechnicals}
+                  onOpenTechnicalsWindow={openTechnicals}
+                  anyFolderWindowOpen={anyFolderWindowOpen}
+                  openWindowStack={openWindowStack}
+                  cascadeOrder={cascadeOrder}
+                  onBringWindowToFront={bringToFront}
+                />
+              ) : (
+                <div className="homepage-major-panels">
+                  <div
+                    hidden={activeHomepageSection !== 'work'}
+                    aria-hidden={activeHomepageSection !== 'work' ? 'true' : undefined}
+                  >
+                    <SelectedWorkSection />
+                  </div>
+                  <div
+                    hidden={activeHomepageSection !== 'about'}
+                    aria-hidden={activeHomepageSection !== 'about' ? 'true' : undefined}
+                  >
+                    <AboutSection lang={lang} />
+                  </div>
+                  <div
+                    hidden={activeHomepageSection !== 'archive'}
+                    aria-hidden={activeHomepageSection !== 'archive' ? 'true' : undefined}
+                  >
+                    <ArchiveSection />
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+            <Footer accentColor={siteAccentColor} lang={lang} />
+          </div>
         </div>
-        <ContactSection lang={lang} />
-        <Footer accentColor={footerColor} lang={lang} />
       </main>
     </div>
   )

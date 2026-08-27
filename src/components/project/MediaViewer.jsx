@@ -49,7 +49,6 @@ export function MediaThumbnail({
     detailedHover || showHover
       ? 'group-hover:scale-[1.06] group-hover:blur-[2px] group-hover:brightness-[0.92]'
       : 'group-hover:scale-[1.08]'
-
   return (
     <button
       type="button"
@@ -417,6 +416,7 @@ export default function MediaViewer({
   borderColor,
   isMaximized = false,
   isMdUp = true,
+  inlineFlow = false,
   documentMaxWidthClass = 'max-w-[min(780px,100%)]',
   presentation: Presentation = DefaultMediaPresentation,
 }) {
@@ -455,11 +455,15 @@ export default function MediaViewer({
 
   if (!isOpen) return null
 
+  const overlayClassName = inlineFlow
+    ? 'relative z-50 h-[clamp(20rem,72svh,36rem)] w-full flex-none overflow-hidden rounded-lg bg-black/40 backdrop-blur-md flex items-center justify-center cursor-default p-3 select-none'
+    : MEDIA_OVERLAY_CLASS
+
   return (
-    <div role="presentation" className={MEDIA_OVERLAY_CLASS} onMouseDown={onClose}>
+    <div role="presentation" className={overlayClassName} onMouseDown={onClose}>
       <div
         role="dialog"
-        aria-modal="true"
+        aria-modal={inlineFlow ? undefined : 'true'}
         aria-label="Image preview"
         className="relative w-full h-full max-w-[min(1100px,100%)] max-h-full cursor-default"
         onContextMenu={(event) => event.preventDefault()}

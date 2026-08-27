@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import SectionTab from './ui/SectionTab'
 
 const sections = [
@@ -31,7 +32,12 @@ const sections = [
 ]
 
 export default function MajorSectionTabs({ activeSection = 'work', onNavigate }) {
+  const [hoveredSection, setHoveredSection] = useState(null)
+  const [focusedSection, setFocusedSection] = useState(null)
   const activeTab = sections.find((section) => section.id === activeSection) || sections[0]
+  const previewSection = focusedSection || hoveredSection
+  const previewTab = sections.find((section) => section.id === previewSection)
+  const railTab = previewTab || activeTab
 
   return (
     <nav
@@ -46,13 +52,32 @@ export default function MajorSectionTabs({ activeSection = 'work', onNavigate })
             variant="hero-folder"
             isActive={section.id === activeSection}
             onClick={(event) => onNavigate?.(event, section.id)}
+            onPointerEnter={(event) => {
+              if (event.pointerType === 'mouse' && section.id !== activeSection) {
+                setHoveredSection(section.id)
+              }
+            }}
+            onPointerLeave={() =>
+              setHoveredSection((current) => (current === section.id ? null : current))
+            }
+            onFocus={(event) => {
+              if (
+                section.id !== activeSection &&
+                event.currentTarget.matches(':focus-visible')
+              ) {
+                setFocusedSection(section.id)
+              }
+            }}
+            onBlur={() =>
+              setFocusedSection((current) => (current === section.id ? null : current))
+            }
             {...section}
           />
         ))}
       </div>
       <div
         className="hero-folder-tabs__rail"
-        style={{ backgroundColor: activeTab.backgroundColor }}
+        style={{ backgroundColor: railTab.backgroundColor }}
         aria-hidden
       />
     </nav>

@@ -8,6 +8,8 @@ const Folder = forwardRef(function Folder(
     size = 'large',
     className = '',
     labelClassName = '',
+    statusLabel = null,
+    statusClassName = '',
     ...buttonProps
   },
   ref,
@@ -83,6 +85,13 @@ const Folder = forwardRef(function Folder(
         </div>
       )}
       <span className={`${defaultLabelClassName} ${labelClassName}`.trim()}>{label}</span>
+      {statusLabel ? (
+        <span
+          className={`type-meta -mt-1 max-w-[11rem] text-center font-medium tracking-[0.08em] opacity-60 ${statusClassName}`.trim()}
+        >
+          {statusLabel}
+        </span>
+      ) : null}
     </button>
   )
 })

@@ -36,7 +36,47 @@ function projectName(project) {
   return project.featuredTitle || project.title
 }
 
-export default function CaseStudyPage({ project, accentColor = '#6A22FF' }) {
+export function CaseStudyComingSoon({ project, accentColor }) {
+  useEffect(() => {
+    document.title = `${project.title} — Case Study Coming Soon`
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [project.title])
+
+  return (
+    <div
+      className="integrated-case-study"
+      style={{ '--case-accent': accentColor }}
+    >
+      <main
+        id="case-content"
+        className="flex min-h-screen items-center justify-center px-5 pb-16 text-center sm:px-8"
+        style={{ paddingTop: 'calc(var(--app-header-height, 3.75rem) + 4rem)' }}
+      >
+        <div className="flex max-w-2xl flex-col items-center">
+          <h1 className="type-heading mb-5">CAL HACKS</h1>
+          <p className="type-body mb-8 opacity-80">
+            Collaborative product + design project
+          </p>
+          <p
+            className="type-meta mb-12 font-semibold tracking-[0.12em]"
+            style={{ color: accentColor }}
+          >
+            CASE STUDY COMING SOON
+          </p>
+          <a
+            className="type-ui border-b pb-1 font-semibold tracking-[0.08em]"
+            href="/#work"
+            style={{ borderColor: accentColor }}
+          >
+            ← Back to Work
+          </a>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+export default function CaseStudyPage({ project }) {
   const rootRef = useRef(null)
   const authored = useMemo(
     () =>
@@ -128,7 +168,7 @@ export default function CaseStudyPage({ project, accentColor = '#6A22FF' }) {
     <div
       ref={rootRef}
       className="integrated-case-study"
-      style={{ '--case-accent': accentColor }}
+      style={{ '--case-accent': project.folderColors.body }}
     >
       <a className="case-skip-link" href="#case-content">
         Skip to case study

@@ -27,9 +27,14 @@ const technicalProjects = getProjectsByLegacyCategory('technicals')
 const photoCategory = PROJECT_CATEGORIES.find((category) => category.id === 'photos')
 const designCategory = PROJECT_CATEGORIES.find((category) => category.id === 'design')
 const technicalCategory = PROJECT_CATEGORIES.find((category) => category.id === 'technicals')
-const photoFolderNames = photoProjects.map((project) => project.title)
-const designFolderNames = designProjects.map((project) => project.title)
-const technicalFolderNames = technicalProjects.map((project) => project.title)
+const folderItems = (projects) =>
+  projects.map((project) => ({
+    label: project.title,
+    statusLabel: project.caseStudyStatusLabel,
+  }))
+const photoFolderNames = folderItems(photoProjects)
+const designFolderNames = folderItems(designProjects)
+const technicalFolderNames = folderItems(technicalProjects)
 
 const PAST_NOTES_FOLDER = {
   label: 'PAST NOTES',
@@ -93,6 +98,9 @@ function FolderWindow({
 
   const displayTitle = subfolderName ? `${title} > ${subfolderName}` : title
   const isInsideSubfolder = Boolean(subfolderName)
+  const normalizedInnerFolders = innerFolderNames.map((folder) =>
+    typeof folder === 'string' ? { label: folder } : folder,
+  )
 
   const ctaLink = cta ? (
     <a
@@ -374,6 +382,11 @@ function FolderWindow({
                 >
                   <span aria-hidden>← Back</span>
                 </button>
+                {project?.caseStudyStatusLabel ? (
+                  <p className="type-meta shrink-0 font-semibold tracking-[0.1em] text-black/55">
+                    {project.caseStudyStatusLabel}
+                  </p>
+                ) : null}
                 <div
                   className={`w-full min-h-0 ${cta ? 'flex-1' : ''} ${
                     useSideBySideCaptionLayout
@@ -445,14 +458,16 @@ function FolderWindow({
               <div className="flex h-full min-h-0 w-full flex-col">
                 <div className="flex min-h-0 flex-1 items-center justify-center w-full">
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
-                    {innerFolderNames.map((name) => (
+                    {normalizedInnerFolders.map(({ label, statusLabel }) => (
                       <Folder
-                        key={name}
-                        label={name}
+                        key={label}
+                        label={label}
+                        statusLabel={statusLabel}
                         size="small"
                         bodyColor={bodyColor}
                         tabColor={tabColor}
-                        onClick={() => onOpenSubfolder?.(name)}
+                        aria-label={`Open ${label}${statusLabel ? `. ${statusLabel}` : ''}`}
+                        onClick={() => onOpenSubfolder?.(label)}
                       />
                     ))}
                   </div>
@@ -461,14 +476,16 @@ function FolderWindow({
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 w-full content-start">
-                {innerFolderNames.map((name) => (
+                {normalizedInnerFolders.map(({ label, statusLabel }) => (
                   <Folder
-                    key={name}
-                    label={name}
+                    key={label}
+                    label={label}
+                    statusLabel={statusLabel}
                     size="small"
                     bodyColor={bodyColor}
                     tabColor={tabColor}
-                    onClick={() => onOpenSubfolder?.(name)}
+                    aria-label={`Open ${label}${statusLabel ? `. ${statusLabel}` : ''}`}
+                    onClick={() => onOpenSubfolder?.(label)}
                   />
                 ))}
               </div>

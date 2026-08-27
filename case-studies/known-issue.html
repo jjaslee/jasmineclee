@@ -7,8 +7,52 @@
   <link rel="icon" href="/favicon.svg">
   <link rel="stylesheet" href="./case-study.css">
   <title>Known Issue — Jasmine Lee</title>
+  <style>
+    .known-issue .case-title { margin-bottom: 22px; }
+    .known-issue .case-intro { max-width: 720px; margin: 0 0 28px; font-size: 22px; line-height: 1.4; }
+    .known-issue .project-meta { display: grid; grid-template-columns: 2fr 1fr; gap: 28px; margin: 0 0 72px; padding: 18px 0; border-block: 1px solid var(--line); }
+    .known-issue .project-meta p { margin: 0; color: var(--muted); font-size: 15px; }
+    .known-issue .project-meta strong { display: block; margin-bottom: 5px; color: var(--accent); font-size: 12px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
+    .known-issue .decision-question { max-width: 720px; margin: 34px 0 0; padding: 5px 0 5px 24px; border-left: 3px solid var(--accent); font-size: clamp(24px, 3vw, 32px); line-height: 1.25; }
+    .known-issue .artifact-content { padding: 30px; }
+    .known-issue .artifact-label { margin: 0 0 15px; color: #555; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+    .known-issue .comparison { display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: stretch; }
+    .known-issue .comparison__item { display: grid; place-items: center; min-height: 145px; padding: 22px; border: 1px solid #aaa; text-align: center; }
+    .known-issue .comparison__item strong { display: block; margin-bottom: 8px; font-size: 21px; }
+    .known-issue .comparison__item span { color: #555; font-size: 14px; }
+    .known-issue .comparison__versus { align-self: center; color: #555; font-size: 12px; letter-spacing: .12em; }
+    .known-issue .model-stack { display: grid; gap: 8px; text-align: center; }
+    .known-issue .model-node { padding: 16px 18px; border: 1px solid #999; }
+    .known-issue .model-node strong { display: block; font-size: 18px; letter-spacing: .06em; }
+    .known-issue .model-node span { color: #555; font-size: 14px; }
+    .known-issue .model-arrow { color: var(--accent); font-size: 20px; line-height: 1; }
+    .known-issue .record-examples { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 24px; }
+    .known-issue .record-example { padding: 18px; border: 1px solid #999; text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; line-height: 1.65; }
+    .known-issue .record-id { margin: 4px 0 18px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(30px, 5vw, 52px); font-weight: 600; letter-spacing: .04em; }
+    .known-issue .record-anatomy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .known-issue .record-anatomy div { padding-top: 12px; border-top: 1px solid #999; }
+    .known-issue .record-anatomy strong { display: block; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .known-issue .record-anatomy span { color: #555; font-size: 13px; }
+    .known-issue .rules { margin: 24px 0; padding: 20px 22px; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px; line-height: 1.8; }
+    .known-issue .flow { display: flex; align-items: center; justify-content: center; gap: 18px; min-height: 170px; text-align: center; }
+    .known-issue .flow__step { padding: 16px; border: 1px solid #999; font-weight: 600; letter-spacing: .04em; }
+    .known-issue .flow__arrow { color: var(--accent); font-size: 22px; }
+    .known-issue .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .known-issue .status-grid div { padding: 18px; border-top: 2px solid var(--accent); }
+    .known-issue .status-grid strong { display: block; margin-bottom: 7px; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; }
+    .known-issue .status-grid span { color: #555; font-size: 14px; }
+    .known-issue .future-signals { margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .known-issue .future-signals h3 { margin: 0 0 12px; color: var(--accent); font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; }
+    @media (max-width: 640px) {
+      .known-issue .project-meta, .known-issue .comparison, .known-issue .record-examples, .known-issue .record-anatomy, .known-issue .status-grid { grid-template-columns: 1fr; }
+      .known-issue .comparison__versus { justify-self: center; }
+      .known-issue .flow { flex-direction: column; }
+      .known-issue .flow__arrow { transform: rotate(90deg); }
+      .known-issue .artifact-content { padding: 22px; }
+    }
+  </style>
 </head>
-<body>
+<body class="known-issue">
   <a class="skip-link" href="#case-content">Skip to case study</a>
   <header class="site-header">
     <div class="site-header__inner">
@@ -34,67 +78,178 @@
     <nav class="case-toc" aria-label="Known Issue sections">
       <ol class="toc-list">
         <li><a class="toc-link" data-toc-link href="#overview"><span>01</span><span>Overview</span></a></li>
-        <li><a class="toc-link" data-toc-link href="#product-model"><span>02</span><span>Product model</span></a><ul class="toc-sublist"><li><a href="#subject">Subject</a></li><li><a href="#record">Record</a></li><li><a href="#variant">Variant</a></li></ul></li>
-        <li><a class="toc-link" data-toc-link href="#search"><span>03</span><span>Search</span></a><ul class="toc-sublist"><li><a href="#matching-rules">Matching rules</a></li><li><a href="#aliases">Aliases</a></li><li><a href="#multiple-records">Multiple records</a></li></ul></li>
-        <li><a class="toc-link" data-toc-link href="#missing-names"><span>04</span><span>Missing names</span></a><ul class="toc-sublist"><li><a href="#zero-records">0 Records Found</a></li><li><a href="#request-indexing">Request Indexing</a></li></ul></li>
-        <li><a class="toc-link" data-toc-link href="#commerce"><span>05</span><span>Commerce</span></a><ul class="toc-sublist"><li><a href="#product-hierarchy">Product hierarchy</a></li><li><a href="#sizing">Sizing</a></li><li><a href="#shipping">Shipping / returns</a></li></ul></li>
-        <li><a class="toc-link" data-toc-link href="#implementation"><span>06</span><span>Implementation</span></a><ul class="toc-sublist"><li><a href="#shopify">Shopify model</a></li><li><a href="#metafields">Metafields</a></li><li><a href="#ai-implementation">AI-assisted implementation</a></li></ul></li>
-        <li><a class="toc-link" data-toc-link href="#edge-cases"><span>07</span><span>Edge cases + iteration</span></a></li>
-        <li><a class="toc-link" data-toc-link href="#where-it-landed"><span>08</span><span>Where it landed</span></a></li>
-        <li><a class="toc-link" data-toc-link href="#validate-next"><span>09</span><span>What I’d validate next</span></a></li>
+        <li><a class="toc-link" data-toc-link href="#from-joke-to-system"><span>02</span><span>From joke to system</span></a><ul class="toc-sublist"><li><a href="#beyond-punchline">Beyond the punchline</a></li><li><a href="#why-not-customization">Why not customization</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#product-model"><span>03</span><span>Product model</span></a><ul class="toc-sublist"><li><a href="#subjects-records">Subjects + records</a></li><li><a href="#record-ids">Record IDs</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#search-directory"><span>04</span><span>Search + directory</span></a><ul class="toc-sublist"><li><a href="#name-search">Name search</a></li><li><a href="#browse-az">Browse A–Z</a></li><li><a href="#grouped-records">Grouped records</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#missing-names"><span>05</span><span>Missing names</span></a><ul class="toc-sublist"><li><a href="#zero-records">0 Records Found</a></li><li><a href="#request-indexing">Request Indexing</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#system-language"><span>06</span><span>System language</span></a><ul class="toc-sublist"><li><a href="#directory-conventions">Directory conventions</a></li><li><a href="#functional-metadata">Functional metadata</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#commerce-boundary"><span>07</span><span>Commerce boundary</span></a><ul class="toc-sublist"><li><a href="#purchase-controls">Purchase controls</a></li><li><a href="#order-information">Order information</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#building-iterating"><span>08</span><span>Building + iterating</span></a><ul class="toc-sublist"><li><a href="#shopify-liquid">Shopify / Liquid</a></li><li><a href="#ai-assisted">AI-assisted implementation</a></li></ul></li>
+        <li><a class="toc-link" data-toc-link href="#where-it-landed"><span>09</span><span>Where it landed</span></a><ul class="toc-sublist"><li><a href="#current-state">Current state</a></li><li><a href="#validate-next">What I would validate next</a></li></ul></li>
       </ol>
     </nav>
 
     <main class="case-main" id="case-content">
-      <p class="case-kicker">Product system · ecommerce</p>
+      <p class="case-kicker">Product system · commerce experience</p>
       <h1 class="case-title">Known Issue</h1>
-      <details class="mobile-toc"><summary><span data-mobile-label>01 Overview</span></summary><nav aria-label="Case study sections"><a data-toc-link href="#overview">01 Overview</a><a data-toc-link href="#product-model">02 Product model</a><a data-toc-link href="#search">03 Search</a><a data-toc-link href="#missing-names">04 Missing names</a><a data-toc-link href="#commerce">05 Commerce</a><a data-toc-link href="#implementation">06 Implementation</a><a data-toc-link href="#edge-cases">07 Edge cases + iteration</a><a data-toc-link href="#where-it-landed">08 Where it landed</a><a data-toc-link href="#validate-next">09 What I’d validate next</a></nav></details>
+      <p class="case-intro">A name-indexed storefront that turns predetermined apparel releases into searchable records instead of custom products.</p>
+      <div class="project-meta">
+        <p><strong>Role</strong>Product definition · Information architecture · Interaction design · Visual system · Shopify/Liquid implementation</p>
+        <p><strong>Project type</strong>Independent project · 2026</p>
+      </div>
+      <details class="mobile-toc"><summary><span data-mobile-label>01 Overview</span></summary><nav aria-label="Case study sections"><a data-toc-link href="#overview">01 Overview</a><a data-toc-link href="#from-joke-to-system">02 From joke to system</a><a data-toc-link href="#product-model">03 Product model</a><a data-toc-link href="#search-directory">04 Search + directory</a><a data-toc-link href="#missing-names">05 Missing names</a><a data-toc-link href="#system-language">06 System language</a><a data-toc-link href="#commerce-boundary">07 Commerce boundary</a><a data-toc-link href="#building-iterating">08 Building + iterating</a><a data-toc-link href="#where-it-landed">09 Where it landed</a></nav></details>
 
       <section class="case-section" id="overview">
         <h2 class="section-title">01 Overview</h2>
-        <p class="section-lede">Known Issue is a name-based apparel and ecommerce concept built around predetermined records for first names rather than custom text.</p>
-        <p>Instead of allowing customers to personalize garments, Known Issue releases selected names as designed records. A single name can have multiple designs or garment types associated with it.</p>
-        <p>The main design challenge was defining the product system around the apparel: what counts as a record, how people search, how multiple products are grouped, and what happens when a name does not exist.</p>
-        <div class="artifact-full artifact-placeholder"><span>Project framing / system overview — visual pending</span></div>
+        <p class="section-lede">Known Issue is a curated apparel concept organized as a public name index.</p>
+        <p>Instead of allowing customers to enter arbitrary text, the system publishes predetermined designs associated with first names. Names become subjects, individual releases become records, and search becomes the primary way into the catalog.</p>
+        <p>I worked across product definition, information architecture, interaction design, visual language, and implementation in a custom Shopify Liquid theme.</p>
+        <blockquote class="decision-question">How could a one-off name joke grow into a coherent catalog without becoming another customization tool?</blockquote>
+        <div class="artifact-full artifact-placeholder"><span>Final storefront hero<br>Search + featured record + Known Issue interface</span></div>
+      </section>
+
+      <section class="case-section" id="from-joke-to-system">
+        <h2 class="section-title">02 From Joke to System</h2>
+        <div id="beyond-punchline">
+          <p class="section-lede">Known Issue began with a joke shirt I saw online: a line about dudes named Max doing the minimum.</p>
+          <p>The joke was memorable. The shirt itself felt disposable.</p>
+          <p>It seemed like something a person might receive as a gift, wear once, and stop reaching for after the punchline lost its novelty. I became interested in whether the premise could support a more considered garment—something that would still feel desirable after everyone already understood the joke.</p>
+          <p>At that stage, I was not thinking about records, indexes, or information architecture. I was thinking about better shirts, more names, and a coherent first release.</p>
+          <p>The system emerged when those individual products needed rules.</p>
+        </div>
+        <div id="why-not-customization" style="margin-top: 42px;">
+          <h3 class="section-title" style="font-size: 24px;">Why not customization?</h3>
+          <p>The obvious product model already existed. On marketplaces such as Etsy, one reusable graphic can support almost any customer-entered name. That model solves availability, but it also makes each output feel interchangeable.</p>
+          <p>I chose predetermined releases instead.</p>
+          <p>That decision reduces immediate catalog coverage. Someone may search Known Issue and find nothing associated with their name. In return, each record can be treated as an authored product rather than a generated variation of the same template.</p>
+          <p>Customization is not permanently forbidden. It was excluded from the initial model because I wanted the first releases to establish what deserved to enter the catalog.</p>
+        </div>
+        <div class="artifact-full artifact-content">
+          <p class="artifact-label">Product-model comparison</p>
+          <div class="comparison"><div class="comparison__item"><div><strong>One template / any name</strong><span>Coverage through interchangeable outputs</span></div></div><div class="comparison__versus">VS.</div><div class="comparison__item"><div><strong>One subject / authored record</strong><span>Selectivity through predetermined releases</span></div></div></div>
+        </div>
       </section>
 
       <section class="case-section" id="product-model">
-        <h2 class="section-title">02 Product model</h2>
-        <p class="section-lede">Discovery is organized around a name; commerce is organized around the individual records attached to that subject.</p>
-        <div class="subsections"><div class="subsection" id="subject"><h3>Subject</h3><p>The first name a person searches for.</p></div><div class="subsection" id="record"><h3>Record</h3><p>A designed release associated with that name.</p></div><div class="subsection" id="variant"><h3>Variant</h3><p>The purchasable size or option within a record.</p></div></div>
-        <div class="artifact-grid"><div class="artifact-small artifact-placeholder"><span>Subject → record diagram</span></div><div class="artifact-large artifact-placeholder"><span>Record and variant model</span></div></div>
+        <h2 class="section-title">03 Product Model</h2>
+        <div id="subjects-records">
+          <p class="section-lede">“One name equals one shirt” would have worked for the first release, but it would have limited the system later.</p>
+          <p>Some names can support multiple references, ideas, and designed releases. I separated the name being indexed from the individual product being sold.</p>
+        </div>
+        <div class="artifact-grid">
+          <div class="artifact-small artifact-content">
+            <p class="artifact-label">Final hierarchy</p>
+            <div class="model-stack"><div class="model-node"><strong>Subject</strong><span>The first name being indexed</span></div><div class="model-arrow">↓</div><div class="model-node"><strong>Record</strong><span>An individual designed release</span></div><div class="model-arrow">↓</div><div class="model-node"><strong>Product</strong><span>Price, inventory, media, purchasing</span></div><div class="model-arrow">↓</div><div class="model-node"><strong>Variant</strong><span>A selectable form, such as size</span></div></div>
+          </div>
+          <div class="artifact-large artifact-content">
+            <p class="artifact-label">One subject, independent records</p>
+            <div class="record-examples"><div class="record-example">MAX<br>↓<br><strong>KI-MAX-001</strong><br>↓<br>Product<br>↓<br>S / M / L</div><div class="record-example">MAX<br>↓<br><strong>KI-MAX-002</strong><br>↓<br>Product<br>↓<br>S / M / L</div></div>
+            <p style="margin: 24px 0 0; font-size: 15px;">This allows one subject to support multiple records while each record remains independently purchasable.</p>
+          </div>
+        </div>
+        <p style="margin-top: 28px;">Search aliases can point alternate inputs toward the same subject rather than creating duplicate catalog entries. The structure leaves room for additional records without changing the underlying hierarchy.</p>
+        <div id="record-ids" style="margin-top: 54px;">
+          <h3 class="section-title" style="font-size: 24px;">Record IDs</h3>
+          <p>The record ID began with an aesthetic reference. I was interested in the microtype, barcodes, and technical labels used across streetwear, but meaningless numbers would have been decoration pretending to be information.</p>
+          <p>I gave the detail a job. The same identifier can connect the garment, storefront, product information, and future releases.</p>
+        </div>
+        <div class="artifact-full artifact-content"><p class="artifact-label">Record ID anatomy</p><div class="record-id">KI-MAX-001</div><div class="record-anatomy"><div><strong>KI</strong><span>Known Issue</span></div><div><strong>MAX</strong><span>Subject</span></div><div><strong>001</strong><span>Sequence within the subject</span></div></div></div>
       </section>
 
-      <section class="case-section" id="search">
-        <h2 class="section-title">03 Search</h2>
-        <p class="section-lede">Search has to feel simple to the visitor while respecting a curated, finite record set.</p>
-        <div class="subsections"><div class="subsection" id="matching-rules"><h3>Matching rules</h3><p>Normalize case and spacing without implying arbitrary customization.</p></div><div class="subsection" id="aliases"><h3>Aliases</h3><p>Related spellings can guide discovery while keeping each indexed name explicit.</p></div><div class="subsection" id="multiple-records"><h3>Multiple records</h3><p>One result can open into several distinct designed releases.</p></div></div>
-        <div class="artifact-full artifact-placeholder"><span>Search states and result grouping — visual pending</span></div>
+      <section class="case-section" id="search-directory">
+        <h2 class="section-title">04 Search + Directory</h2>
+        <div id="name-search">
+          <p class="section-lede">I designed around the product hypothesis that the visitor wants to know whether a particular name exists.</p>
+          <p>Most storefronts begin by asking what category of product someone wants. Known Issue instead treats the name as the primary discovery object.</p>
+          <p>A visitor can search directly for a subject, browse the public directory, filter the index alphabetically, open an individual name, and see all records associated with that subject.</p>
+          <div class="rules" aria-label="Controlled matching examples">Sarah&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ match<br>SARAH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ match<br>&nbsp;&nbsp;Sarah&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ match<br><br>Sara&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ no match<br>unless “Sara” is explicitly stored as an alias</div>
+          <p>In this system, a near-match is not simply a slightly worse search result. It may represent a different person entirely. Aliases resolve only when intentionally configured.</p>
+        </div>
+        <div class="subsections">
+          <div class="subsection" id="browse-az"><h3>Browse A–Z</h3><p>The directory provides a second route for visitors who do not arrive with a specific name. Available record counts can appear beside names, while the alphabet makes the catalog’s selectivity visible.</p></div>
+          <div class="subsection" id="grouped-records"><h3>Grouped records</h3><p>When one subject contains multiple records, they remain grouped under that subject rather than appearing as unrelated listings.</p></div>
+        </div>
+        <p>I have not yet tested whether real visitors instinctively begin with their own name or prefer to browse the available records first.</p>
+        <div class="artifact-full artifact-placeholder"><span>A–Z directory + record counts<br>Large directory artifact pending</span></div>
+        <div class="artifact-full artifact-placeholder"><span>Successful search state</span></div>
       </section>
 
       <section class="case-section" id="missing-names">
-        <h2 class="section-title">04 Missing names</h2>
-        <p class="section-lede">A missing name is a product state, not just an empty search result.</p>
-        <div class="subsections"><div class="subsection" id="zero-records"><h3>0 Records Found</h3><p>The interface clearly distinguishes “not indexed” from a broken search.</p></div><div class="subsection" id="request-indexing"><h3>Request Indexing</h3><p>A request records interest without turning the product into made-to-order customization.</p></div></div>
-        <div class="artifact-pair"><div class="artifact-placeholder"><span>Zero-result state</span></div><div class="artifact-placeholder"><span>Request indexing flow</span></div></div>
+        <h2 class="section-title">05 Missing Names</h2>
+        <div id="zero-records">
+          <p class="section-lede">A selective catalog creates an immediate edge case: what happens when the searched name has no record?</p>
+          <p>The system does not fabricate a result, silently substitute another subject, or turn every failed search into an on-demand product. Automatic customization was deliberately not used as the fallback.</p>
+          <p><strong>0 RECORDS FOUND</strong> communicates a real catalog state rather than a broken search.</p>
+        </div>
+        <div id="request-indexing" style="margin-top: 42px;">
+          <h3 class="section-title" style="font-size: 24px;">Request Indexing</h3>
+          <p><strong>Consider this name for a future record.</strong></p>
+          <p>A request does not mean a product has been ordered, the name will definitely be released, every request will be accepted, or a release date is promised.</p>
+          <p>Repeated requests could eventually become one input into release decisions, but this is not currently validated demand data. The request email and promotional opt-in serve separate purposes, so marketing consent remains a separate optional choice.</p>
+        </div>
+        <div class="artifact-full artifact-content"><p class="artifact-label">Prototype / production connection pending</p><div class="flow"><div class="flow__step">Enter name</div><div class="flow__arrow">→</div><div class="flow__step">0 Records Found</div><div class="flow__arrow">→</div><div class="flow__step">Request Indexing</div></div></div>
       </section>
 
-      <section class="case-section" id="commerce">
-        <h2 class="section-title">05 Commerce</h2>
-        <p class="section-lede">The editorial archive metaphor still has to resolve into familiar product decisions at checkout.</p>
-        <div class="subsections"><div class="subsection" id="product-hierarchy"><h3>Product hierarchy</h3><p>Name, record, garment, and purchasable variant stay legible.</p></div><div class="subsection" id="sizing"><h3>Sizing</h3><p>Size belongs to the product variant, not to the indexed name.</p></div><div class="subsection" id="shipping"><h3>Shipping / returns</h3><p>Operational information remains conventional and easy to find.</p></div></div>
+      <section class="case-section" id="system-language">
+        <h2 class="section-title">06 System Language</h2>
+        <div id="directory-conventions">
+          <p class="section-lede">I initially explored an interface influenced by late-2000s and 2010s web conventions.</p>
+          <p>The appeal was partly cultural, but while designing the storefront I realized those conventions fit the product model naturally.</p>
+          <p>Indexes are built for looking something up, browsing known entries, distinguishing visited links, showing record counts, organizing items alphabetically, and communicating when an entry does not exist.</p>
+          <p>The reference therefore stopped being surface styling and began shaping the information architecture.</p>
+        </div>
+        <div id="functional-metadata" style="margin-top: 42px;">
+          <h3 class="section-title" style="font-size: 24px;">Functional metadata</h3>
+          <p>Technical-looking details have to carry real information: record IDs identify records, status labels communicate availability, counts describe the directory, and links behave like links. IBM Plex Mono supports that system visually without becoming the decision itself.</p>
+        </div>
+        <div class="artifact-full artifact-content"><p class="artifact-label">System language in use</p><div class="status-grid"><div><strong>KI-MAX-001 / Available</strong><span>Record identity and status</span></div><div><strong>A–Z Directory</strong><span>Alphabetical entry and counts</span></div><div><strong>Garment / product micrographic</strong><span>Information carried onto the product</span></div></div></div>
       </section>
 
-      <section class="case-section" id="implementation">
-        <h2 class="section-title">06 Implementation</h2>
-        <p class="section-lede">The interface model maps to Shopify without forcing the archive language into an incompatible backend structure.</p>
-        <div class="subsections"><div class="subsection" id="shopify"><h3>Shopify model</h3><p>Records map to products and their purchase options map to variants.</p></div><div class="subsection" id="metafields"><h3>Metafields</h3><p>Structured name and release metadata can support grouping and retrieval.</p></div><div class="subsection" id="ai-implementation"><h3>AI-assisted implementation</h3><p>Implementation assistance supports production work; system decisions remain deliberate and reviewable.</p></div></div>
-        <div class="artifact-full artifact-placeholder"><span>Shopify data mapping — visual pending</span></div>
+      <section class="case-section" id="commerce-boundary">
+        <h2 class="section-title">07 Commerce Boundary</h2>
+        <p class="section-lede">Use the record metaphor to organize the experience, not to make customers decode it.</p>
+        <p>Known Issue can describe products as records and names as subjects, but ordinary purchase actions remain recognizable. A shopper should not need to understand the metaphor in order to buy a shirt.</p>
+        <div class="subsections"><div class="subsection" id="purchase-controls"><h3>Purchase controls</h3><p>Size, price, quantity, and Add to Cart use familiar labels and behavior.</p></div><div class="subsection" id="order-information"><h3>Order information</h3><p>Garment measurements, delivery estimate, shipping, product information, and return or final-sale terms remain direct.</p></div></div>
+        <p>The concept frames the transaction; it does not replace it.</p>
+        <div class="artifact-full artifact-placeholder"><span>Product page<br>Record identity + size + quantity + Add to Cart + information accordions</span></div>
       </section>
 
-      <section class="case-section" id="edge-cases"><h2 class="section-title">07 Edge cases + iteration</h2><p class="section-lede">The model needs to account for spelling variants, duplicate subjects, record availability, sold-out variants, and names with many releases.</p><p>These are the points where archive language and commerce language can diverge, so the interface should make state changes explicit.</p></section>
-      <section class="case-section" id="where-it-landed"><h2 class="section-title">08 Where it landed</h2><p class="section-lede">The concept landed on a subject-first discovery model with record-level commerce.</p><p>That separation lets the brand feel like an index while preserving a conventional path from a selected design to a purchasable variant.</p></section>
-      <section class="case-section" id="validate-next"><h2 class="section-title">09 What I’d validate next</h2><p class="section-lede">The next questions are whether people understand “record” without explanation, whether alias behavior feels predictable, and whether requesting a name is distinct enough from customization.</p></section>
+      <section class="case-section" id="building-iterating">
+        <h2 class="section-title">08 Building + Iterating</h2>
+        <div id="shopify-liquid">
+          <p class="section-lede">Checkout, inventory, orders, and payment infrastructure were not the parts that made Known Issue distinct.</p>
+          <p>Rebuilding them would add risk without strengthening the product idea. I chose Shopify for the operational layer and built a custom Liquid theme for the differentiated behavior:</p>
+          <ul><li>name-centered discovery</li><li>public directory</li><li>record grouping</li><li>controlled search</li><li>zero-result states</li><li>Request Indexing</li><li>the visual and interaction system</li></ul>
+          <p style="margin-top: 18px;">This kept custom work focused on the parts unique to the product.</p>
+        </div>
+        <div id="ai-assisted" style="margin-top: 48px;">
+          <h3 class="section-title" style="font-size: 24px;">AI-assisted implementation</h3>
+          <p>I used Cursor and Codex heavily to accelerate implementation across Liquid, JavaScript, and CSS.</p>
+          <p>They helped translate interaction requirements into working behavior, investigate implementation problems, and shorten the distance between an idea and something I could test locally.</p>
+          <p>The product decisions remained mine: what a subject and record meant; how names should be organized; what search should return; what a missing result should offer; what Request Indexing could promise; where the archive metaphor should stop; and what changed after I used the implementation myself.</p>
+          <p><strong>AI accelerated execution. It did not determine what Known Issue should become.</strong></p>
+        </div>
+        <div class="artifact-full artifact-content"><p class="artifact-label">Implementation changed the model</p><div class="comparison"><div class="comparison__item"><div><span>Early model</span><strong>Name → Product</strong></div></div><div class="comparison__versus">BECAME</div><div class="comparison__item"><div><span>Final model</span><strong>Subject → Multiple records → Independent Shopify products</strong></div></div></div></div>
+        <p style="margin-top: 28px;">Implementation exposed the need to distinguish <code>subject_name</code>, <code>record_id</code>, record grouping, related records, directory counts, and independent Shopify products.</p>
+        <p>An immediate promotional interruption also felt too loud when tested in context, so promotional asks moved later in the experience, after demonstrated interest.</p>
+      </section>
+
+      <section class="case-section" id="where-it-landed">
+        <h2 class="section-title">09 Where It Landed</h2>
+        <div id="current-state">
+          <p class="section-lede">The current storefront establishes the core product system, but it should not be described as a validated commercial launch.</p>
+          <p>Implemented work includes:</p>
+          <ul><li>a custom Shopify Liquid theme</li><li>first names as subjects and predetermined product records</li><li>structured record IDs</li><li>name search, aliases, and controlled matching</li><li>grouped subject results and an alphabetical directory</li><li>a designed zero-result state and Request Indexing interface</li><li>product and purchase pages with sizing, delivery, shipping, and product information</li><li>responsive behavior</li></ul>
+          <p style="margin-top: 20px;">Some screenshots may still come from theme preview, final product imagery may still be pending, the Shopify Forms production connection may still be pending, and a real subject containing multiple live records may still need to be demonstrated.</p>
+        </div>
+        <div class="artifact-full artifact-placeholder"><span>Directory → successful record → zero result / request<br>Final state sequence pending</span></div>
+        <div id="validate-next" style="margin-top: 58px;">
+          <h3 class="section-title" style="font-size: 24px;">What I would validate next</h3>
+          <div class="subsections"><div class="subsection"><h3>Comprehension</h3><p>Can someone explain the difference between a subject and a record?</p></div><div class="subsection"><h3>Entry behavior</h3><p>Do people search first, browse the directory, or use another route?</p></div><div class="subsection"><h3>Missing-name expectations</h3><p>Does Request Indexing feel like a suggestion, a waitlist, or a promise?</p></div><div class="subsection"><h3>Multiple-record understanding</h3><p>When one subject contains multiple records, is their relationship clear?</p></div><div class="subsection"><h3>Commerce clarity</h3><p>Can people find size, price, delivery, and checkout controls without the metaphor creating friction?</p></div></div>
+          <div class="future-signals"><h3>After launch, I would measure — future signals, not existing results</h3><p>Search → record view · zero-result searches · Request Indexing submissions · repeatedly requested names · product → cart · cart completion · size-related questions · return reasons</p></div>
+          <blockquote class="decision-question">The next step is not to add more metaphor. It is to learn where the existing metaphor helps—and where it needs to get out of the way.</blockquote>
+        </div>
+      </section>
     </main>
   </div>
   <script type="module" src="./case-study.js"></script>

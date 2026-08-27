@@ -23,7 +23,7 @@ function ProjectPreview({ project }) {
         ) : (
           <div
             className="flex min-h-48 flex-col justify-between p-5 md:min-h-72 md:p-7"
-            style={{ backgroundColor: project.featuredColors.body }}
+            style={{ backgroundColor: project.folderColors.body }}
             aria-label={`${title} text-only project preview`}
           >
             <span className="type-meta tracking-[0.18em] text-black/65">
@@ -149,8 +149,8 @@ export default function SelectedWorkSection() {
                     else folderRefs.current.delete(project.id)
                   }}
                   label={title}
-                  bodyColor={project.featuredColors.body}
-                  tabColor={project.featuredColors.tab}
+                  bodyColor={project.folderColors.body}
+                  tabColor={project.folderColors.tab}
                   labelClassName="type-ui text-center tracking-normal"
                   className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-current"
                   aria-label={`Open ${title} project preview`}
@@ -179,7 +179,7 @@ export default function SelectedWorkSection() {
                     title={title}
                     displayTitle={title}
                     iconType={project.featuredIconType}
-                    borderColor={project.featuredColors.border}
+                    borderColor={project.folderColors.border}
                     stackIndex={stackIndex}
                     cascadeSlot={cascadeOrder.indexOf(project.id)}
                     isFrontWindow={stackIndex === windowStack.length - 1}

@@ -1,0 +1,467 @@
+.about-section {
+  --about-pink: #f62f60;
+  --about-pink-dark: #a9143a;
+  --about-paper: var(--paper-bg);
+  --about-ink: #171717;
+  --about-card-width: 42.5rem;
+  --about-card-height: 24.375rem;
+  --about-stack-x: 2.625rem;
+  --about-stack-y: 1.75rem;
+  --about-hover-lift: 1.875rem;
+  color: var(--app-text);
+}
+
+.about-workspace {
+  min-height: calc(
+    100svh - var(--app-header-height, 3.75rem) - var(--hero-tab-total-height, 2.5625rem)
+  );
+  display: grid;
+  place-items: center;
+  padding: 4rem 1.5rem 5.5rem;
+}
+
+.about-stack {
+  position: relative;
+  width: min(
+    100%,
+    calc(
+      var(--about-card-width) + var(--about-stack-x) + var(--about-stack-x) +
+        var(--about-stack-x)
+    )
+  );
+  height: calc(
+    var(--about-card-height) + var(--about-stack-y) + var(--about-stack-y) +
+      var(--about-stack-y)
+  );
+  filter: drop-shadow(0 1.5rem 1.75rem rgba(0, 0, 0, 0.2));
+}
+
+.about-stack-card {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: min(
+    var(--about-card-width),
+    calc(
+      100% - var(--about-stack-x) - var(--about-stack-x) - var(--about-stack-x)
+    )
+  );
+  height: var(--about-card-height);
+  border: 0.25rem solid var(--about-pink);
+  border-radius: 0;
+  overflow: hidden;
+  background: var(--about-paper);
+  color: var(--about-ink);
+  transition:
+    left 220ms ease-out,
+    bottom 220ms ease-out,
+    transform 200ms ease-out,
+    filter 160ms ease-out;
+}
+
+.about-stack-card[data-depth='0'] {
+  z-index: 40;
+}
+
+.about-stack-card[data-depth='1'] {
+  z-index: 30;
+  left: var(--about-stack-x);
+  bottom: var(--about-stack-y);
+  background: color-mix(in srgb, var(--about-paper), var(--about-pink) 4%);
+}
+
+.about-stack-card[data-depth='2'] {
+  z-index: 20;
+  left: calc(var(--about-stack-x) + var(--about-stack-x));
+  bottom: calc(var(--about-stack-y) + var(--about-stack-y));
+  background: color-mix(in srgb, var(--about-paper), var(--about-pink) 7%);
+}
+
+.about-stack-card[data-depth='3'] {
+  z-index: 10;
+  left: calc(var(--about-stack-x) + var(--about-stack-x) + var(--about-stack-x));
+  bottom: calc(var(--about-stack-y) + var(--about-stack-y) + var(--about-stack-y));
+  background: color-mix(in srgb, var(--about-paper), var(--about-pink) 10%);
+}
+
+.about-card-title {
+  position: absolute;
+  top: 0.125rem;
+  left: 1.125rem;
+  z-index: 2;
+  min-width: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--about-pink-dark);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.about-card-activation {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.about-card-activation .about-card-title {
+  pointer-events: none;
+}
+
+.about-stack-card:not(.about-stack-card--active) .about-card-title {
+  top: 0;
+  left: 0;
+  height: var(--about-stack-y);
+  padding: 0.25rem 0 0 1.125rem;
+  font-family: var(--font-ui);
+  font-size: 1.1875rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.about-stack-card--active .about-card-title {
+  top: 1rem;
+  left: 1.375rem;
+}
+
+.about-card-title:focus-visible,
+.about-card-activation:focus-visible,
+.about-connect-links a:focus-visible,
+.connect-field :is(input, textarea):focus-visible,
+.connect-send:focus-visible {
+  outline: 2px solid var(--about-pink);
+  outline-offset: 3px;
+}
+
+.about-card-activation:focus-visible {
+  outline-offset: -0.5rem;
+}
+
+.about-stack-card__content {
+  position: absolute;
+  inset: 4.25rem 1.375rem 1.25rem;
+}
+
+.about-card-layout {
+  height: 100%;
+}
+
+.about-card-layout--media {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.about-card-layout--text {
+  display: grid;
+  align-content: start;
+  max-width: 35rem;
+  margin: 0 auto;
+  padding-top: 1.5rem;
+}
+
+.about-card-image {
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  border: 1px solid rgba(246, 47, 96, 0.42);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #111;
+}
+
+.about-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 62%;
+}
+
+.about-card-bullets {
+  align-self: center;
+  display: grid;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-card-bullets li {
+  position: relative;
+  padding-left: 1.125rem;
+}
+
+.about-card-bullets li::before {
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--about-pink);
+  content: '';
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-stack-card:not(.about-stack-card--active):hover {
+    transform: translateY(calc(-1 * var(--about-hover-lift)));
+    filter: brightness(1.035);
+  }
+}
+
+.about-connect-content {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.625rem;
+}
+
+.about-connect-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.about-connect-meta {
+  display: grid;
+  gap: 0.15rem;
+  color: rgba(23, 23, 23, 0.74);
+}
+
+.about-connect-links {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem 1rem;
+  color: var(--about-pink-dark);
+}
+
+.about-connect-links a {
+  border-bottom: 1px solid currentColor;
+  text-decoration: none;
+}
+
+.connect-form-shell {
+  position: relative;
+  min-height: 0;
+}
+
+.connect-form {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 0.5rem;
+}
+
+.connect-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem 0.875rem;
+}
+
+.connect-field {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  color: rgba(23, 23, 23, 0.66);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.connect-field--message {
+  grid-column: 1 / -1;
+}
+
+.connect-field :is(input, textarea) {
+  width: 100%;
+  min-height: 2.625rem;
+  border: 1px solid rgba(23, 23, 23, 0.25);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.625rem;
+  background: rgba(255, 255, 255, 0.72);
+  color: #171717;
+  font-family: var(--font-ui);
+  font-size: var(--text-ui);
+  line-height: var(--leading-ui);
+  text-transform: none;
+}
+
+.connect-field textarea {
+  min-height: 4.625rem;
+  resize: vertical;
+}
+
+.connect-field :is(input, textarea)[aria-invalid='true'] {
+  border-color: var(--about-pink);
+  box-shadow: 0 0 0 1px var(--about-pink);
+}
+
+.connect-form__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: rgba(23, 23, 23, 0.55);
+}
+
+.connect-send {
+  min-height: 2.75rem;
+  padding: 0.625rem 1.125rem;
+  border: 1px solid var(--about-pink-dark);
+  border-radius: 0.5rem;
+  background: var(--about-pink);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+
+.connect-send:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.connect-send:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 799px) {
+  .about-section {
+    --about-card-width: 41.25rem;
+    --about-card-height: 25rem;
+    --about-stack-x: 1.625rem;
+    --about-stack-y: 1.5rem;
+  }
+
+  .about-stack-card:not(.about-stack-card--active) .about-card-title {
+    padding-top: 0.125rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .about-section {
+    --about-card-height: 38.75rem;
+    --about-stack-x: 0.875rem;
+    --about-stack-y: 1.5rem;
+    --about-hover-lift: 0rem;
+  }
+
+  .about-workspace {
+    min-height: auto;
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  .about-stack-card {
+    border-width: 0.1875rem;
+    border-radius: 0;
+  }
+
+  .about-card-title {
+    top: 0.1rem;
+    left: 0.75rem;
+  }
+
+  .about-stack-card:not(.about-stack-card--active) .about-card-title {
+    top: 0;
+    left: 0;
+    padding-top: 0.125rem;
+    padding-left: 0.75rem;
+  }
+
+  .about-stack-card--active .about-card-title {
+    top: 0.75rem;
+    left: 1rem;
+  }
+
+  .about-stack-card__content {
+    inset: 3.75rem 1rem 1rem;
+  }
+
+  .about-card-layout--media {
+    grid-template-columns: 1fr;
+    grid-template-rows: 8.5rem 1fr;
+    gap: 1rem;
+  }
+
+  .about-card-image img {
+    object-position: 50% 58%;
+  }
+
+  .about-card-bullets {
+    gap: 0.55rem;
+  }
+
+  .about-connect-content {
+    gap: 0.75rem;
+  }
+
+  .about-connect-intro {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .about-connect-links {
+    justify-content: flex-start;
+  }
+
+  .connect-form__grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .connect-field--message {
+    grid-column: auto;
+  }
+
+  .connect-field :is(input, textarea) {
+    min-height: 2.75rem;
+  }
+
+  .connect-field textarea {
+    min-height: 5rem;
+  }
+
+  .connect-form__actions {
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 340px) {
+  .about-section {
+    --about-card-height: 41rem;
+    --about-stack-x: 0.625rem;
+    --about-stack-y: 1.5rem;
+  }
+
+  .about-stack-card__content {
+    right: 0.875rem;
+    bottom: 0.875rem;
+    left: 0.875rem;
+  }
+
+  .about-card-layout--media {
+    grid-template-rows: 7.5rem 1fr;
+  }
+
+  .about-card-bullets {
+    gap: 0.45rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-stack-card,
+  .connect-send {
+    transition: none;
+  }
+}

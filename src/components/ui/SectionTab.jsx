@@ -18,6 +18,10 @@ export default function SectionTab({
   position = 'middle',
   isActive = false,
   onClick,
+  onPointerEnter,
+  onPointerLeave,
+  onFocus,
+  onBlur,
   shortLabel,
 }) {
   if (variant === 'hero-folder') {
@@ -25,6 +29,10 @@ export default function SectionTab({
       <a
         href={href}
         onClick={onClick}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        onFocus={onFocus}
+        onBlur={onBlur}
         aria-label={label}
         aria-current={isActive ? 'location' : undefined}
         className={`hero-folder-tab hero-folder-tab--${position} ${isActive ? 'is-active' : ''}`}

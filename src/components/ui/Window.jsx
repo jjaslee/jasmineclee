@@ -1,5 +1,5 @@
 const MINIMIZE_DURATION_MS = 350
-const CASCADE_OFFSET_PX = 20
+export const WINDOW_CASCADE_OFFSET_PX = 20
 
 export function TitleBarIcon({ type }) {
   if (type === 'notes') {
@@ -52,6 +52,8 @@ export default function Window({
   borderColor,
   stackIndex = 0,
   cascadeSlot = 0,
+  cascadeOffsetX = WINDOW_CASCADE_OFFSET_PX,
+  cascadeOffsetY = WINDOW_CASCADE_OFFSET_PX,
   randomOffset = { x: 0, y: 0 },
   isFrontWindow = false,
   isMaximized = false,
@@ -61,6 +63,8 @@ export default function Window({
   hasFooter = false,
   variant = 'default',
   layoutMode = 'stacked',
+  frameClassName = '',
+  lockInactiveContent = false,
   onBringToFront,
   onMinimize,
   onMaximize,
@@ -70,9 +74,8 @@ export default function Window({
 }) {
   const layer = Math.max(0, stackIndex)
   const slot = Math.max(0, cascadeSlot)
-  const baseOffset = slot * CASCADE_OFFSET_PX
-  const offsetX = baseOffset + randomOffset.x
-  const offsetY = baseOffset + randomOffset.y
+  const offsetX = slot * cascadeOffsetX + randomOffset.x
+  const offsetY = slot * cascadeOffsetY + randomOffset.y
   const isPreview = variant === 'preview'
   const isFlowLayout = layoutMode === 'flow'
 
@@ -95,7 +98,7 @@ export default function Window({
       }}
     >
       <div
-        className={`mx-auto transition-all duration-300 ease-out ${
+        className={`mx-auto transition-all duration-300 ease-out ${frameClassName} ${
           isPreview
             ? isMaximized
               ? 'mt-8 w-[calc(100%-1rem)] sm:w-[min(94vw,1200px)]'
@@ -134,6 +137,8 @@ export default function Window({
             className={`paper-bg font-poppins border-[4px] rounded-xl overflow-hidden flex flex-col transition-all duration-300 ease-out ${
               isMaximized ? 'min-h-[380px]' : ''
             }`}
+            inert={lockInactiveContent && !isFrontWindow ? '' : undefined}
+            aria-hidden={lockInactiveContent && !isFrontWindow ? 'true' : undefined}
             style={{
               borderColor,
               clipPath: 'polygon(0 0, 26% 0, 30% -14%, 62% -14%, 66% 0, 100% 0, 100% 100%, 0 100%)',

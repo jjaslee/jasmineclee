@@ -13,8 +13,8 @@ const navItems = [
 ]
 
 export default function Header({
-  heroColor,
-  onHeroColorChange,
+  siteAccent,
+  onSiteAccentChange,
   lang = 'EN',
   onLangChange,
   theme = 'dark',
@@ -23,7 +23,7 @@ export default function Header({
   onSectionNavigate,
   resumeHref = null,
 }) {
-  const active = colorOptions.find((color) => color.id === heroColor) ?? colorOptions[0]
+  const active = colorOptions.find((color) => color.id === siteAccent) ?? colorOptions[0]
   const [spinTurns, setSpinTurns] = useState(0)
 
   return (
@@ -41,12 +41,12 @@ export default function Header({
           </a>
           <div className="flex shrink-0 gap-0.5" aria-label="Accent color">
             {colorOptions.map((option) => {
-              const isActive = heroColor === option.id
+              const isActive = siteAccent === option.id
               return (
                 <button
                   key={option.id}
                   type="button"
-                  onClick={() => onHeroColorChange?.(option.id)}
+                  onClick={() => onSiteAccentChange?.(option.id)}
                   className="flex h-6 w-6 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1 focus-visible:ring-offset-transparent"
                   aria-label={`Set accent color to ${option.id}`}
                   aria-pressed={isActive}
@@ -67,6 +67,7 @@ export default function Header({
         <nav
           aria-label="Primary navigation"
           className="type-ui col-span-2 row-start-2 flex items-center justify-center gap-5 tracking-[0.14em] chrome-muted sm:gap-8 md:absolute md:left-1/2 md:top-1/2 md:col-span-1 md:row-start-1 md:-translate-x-1/2 md:-translate-y-1/2"
+          style={{ fontSize: '0.875rem' }}
         >
           {navItems.map((item) => (
             <a

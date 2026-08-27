@@ -671,6 +671,80 @@ const CATEGORY_DEFINITIONS = [
   },
 ]
 
+const ARCHIVE_CATEGORY_DEFINITIONS = [
+  {
+    id: 'product-interaction',
+    title: 'Product + Interaction',
+    label: 'PRODUCT + INTERACTION',
+    bodyColor: '#50C0FA',
+    tabColor: '#1688C4',
+    borderColor: '#29A1F4',
+    iconType: 'pen',
+    order: 0,
+  },
+  {
+    id: 'systems-prototypes',
+    title: 'Systems + Prototypes',
+    label: 'SYSTEMS + PROTOTYPES',
+    bodyColor: '#C0F000',
+    tabColor: '#8EAC12',
+    borderColor: '#C0F000',
+    iconType: 'monitor',
+    order: 1,
+  },
+  {
+    id: 'visual-studies',
+    title: 'Visual Studies',
+    label: 'VISUAL STUDIES',
+    bodyColor: '#C96AED',
+    tabColor: '#A825D9',
+    borderColor: '#C96AED',
+    iconType: 'camera',
+    order: 2,
+  },
+]
+
+const ARCHIVE_GROUP_DEFINITIONS = [
+  {
+    id: 'photography-studies',
+    title: 'Photography Studies',
+    archiveCategory: 'visual-studies',
+    archiveOrder: 1,
+    hideArchiveCount: true,
+    summary:
+      'A grouped collection of four earlier photography series: Ember, Passing, Tidal, and Canopy.',
+    bodyColor: '#C96AED',
+    tabColor: '#A825D9',
+    iconType: 'camera',
+  },
+]
+
+export const KNOWLEDGE_CAPSULE = {
+  id: 'knowledge-capsule',
+  title: 'Knowledge Capsule',
+  label: 'KNOWLEDGE CAPSULE',
+  bodyColor: '#FFD166',
+  tabColor: '#B88416',
+  borderColor: '#E0A928',
+  iconType: 'notes',
+  items: [
+    {
+      id: 'indeng-115-notes',
+      title: 'INDENG 115',
+      courseCode: 'INDENG 115',
+      type: 'pdf',
+      pdfUrl: '/knowledge-capsule/notes_indeng115.pdf',
+    },
+    {
+      id: 'math-56-notes',
+      title: 'MATH 56',
+      courseCode: 'MATH 56',
+      type: 'pdf',
+      pdfUrl: '/knowledge-capsule/notes_math56.pdf',
+    },
+  ],
+}
+
 function publicMediaPaths(category, slug, filenames) {
   return filenames.map((filename) => `/${category}/${slug}/${filename}`)
 }
@@ -736,7 +810,11 @@ const RAW_PROJECTS = [
     summary: DESIGN_FOLDER_CAPTIONS['Cal Hacks'],
     media: withHoverCopy(CAL_HACKS_ITEMS, CAL_HACKS_GRID_HOVER),
     caseStudyRoute: '/work/cal-hacks',
+    caseStudyStatus: 'coming-soon',
+    caseStudyStatusLabel: 'CASE STUDY COMING SOON',
     mediaViewer: { documentMaxWidthClass: 'max-w-[min(560px,100%)]' },
+    archiveCategory: 'product-interaction',
+    archiveOrder: 0,
     order: 0,
   },
   {
@@ -748,6 +826,8 @@ const RAW_PROJECTS = [
     summaryLeadBold: true,
     media: withHoverCopy(AQUASYNC_ITEMS, AQUASYNC_GRID_HOVER),
     mediaPresentation: 'aquasync',
+    archiveCategory: 'product-interaction',
+    archiveOrder: 1,
     order: 1,
   },
   {
@@ -764,6 +844,8 @@ const RAW_PROJECTS = [
       'astron-05.png',
       'astron-06.png',
     ]),
+    archiveCategory: 'product-interaction',
+    archiveOrder: 2,
     order: 2,
   },
   {
@@ -774,6 +856,8 @@ const RAW_PROJECTS = [
     summary: DESIGN_FOLDER_CAPTIONS['Lazy Day Lines'],
     media: withHoverCopy(LAZY_DAY_LINES_ITEMS, LAZY_DAY_LINES_GRID_HOVER),
     mediaViewer: { documentMaxWidthClass: 'max-w-[min(620px,100%)]' },
+    archiveCategory: 'product-interaction',
+    archiveOrder: 4,
     order: 3,
   },
   {
@@ -788,6 +872,8 @@ const RAW_PROJECTS = [
       'forest-elder.png',
       'shattering.png',
     ]),
+    archiveCategory: 'visual-studies',
+    archiveOrder: 0,
     order: 4,
   },
   {
@@ -820,6 +906,8 @@ const RAW_PROJECTS = [
     legacyCategory: 'design',
     summary: DESIGN_FOLDER_CAPTIONS['Fluttering Kindness'],
     media: FLUTTERING_KINDNESS_ITEMS,
+    archiveCategory: 'product-interaction',
+    archiveOrder: 3,
     order: 6,
   },
   {
@@ -850,6 +938,8 @@ const RAW_PROJECTS = [
     legacyCategory: 'technicals',
     summary: TECHNICALS_FOLDER_CAPTIONS['Kinetic Origamic'],
     media: KINETIC_ORIGAMIC_ITEMS,
+    archiveCategory: 'systems-prototypes',
+    archiveOrder: 0,
     order: 1,
   },
   {
@@ -859,6 +949,8 @@ const RAW_PROJECTS = [
     legacyCategory: 'technicals',
     summary: TECHNICALS_FOLDER_CAPTIONS['Gear System'],
     media: GEAR_SYSTEM_ITEMS,
+    archiveCategory: 'systems-prototypes',
+    archiveOrder: 1,
     order: 2,
   },
   {
@@ -868,6 +960,8 @@ const RAW_PROJECTS = [
     legacyCategory: 'technicals',
     summary: TECHNICALS_FOLDER_CAPTIONS['Water Automata'],
     media: WATER_AUTOMATA_ITEMS,
+    archiveCategory: 'systems-prototypes',
+    archiveOrder: 2,
     order: 3,
   },
   ...PHOTO_PROJECT_DEFINITIONS.map(({ files, ...project }, order) => {
@@ -876,6 +970,10 @@ const RAW_PROJECTS = [
       ...project,
       legacyCategory: 'photos',
       media,
+      archivePresentation: 'photography-series',
+      archiveCategory: 'visual-studies',
+      archiveGroup: 'photography-studies',
+      archiveGroupOrder: order,
       order,
     }
   }),
@@ -883,15 +981,42 @@ const RAW_PROJECTS = [
 
 export const PROJECT_CATEGORIES = CATEGORY_DEFINITIONS.map((category) => ({ ...category }))
 
-export const PROJECTS = RAW_PROJECTS.map((project) => ({
-  ...project,
-  route: buildProjectPath(project.legacyCategory, project.slug),
-  thumbnail: mediaThumbnail(project.media),
+export const ARCHIVE_CATEGORIES = ARCHIVE_CATEGORY_DEFINITIONS.map((category) => ({
+  ...category,
 }))
+
+export const PROJECTS = RAW_PROJECTS.map((project) => {
+  const legacyCategory = CATEGORY_DEFINITIONS.find(
+    (category) => category.id === project.legacyCategory,
+  )
+  const folderColors =
+    project.featuredColors ||
+    (legacyCategory
+      ? {
+          body: legacyCategory.bodyColor,
+          tab: legacyCategory.tabColor,
+          border: legacyCategory.borderColor,
+        }
+      : null)
+
+  return {
+    ...project,
+    folderColors,
+    route: buildProjectPath(project.legacyCategory, project.slug),
+    thumbnail: mediaThumbnail(project.media),
+  }
+})
 
 export const FEATURED_PROJECTS = PROJECTS.filter((project) => project.featured).sort(
   (a, b) => a.featuredOrder - b.featuredOrder,
 )
+
+export const ARCHIVE_GROUPS = ARCHIVE_GROUP_DEFINITIONS.map((group) => ({
+  ...group,
+  projects: PROJECTS.filter((project) => project.archiveGroup === group.id).sort(
+    (a, b) => a.archiveGroupOrder - b.archiveGroupOrder,
+  ),
+}))
 
 export const JASCIELLE_PHOTOGRAPHY_URL = PHOTOGRAPHY_SITE_URL
 
@@ -899,6 +1024,28 @@ export function getProjectsByLegacyCategory(category) {
   return PROJECTS.filter((project) => project.legacyCategory === category).sort(
     (a, b) => a.order - b.order,
   )
+}
+
+export function getArchiveItemsByCategory(category) {
+  const projects = PROJECTS.filter(
+    (project) => project.archiveCategory === category && !project.archiveGroup,
+  ).map((project) => ({ ...project, archiveItemType: 'project' }))
+  const groups = ARCHIVE_GROUPS.filter(
+    (group) => group.archiveCategory === category,
+  ).map((group) => ({ ...group, archiveItemType: 'group' }))
+
+  return [...projects, ...groups].sort((a, b) => a.archiveOrder - b.archiveOrder)
+}
+
+export function getArchiveItemById(id) {
+  if (!id) return null
+  const project = PROJECTS.find(
+    (candidate) => candidate.id === id && candidate.archiveCategory,
+  )
+  if (project) return { ...project, archiveItemType: 'project' }
+
+  const group = ARCHIVE_GROUPS.find((candidate) => candidate.id === id)
+  return group ? { ...group, archiveItemType: 'group' } : null
 }
 
 export function getProjectByLegacyCategoryAndSlug(category, slug) {
