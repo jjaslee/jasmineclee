@@ -307,12 +307,39 @@
   box-shadow: 0 0 0 1px var(--about-pink);
 }
 
+.connect-field__error {
+  margin-top: 0.125rem;
+  color: var(--about-pink-dark);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
 .connect-form__actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   color: rgba(23, 23, 23, 0.55);
+}
+
+.connect-form__submit {
+  min-width: 0;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.connect-form__error {
+  max-width: 15rem;
+  margin: 0;
+  color: var(--about-pink-dark);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  text-align: right;
 }
 
 .connect-send {
@@ -434,6 +461,10 @@
 
   .connect-form__actions {
     align-items: flex-end;
+  }
+
+  .connect-form__submit {
+    flex-wrap: wrap;
   }
 }
 

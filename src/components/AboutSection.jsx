@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ContactForm from './contact/ContactForm'
+import resumePdf from '../assets/Jasmine_Lee_Resume.pdf'
 import './about-section.css'
 
 const ABOUT_CARDS = [
@@ -70,7 +71,9 @@ function ConnectContent({ lang }) {
           <span>Open to interesting work + collaborations</span>
         </div>
         <div className="about-connect-links type-ui">
-          <a href="mailto:jas.lee@berkeley.edu">Email ↗</a>
+          <a href={resumePdf} target="_blank" rel="noopener noreferrer">
+            Resume ↗
+          </a>
           <a href="https://www.linkedin.com/in/jasmineclee" target="_blank" rel="noreferrer">
             LinkedIn ↗
           </a>

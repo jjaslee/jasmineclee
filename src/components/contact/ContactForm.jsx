@@ -12,34 +12,33 @@ export default function ContactForm({ lang = 'EN' }) {
   const [message, setMessage] = useState('')
   const [honeypot, setHoneypot] = useState('')
   const [showValidation, setShowValidation] = useState(false)
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const [toast, setToast] = useState(null)
+  const [submissionStatus, setSubmissionStatus] = useState(null)
   const [isSending, setIsSending] = useState(false)
 
-  const fieldValidity = useMemo(
+  const fieldErrors = useMemo(
     () => ({
-      name: Boolean(name.trim()),
-      email: Boolean(email.trim()) && validateEmail(email.trim()),
-      message: Boolean(message.trim()),
+      name: name.trim() ? '' : 'Please enter your name.',
+      email: !email.trim()
+        ? 'Please enter your email.'
+        : validateEmail(email.trim())
+          ? ''
+          : 'Please enter a valid email address.',
+      message: message.trim() ? '' : 'Please enter a message.',
     }),
     [email, message, name],
   )
+  const fieldValidity = {
+    name: !fieldErrors.name,
+    email: !fieldErrors.email,
+    message: !fieldErrors.message,
+  }
   const isValid = fieldValidity.name && fieldValidity.email && fieldValidity.message
 
   useEffect(() => {
-    if (!toast) return undefined
-    const timeoutId = window.setTimeout(() => setToast(null), 2600)
+    if (!submissionStatus) return undefined
+    const timeoutId = window.setTimeout(() => setSubmissionStatus(null), 2600)
     return () => window.clearTimeout(timeoutId)
-  }, [toast])
-
-  useEffect(() => {
-    if (!isConfirmOpen) return undefined
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape' && !isSending) setIsConfirmOpen(false)
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [isConfirmOpen, isSending])
+  }, [submissionStatus])
 
   const clearForm = () => {
     setName('')
@@ -50,22 +49,18 @@ export default function ContactForm({ lang = 'EN' }) {
 
   const submitMessage = async () => {
     if (honeypot) {
-      setToast({ type: 'success', text: 'Thank you. Message sent.' })
+      setSubmissionStatus({ type: 'success', text: 'Thank you. Message sent.' })
       clearForm()
-      setIsConfirmOpen(false)
       return
     }
 
     if (!FORMSPREE_ENDPOINT) {
-      setToast({ type: 'error', text: 'Form is not configured yet.' })
-      setIsConfirmOpen(false)
+      setSubmissionStatus({ type: 'error', text: 'Form is not configured yet.' })
       return
     }
 
     if (!isValid) {
       setShowValidation(true)
-      setToast({ type: 'error', text: 'Please fill out all required fields.' })
-      setIsConfirmOpen(false)
       return
     }
 
@@ -86,12 +81,10 @@ export default function ContactForm({ lang = 'EN' }) {
 
       if (!response.ok) throw new Error('Request failed')
 
-      setToast({ type: 'success', text: 'Thank you. Message sent.' })
+      setSubmissionStatus({ type: 'success', text: 'Thank you. Message sent.' })
       clearForm()
-      setIsConfirmOpen(false)
     } catch {
-      setToast({ type: 'error', text: 'Could not send. Please try again.' })
-      setIsConfirmOpen(false)
+      setSubmissionStatus({ type: 'error', text: 'Could not send. Please try again.' })
     } finally {
       setIsSending(false)
     }
@@ -100,12 +93,10 @@ export default function ContactForm({ lang = 'EN' }) {
   const handleSubmit = (event) => {
     event.preventDefault()
     if (isSending) return
+    setSubmissionStatus(null)
     setShowValidation(true)
-    if (!isValid) {
-      setToast({ type: 'error', text: 'Please fill out all required fields.' })
-      return
-    }
-    setIsConfirmOpen(true)
+    if (!isValid) return
+    submitMessage()
   }
 
   const label = {
@@ -138,8 +129,14 @@ export default function ContactForm({ lang = 'EN' }) {
               autoComplete="name"
               value={name}
               aria-invalid={showValidation && !fieldValidity.name ? 'true' : undefined}
+              aria-describedby={showValidation && fieldErrors.name ? 'contact-name-error' : undefined}
               onChange={(event) => setName(event.target.value)}
             />
+            {showValidation && fieldErrors.name ? (
+              <span id="contact-name-error" className="connect-field__error" role="alert">
+                {fieldErrors.name}
+              </span>
+            ) : null}
           </label>
 
           <label className="connect-field">
@@ -150,8 +147,14 @@ export default function ContactForm({ lang = 'EN' }) {
               autoComplete="email"
               value={email}
               aria-invalid={showValidation && !fieldValidity.email ? 'true' : undefined}
+              aria-describedby={showValidation && fieldErrors.email ? 'contact-email-error' : undefined}
               onChange={(event) => setEmail(event.target.value)}
             />
+            {showValidation && fieldErrors.email ? (
+              <span id="contact-email-error" className="connect-field__error" role="alert">
+                {fieldErrors.email}
+              </span>
+            ) : null}
           </label>
 
           <label className="connect-field connect-field--message">
@@ -161,8 +164,14 @@ export default function ContactForm({ lang = 'EN' }) {
               rows={3}
               value={message}
               aria-invalid={showValidation && !fieldValidity.message ? 'true' : undefined}
+              aria-describedby={showValidation && fieldErrors.message ? 'contact-message-error' : undefined}
               onChange={(event) => setMessage(event.target.value)}
             />
+            {showValidation && fieldErrors.message ? (
+              <span id="contact-message-error" className="connect-field__error" role="alert">
+                {fieldErrors.message}
+              </span>
+            ) : null}
           </label>
         </div>
 
@@ -170,59 +179,23 @@ export default function ContactForm({ lang = 'EN' }) {
           <span className="type-meta" aria-hidden>
             * Required
           </span>
-          <button className="connect-send type-ui" type="submit" disabled={isSending}>
-            {isSending ? 'SENDING…' : 'SEND →'}
-          </button>
-        </div>
-      </form>
-
-      {isConfirmOpen ? (
-        <div
-          className="contact-modal-overlay"
-          role="presentation"
-          onMouseDown={() => (!isSending ? setIsConfirmOpen(false) : null)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Confirm send"
-            className="modal-card"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <p className="modal-title">Send this message?</p>
-            <p className="modal-body">I will send your note to Jasmine.</p>
-            <div className="modal-actions">
-              <button
-                type="button"
-                className="modal-btn"
-                autoFocus
-                disabled={isSending}
-                onClick={() => setIsConfirmOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="modal-btn modal-btn-primary"
-                disabled={isSending}
-                onClick={submitMessage}
-              >
-                {isSending ? 'Sending…' : 'Send'}
-              </button>
-            </div>
+          <div className="connect-form__submit">
+            {submissionStatus?.type === 'error' ? (
+              <p className="connect-form__error" role="status" aria-live="polite">
+                {submissionStatus.text}
+              </p>
+            ) : null}
+            <button
+              className="connect-send type-ui"
+              type="submit"
+              disabled={isSending || submissionStatus?.type === 'success'}
+              aria-live="polite"
+            >
+              {isSending ? 'SENDING…' : submissionStatus?.type === 'success' ? 'SENT!' : 'SEND →'}
+            </button>
           </div>
         </div>
-      ) : null}
-
-      {toast ? (
-        <div
-          className={`toast ${toast.type === 'success' ? 'toast-success' : 'toast-error'}`}
-          role="status"
-          aria-live="polite"
-        >
-          {toast.text}
-        </div>
-      ) : null}
+      </form>
     </div>
   )
 }
