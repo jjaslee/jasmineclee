@@ -196,7 +196,7 @@ function isEditableTarget(target) {
 }
 
 function KnowledgeCapsuleFile({ item }) {
-  const label = item.courseCode || item.label || item.title
+  const label = item.className || item.label || item.title
 
   return (
     <a
@@ -204,7 +204,7 @@ function KnowledgeCapsuleFile({ item }) {
       target="_blank"
       rel="noreferrer"
       className="knowledge-capsule-file"
-      aria-label={`Open ${item.title} PDF in a new tab`}
+      aria-label={`${item.classCode} — ${item.className}, PDF (opens in a new tab)`}
       style={{
         '--capsule-file-body': KNOWLEDGE_CAPSULE.borderColor,
         '--capsule-file-fold': KNOWLEDGE_CAPSULE.tabColor,
@@ -246,7 +246,7 @@ function KnowledgeCapsulePreview() {
             {String(capsuleFiles.length).padStart(2, '0')} ARCHIVED{' '}
             {capsuleFiles.length === 1 ? 'ITEM' : 'ITEMS'}
           </p>
-          <div className="archive-category-window__grid">
+          <div className="archive-category-window__grid knowledge-capsule-window__grid">
             {capsuleFiles.map((item) => (
               <KnowledgeCapsuleFile key={item.id} item={item} />
             ))}

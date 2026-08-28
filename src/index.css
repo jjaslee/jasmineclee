@@ -15,7 +15,7 @@
   --page-max-width: 80rem;
   --page-inline: 1.5rem;
   --header-identity-width: clamp(14.125rem, calc(12.25rem + 3vw), 14.875rem);
-  --header-accent-start: calc(var(--header-identity-width) - 3.9375rem);
+  --header-accent-start: clamp(9.4375rem, calc(7.9rem + 3.2vw), 10.75rem);
   --leading-display: 0.92;
   --leading-heading: 1.05;
   --leading-body: 1.45;

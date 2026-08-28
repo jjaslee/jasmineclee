@@ -82,6 +82,8 @@ const heroCopy = {
   EN: {
     title: 'Designer & Builder',
     body: 'I design and build products, interfaces, and physical systems grounded in human behavior and data.',
+    aside:
+      'Mostly, I’m curious about everything, which keeps me on a quest for the wrinkliest brain possible.',
     education: 'Cognitive Science + Data Science',
     school: 'UC Berkeley · Design Innovation',
   },
@@ -217,8 +219,8 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
       </div>
 
       <div className="relative z-10 flex min-h-0 w-full flex-1 items-center">
-        <div className="mx-auto w-full max-w-[var(--page-max-width)] px-6 sm:px-10 lg:px-[var(--page-inline)]">
-          <div className="w-full max-w-[64rem] -translate-y-4 lg:ml-[var(--header-accent-start)] lg:w-[calc(100%_-_var(--header-accent-start))]">
+        <div className="mx-auto w-full max-w-[var(--page-max-width)] px-6 sm:px-[var(--page-inline)]">
+          <div className="w-full max-w-[58rem] md:ml-[var(--header-accent-start)] md:w-[calc(100%_-_var(--header-accent-start))]">
             <h1
               data-hero-content
               className="type-display max-w-[12ch] tracking-[-0.04em]"
@@ -227,14 +229,19 @@ export default function HeroSection({ heroColor = 'purple', lang = 'EN' }) {
               {copy.title}
             </h1>
 
-            <p
-              data-hero-content
-              className="type-body mt-7 max-w-[42rem] app-text sm:mt-8"
-            >
-              {copy.body}
-            </p>
+            <div className="type-body mt-7 app-text sm:mt-8">
+              <p data-hero-content className="max-w-[46rem] [text-wrap:balance]">
+                {copy.body}
+              </p>
+              <p
+                data-hero-content
+                className="mt-2.5 max-w-[36rem] opacity-[0.68] [text-wrap:balance]"
+              >
+                {copy.aside}
+              </p>
+            </div>
 
-            <div data-hero-content className="type-ui mt-8 app-text sm:mt-10">
+            <div data-hero-content className="type-ui mt-7 app-text sm:mt-8">
               <p className="font-semibold">{copy.education}</p>
               <p className="mt-1 font-normal opacity-60">{copy.school}</p>
             </div>

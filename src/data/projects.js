@@ -719,6 +719,52 @@ const ARCHIVE_GROUP_DEFINITIONS = [
   },
 ]
 
+const knowledgeCapsulePdfModules = import.meta.glob(
+  '../assets/knowledge-capsule/*.pdf',
+  {
+    eager: true,
+    query: '?url',
+    import: 'default',
+  },
+)
+
+function parseKnowledgeCapsulePdf(filePath, pdfUrl) {
+  const filename = decodeURIComponent(filePath.split('/').pop())
+  const stem = filename.replace(/\.pdf$/i, '')
+  const segments = stem.split('_')
+  const firstCodeSegment = segments.shift() || ''
+  const codeSegments = [firstCodeSegment]
+
+  // The supplied filenames encode the department and catalog number as two
+  // underscore-delimited segments (for example, CS_61b). Also support the
+  // documented `CS 61B_Data Structures` form if future files use it.
+  if (!/\d/.test(firstCodeSegment) && segments.length > 1) {
+    codeSegments.push(segments.shift())
+  }
+
+  const classCode = codeSegments.join(' ').replace(/\s+/g, ' ').trim().toUpperCase()
+  const className = segments.join(' ').replace(/\s+/g, ' ').trim()
+
+  return {
+    id: stem.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+    title: className,
+    classCode,
+    className,
+    sourceFile: filename,
+    type: 'pdf',
+    pdfUrl,
+  }
+}
+
+const KNOWLEDGE_CAPSULE_FILES = Object.entries(knowledgeCapsulePdfModules)
+  .map(([filePath, pdfUrl]) => parseKnowledgeCapsulePdf(filePath, pdfUrl))
+  .sort(
+    (a, b) =>
+      a.className.localeCompare(b.className) ||
+      a.classCode.localeCompare(b.classCode) ||
+      a.sourceFile.localeCompare(b.sourceFile),
+  )
+
 export const KNOWLEDGE_CAPSULE = {
   id: 'knowledge-capsule',
   title: 'Knowledge Capsule',
@@ -727,22 +773,7 @@ export const KNOWLEDGE_CAPSULE = {
   tabColor: '#B88416',
   borderColor: '#E0A928',
   iconType: 'notes',
-  items: [
-    {
-      id: 'indeng-115-notes',
-      title: 'INDENG 115',
-      courseCode: 'INDENG 115',
-      type: 'pdf',
-      pdfUrl: '/knowledge-capsule/notes_indeng115.pdf',
-    },
-    {
-      id: 'math-56-notes',
-      title: 'MATH 56',
-      courseCode: 'MATH 56',
-      type: 'pdf',
-      pdfUrl: '/knowledge-capsule/notes_math56.pdf',
-    },
-  ],
+  items: KNOWLEDGE_CAPSULE_FILES,
 }
 
 function publicMediaPaths(category, slug, filenames) {
